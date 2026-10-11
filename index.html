@@ -18,6 +18,10 @@
   --s1:#C2362B; --s2:#B86A00; --s3:#1F7A4D; --s4:#1257B8;
   --s1-soft:#FBE6E3; --s2-soft:#FCF0DC; --s3-soft:#DFF3E8; --s4-soft:#DDE9FA;
   --code-bg:#151A2D; --code-fg:#E7EAF6;
+  --surface-chart:#FFFFFF;
+  --good:#0ca30c; --warn:#fab219; --crit:#d03b3b; --neutral:#a3a29c;
+  --good-soft:#E3F4E3; --warn-soft:#FDF2D9; --crit-soft:#FBE4E4; --good-text:#0a7a0a; --warn-text:#8a5d00;
+  --c1:#2a78d6; --c2:#eb6834; --c3:#1baf7a; --c4:#eda100; --c5:#6250d6; --c6:#e87ba4;
   --f-display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
   --f-body:"Public Sans", "Segoe UI", system-ui, sans-serif;
   --f-mono:"JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
@@ -28,12 +32,18 @@
   --accent:#8C99FF; --accent-fg:#0E1120; --accent-soft:#232A52;
   --s1:#FF8A7D; --s2:#F2B24D; --s3:#5DD39A; --s4:#7DB2FF;
   --s1-soft:#3A1E22; --s2-soft:#372A14; --s3-soft:#14342A; --s4-soft:#15294A;
+  --good:#0ca30c; --warn:#fab219; --crit:#d03b3b; --neutral:#6f6e69;
+  --good-soft:#15301A; --warn-soft:#352A12; --crit-soft:#3A1C1E; --good-text:#4fd34f; --warn-text:#f2c25a;
+  --c1:#3987e5; --c2:#d95926; --c3:#199e70; --c4:#c98500; --c5:#9085e9; --c6:#d55181;
   --code-bg:#090B16; --code-fg:#E7EAF6; color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#0E1120; --surface:#161A2E; --sunken:#1D2239; --fg:#E6E8F3; --muted:#9AA1C0; --line:#2B3152;
   --accent:#8C99FF; --accent-fg:#0E1120; --accent-soft:#232A52;
   --s1:#FF8A7D; --s2:#F2B24D; --s3:#5DD39A; --s4:#7DB2FF;
   --s1-soft:#3A1E22; --s2-soft:#372A14; --s3-soft:#14342A; --s4-soft:#15294A;
+  --good:#0ca30c; --warn:#fab219; --crit:#d03b3b; --neutral:#6f6e69;
+  --good-soft:#15301A; --warn-soft:#352A12; --crit-soft:#3A1C1E; --good-text:#4fd34f; --warn-text:#f2c25a;
+  --c1:#3987e5; --c2:#d95926; --c3:#199e70; --c4:#c98500; --c5:#9085e9; --c6:#d55181;
   --code-bg:#090B16; --code-fg:#E7EAF6; color-scheme:dark}
 
 *{box-sizing:border-box}
@@ -115,7 +125,9 @@ textarea:focus,input:focus{border-color:var(--accent);outline:none}
 .sc3 .num{background:var(--s3-soft);color:var(--s3)} .sc4 .num{background:var(--s4-soft);color:var(--s4)}
 .score .verdict b{display:block;font-size:16px}
 .score .verdict span{color:var(--muted);font-size:13.5px}
-.fb{display:grid;gap:16px}
+.fb{display:grid;gap:16px;grid-template-columns:minmax(0,1fr)}
+.fb>*,.model,.rich{min-width:0}
+.model pre,.rich pre{max-width:100%}
 .fb h4{margin:0 0 6px;font:600 11.5px var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
 .fb ul{margin:0;padding-left:18px;display:grid;gap:4px}
 .good li::marker{color:var(--s3)} .bad li::marker{color:var(--s1)}
@@ -166,6 +178,57 @@ pre code{background:none;padding:0;color:inherit;font-size:inherit}
 .mixitem{font:600 12.5px var(--f-mono);padding:5px 10px;border-radius:6px;background:var(--sunken);font-variant-numeric:tabular-nums}
 .mixitem b{color:var(--accent);margin-right:4px}
 .pip.t-py{background:var(--line)} 
+/* Multiple choice */
+.opts{display:grid;gap:8px;margin-bottom:14px}
+.opt{display:grid;grid-template-columns:30px minmax(0,1fr) auto;align-items:center;gap:10px;text-align:left;background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:11px 12px;cursor:pointer;font-size:14.5px;line-height:1.4;color:var(--fg)}
+.opt:hover:not([disabled]){border-color:var(--muted)}
+.opt .key{width:28px;height:28px;border-radius:7px;display:grid;place-items:center;background:var(--sunken);font:600 12.5px var(--f-mono);color:var(--muted)}
+.opt.picked{border-color:var(--accent);background:var(--accent-soft)}
+.opt.picked .key{background:var(--accent);color:var(--accent-fg)}
+.opt.right{border-color:var(--good);background:var(--good-soft)}
+.opt.right .key{background:var(--good);color:#fff}
+.opt.wrong{border-color:var(--crit);background:var(--crit-soft)}
+.opt.wrong .key{background:var(--crit);color:#fff}
+.opt[disabled]{cursor:default}
+.opt .mark{font:700 16px var(--f-mono)}
+.opt.right .mark{color:var(--good)} .opt.wrong .mark{color:var(--crit)}
+/* Coding task blocks */
+.endpoint{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:0 0 12px}
+.endpoint code{font-size:13px;padding:5px 9px;word-break:break-all}
+.examples{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:10px;margin:0 0 10px}
+.ex{border:1px solid var(--line);border-radius:8px;padding:10px 12px;background:var(--bg);min-width:0}
+.exh{font:600 11px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.exrow{display:grid;grid-template-columns:56px minmax(0,1fr);gap:8px;align-items:start}
+.exk{font:600 12px var(--f-mono);color:var(--accent);padding-top:9px}
+.exrow pre{margin:4px 0;padding:7px 9px;font-size:12.5px;white-space:pre-wrap;word-break:break-word}
+/* Verdict badges */
+.vbadge{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:12px 14px;border-radius:10px;font-size:15px}
+.vbadge .vi{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font:700 16px var(--f-mono);color:#fff}
+.vbadge span:last-child:not(.vi){color:var(--muted);font-size:13.5px}
+.vbadge.ok{background:var(--good-soft)} .vbadge.ok .vi{background:var(--good)}
+.vbadge.part{background:var(--warn-soft)} .vbadge.part .vi{background:var(--warn);color:#1f1a0a}
+.vbadge.no{background:var(--crit-soft)} .vbadge.no .vi{background:var(--crit)}
+.vbadge.skip{background:var(--sunken)} .vbadge.skip .vi{background:var(--neutral)}
+.pip.o-correct{background:var(--good)} .pip.o-partial{background:var(--warn)} .pip.o-incorrect{background:var(--crit)} .pip.o-skipped{background:var(--neutral)}
+/* Report pies */
+.charts{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:16px}
+.ch-title{font-size:17px;margin:0 0 12px}
+.pie-wrap{display:grid;grid-template-columns:minmax(0,190px) minmax(0,1fr);gap:18px;align-items:center}
+.pie{width:100%;max-width:190px;height:auto;display:block}
+.pie .slice{transition:opacity .15s}
+.pie:hover .slice{opacity:.55} .pie .slice:hover{opacity:1}
+.pie-big{font:700 26px var(--f-display);fill:var(--fg)}
+.pie-small{font:500 11px var(--f-mono);fill:var(--muted);letter-spacing:.06em;text-transform:uppercase}
+.legend{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.legend li{display:grid;grid-template-columns:14px minmax(0,1fr) auto;gap:8px;align-items:center;font-size:14px}
+.legend .sw{width:14px;height:14px;border-radius:4px}
+.legend .lg-v{font:500 12.5px var(--f-mono);color:var(--muted);font-variant-numeric:tabular-nums;text-align:right}
+.logrow .s{font:600 12.5px var(--f-mono);white-space:nowrap}
+.logrow .s.o-correct{color:var(--good-text)} .logrow .s.o-partial{color:var(--warn-text)} .logrow .s.o-incorrect{color:var(--crit)} .logrow .s.o-skipped{color:var(--muted)}
+.logrow{grid-template-columns:28px minmax(0,1fr) auto}
+@media (max-width:520px){ .pie-wrap{grid-template-columns:minmax(0,1fr)} .pie{margin:0 auto} }
+@media (prefers-reduced-motion:reduce){ .pie .slice{transition:none} }
+
 footer{margin-top:36px;color:var(--muted);font-size:12.5px}
 
 @media (max-width:860px){
@@ -189,11 +252,11 @@ footer{margin-top:36px;color:var(--muted);font-size:12.5px}
     <div class="setup">
       <div class="intro">
         <h2>Practise the interview before the real one.</h2>
-        <p>Pick your level and start. Answer real SDET interview questions out loud or in writing, solve Python tasks in a live editor with hidden tests, then compare with a model answer and score yourself 1–4.</p>
+        <p>Pick your sections and start. Answer multiple-choice questions, solve Python coding tasks against hidden tests, and write real API tests with requests against live public APIs. Everything is scored automatically, and your report shows the results as pie charts.</p>
         <div class="syllabus">
           <div class="syl"><b>Playwright</b><span>Locators, auto-wait and actionability, web-first assertions, contexts, network mocking, storage state, frames and popups, tracing.</span></div>
           <div class="syl"><b>Python</b><span>Data structures, comprehensions, generators, decorators, context managers, OOP, exceptions, typing. Live-coding tasks run in a real Python editor with hidden tests.</span></div>
-          <div class="syl"><b>API testing</b><span>REST semantics, status codes, auth, schema and contract validation, requests + pytest, Playwright APIRequestContext, idempotency, pagination.</span></div>
+          <div class="syl"><b>API testing</b><span>Real-time coding with the requests library against live public APIs (JSONPlaceholder, httpbin), graded against deliberately broken responses, plus multiple-choice questions on REST, auth, contracts and resilience.</span></div>
           <div class="syl"><b>Framework</b><span>Pytest fixtures and scopes, parametrize, POM design, test data, parallel runs with xdist, reporting.</span></div>
           <div class="syl"><b>CI &amp; flakiness</b><span>Debugging CI-only failures, trace viewer, flake root causes, pipelines, sharding.</span></div>
         </div>
@@ -273,17 +336,18 @@ footer{margin-top:36px;color:var(--muted);font-size:12.5px}
     <div class="summary">
       <div class="panel">
         <div class="sumhead">
-          <div class="big" id="avgScore">–<small> / 4</small></div>
+          <div class="big" id="avgScore">–<small>%</small></div>
           <div>
             <h2 style="font-size:24px" id="sumTitle">Session summary</h2>
             <div class="hint" id="sumMeta"></div>
           </div>
         </div>
       </div>
-      <div class="cols">
-        <div class="panel"><h4 class="label" style="margin:0 0 12px">Score by skill</h4><div class="bars" id="bars"></div></div>
-        <div class="panel"><h4 class="label" style="margin:0 0 12px">Coach's notes</h4><div id="coach" class="rich"></div></div>
+      <div class="charts">
+        <div class="panel chart"><h3 class="ch-title">Overall result</h3><div class="pie-wrap" id="pieOverall"></div></div>
+        <div class="panel chart"><h3 class="ch-title">Questions by section</h3><div class="pie-wrap" id="pieSections"></div></div>
       </div>
+      <div class="panel"><h4 class="label" style="margin:0 0 12px">Coach's notes</h4><div id="coach" class="rich"></div></div>
       <div class="panel"><h4 class="label" style="margin:0 0 4px">Question log</h4><div class="log" id="log"></div></div>
       <div class="actions">
         <button class="btn primary" id="againBtn" type="button">New interview</button>
@@ -293,7 +357,7 @@ footer{margin-top:36px;color:var(--muted);font-size:12.5px}
     </div>
   </section>
 
-  <footer>Scores use a 1–4 scale: 1 no hire · 2 weak · 3 meets the bar · 4 strong hire. Built for SDET interview practice. Python runs in your browser via Pyodide; nothing is sent anywhere.</footer>
+  <footer>Multiple-choice and coding answers are scored automatically; partly correct coding answers count as half. Built for SDET interview practice. Python runs in your browser via Pyodide; API tasks call public test APIs (JSONPlaceholder, httpbin) straight from your browser.</footer>
 </div>
 
 <script>
@@ -373,20 +437,28 @@ footer{margin-top:36px;color:var(--muted);font-size:12.5px}
     raw.map((r,i)=>[r-base[i], i]).sort((a,b)=>b[0]-a[0] || (WEIGHT[tracks[b[1]]]||1)-(WEIGHT[tracks[a[1]]]||1) || a[1]-b[1]).forEach(([,i]) => { if (left > 0){ base[i]++; left--; } });
     const out = {}; tracks.forEach((t,i) => { if (base[i]) out[t] = base[i]; }); return out;
   }
+  function shuffle(a){ for (let i = a.length - 1; i > 0; i--){ const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
   function buildPlan(tracks, total){
     const alloc = allocate(tracks, total), left = {...alloc}, plan = [];
     let last = null;
     for (let i = 0; i < total; i++){
-      // pick the topic with the most remaining share, avoiding repeats when possible
-      const opts = Object.keys(left).filter(t => left[t] > 0)
-        .sort((a,b) => (left[b]/alloc[b]) - (left[a]/alloc[a]) || alloc[b] - alloc[a]);
-      const t = opts.find(o => o !== last) || opts[0];
+      // random pick weighted by what's left, never the same topic twice in a row when avoidable
+      let opts = Object.keys(left).filter(t => left[t] > 0 && t !== last);
+      if (!opts.length) opts = Object.keys(left).filter(t => left[t] > 0);
+      const weights = opts.map(t => left[t]);
+      let r = Math.random() * weights.reduce((a, b) => a + b, 0), t = opts[0];
+      for (let k = 0; k < opts.length; k++){ r -= weights[k]; if (r <= 0){ t = opts[k]; break; } }
       left[t]--; last = t; plan.push({topic: t});
     }
-    // Python: first one is a spoken warm-up, then roughly 3 in 5 are live-coding tasks
+    // Question types per section: Python ~60% live coding, API ~2/3 requests coding, the rest multiple choice.
+    const kinds = (n, coding, codeKind) => shuffle(Array.from({length: n}, (_, i) => i < coding ? codeKind : "concept"));
     const py = plan.filter(x => x.topic === "Python");
-    const codeKinds = ["concept","python_code","concept","python_code","python_code"];
-    py.forEach((x, i) => { x.kind = codeKinds[i % codeKinds.length]; });
+    const pyKinds = kinds(py.length, Math.round(py.length * 0.6), "python_code");
+    py.forEach((x, i) => { x.kind = pyKinds[i]; });
+    const api = plan.filter(x => x.topic === "API testing");
+    const apiKinds = kinds(api.length, Math.ceil(api.length * 2 / 3), "api_code");
+    api.forEach((x, i) => { x.kind = apiKinds[i]; });
+    plan.forEach(x => { if (!x.kind) x.kind = "concept"; });
     return plan;
   }
   function mixText(alloc){ return Object.entries(alloc).sort((x,y)=>y[1]-x[1]).map(([t,n]) => `${n} ${SHORT[t]||t}`).join(" · "); }
@@ -405,7 +477,7 @@ footer{margin-top:36px;color:var(--muted);font-size:12.5px}
     $("#modeHint").textContent = state==="on" ? "Questions are generated live and adapt to your answers." : state==="off" ? "Questions are drawn at random from the bank, unseen ones first, so each session is different." : "";
   }
 
-  // ---------- Prompts ----------
+  // ---------- Prompts (AI mode) ----------
   const RULES = `You are a demanding but fair technical interviewer for automation testing roles. Stack: Python, Playwright (Python sync API with pytest-playwright), pytest, REST API testing (requests, Playwright APIRequestContext, jsonschema/pydantic), CI/CD.
 Rules for anything technical you write:
 - Only real, current Python Playwright APIs (e.g. page.get_by_role, expect(locator).to_have_text, page.route, page.expect_response, context.storage_state, playwright.request.new_context). Never invent methods.
@@ -414,21 +486,20 @@ Rules for anything technical you write:
 - Keep model answers spoken-length (about 45-90 seconds out loud): direct answer first, then reasoning, then one real-world detail (trade-off, gotcha, or project practice).`;
 
   function context(){
-    const done = S.items.map((it,i)=>`Q${i+1} [${it.q.topic}, ${it.q.difficulty}] ${it.q.question}\n -> score ${it.grade?.score ?? "skipped"}${it.grade?.gaps?.length ? "; gaps: "+it.grade.gaps.slice(0,2).join("; ") : ""}`).join("\n");
+    const done = S.items.map((it,i)=>`Q${i+1} [${it.q.topic}, ${it.q.kind}] ${it.q.question}\n -> ${outcomeOf(it) || "unanswered"}`).join("\n");
     return `Candidate level: ${S.level}.
 Session blueprint (fixed): ${mixText(allocate(S.tracks, S.total))}.
 Total questions in session: ${S.total}. Questions asked so far: ${S.items.length}.
-${S.jd ? "Target role / job description (tailor questions to it):\n"+S.jd.slice(0,3000)+"\n" : ""}${done ? "History so far:\n"+done : "This is the first question: make it a warm-up."}`;
+${S.jd ? "Target role / job description (tailor questions to it):\n"+S.jd.slice(0,3000)+"\n" : ""}${done ? "History so far:\n"+done : "This is the first question."}`;
   }
-  const QSHAPE = `{"topic": one of the skills listed, "difficulty": "warm-up" | "core" | "deep", "kind": "concept" | "python_code" | "code", "question": string (scenario-based where possible), "what_tested": string (one line), "hint": string (one line nudge, no answer), "starter_code": string (only for python_code or code; else ""), "tests": [string] (only for python_code; else [])}`;
+  const QSHAPE = `{"topic": one of the skills listed, "difficulty": "warm-up" | "core" | "deep", "kind": "concept" | "python_code" | "api_code", "question": string, "what_tested": string (one line), "hint": string (one line nudge, no answer), "options": [4 short strings] (concept only), "answer": index of the correct option 0-3 (concept only), "model": string (Markdown explanation of the correct answer; for coding a reference solution and why), "endpoint": string (api_code only), "examples": [{"input": string, "output": string}] (1-2, coding only), "starter_code": string (coding only), "tests": [string] (coding only), "entry": string (api_code only), "mutants": [object] (api_code only)}`;
   const KINDS = `Question kinds:
-- "concept": a spoken answer.
-- "python_code": a live-coding task the candidate solves in a real Python 3.12 editor (standard library only, no pip packages, no input(), no network, no files). Ask for one small function of 5-25 lines relevant to test automation where possible (parsing logs or JSON, data transforms, retry/backoff logic, dedupe, grouping results, validating payloads). starter_code = the function signature with a docstring and "pass". tests = 4-6 single-line Python assert statements calling that function, covering normal and edge cases; every test must pass for a correct solution and never depend on set or dict ordering unless the task requires it.
-- "code": write Playwright or API test code (pytest-playwright, requests, APIRequestContext). It is reviewed, not executed. starter_code may give a short skeleton or relevant HTML/API shape.
-When Python is among the skills, make about half of the Python questions "python_code". Use "code" for some Playwright and API questions.`;
+- "concept": a multiple-choice question with exactly 4 options of similar length and style, one clearly correct, three plausible but wrong. Put the explanation in "model".
+- "python_code": a live-coding task solved in a real Python 3.12 editor (standard library only, no input(), no network, no files). One small function of 5-25 lines relevant to test automation where possible. starter_code = signature with docstring and "pass". tests = 4-6 single-line assert statements calling the function. examples = 2 of them shown as {"input": "f(x)", "output": "y"}.
+- "api_code": a real-time API task using the requests library against ONLY https://jsonplaceholder.typicode.com (posts, comments, users, todos, albums; supports ?userId= filters, nested /posts/1/comments, POST returns 201 with id 101, PUT/PATCH return 200, DELETE returns 200 {}) or https://httpbin.org (/get, /post, /headers, /status/<code>, /basic-auth/<user>/<pass>, /bearer, /delay/<n>, /json). Usually "write test_xxx() that calls ... and asserts ...". starter_code imports requests and defines the empty function. tests = ["test_xxx()"] or asserts on a helper's return value. entry = the call that runs the candidate's test (e.g. "test_xxx()"), and mutants = 2-3 broken responses the test must catch, each like {"label": "server returns 500", "status": 500} or {"label": "title empty", "set": {"title": ""}} or {"label": "id missing", "delete": ["id"]} or {"label": "only 9 items", "truncate": 9}. examples show the request and an abbreviated response.`;
 
   async function askQuestion(){
-    const prompt = `${RULES}\n\n${context()}\n\nWrite the NEXT interview question. ${slotRule(S.plan[S.items.length])} Don't repeat concepts already asked. Ramp difficulty: go deeper where the candidate scored 3-4, probe gaps where they scored 1-2, and pick a skill not yet covered when possible.\n\n${KINDS}\n\nReply with only JSON: ${QSHAPE}`;
+    const prompt = `${RULES}\n\n${context()}\n\nWrite the NEXT interview question. ${slotRule(S.plan[S.items.length])} Don't repeat concepts already asked. Go deeper where the candidate was correct; probe gaps where they were wrong.\n\n${KINDS}\n\nReply with only JSON: ${QSHAPE}`;
     const q = await sample.json(prompt, {signal: ctl.signal, cache:false});
     if (!q || !q.question) throw {code:"invalid_json"};
     return applySlot(normQ(q), S.plan[S.items.length]);
@@ -437,8 +508,9 @@ When Python is among the skills, make about half of the Python questions "python
   function slotRule(slot){
     if (!slot) return "";
     let r = `It MUST be a "${slot.topic}" question (set "topic" to exactly "${slot.topic}").`;
-    if (slot.kind === "python_code") r += ` It MUST be kind "python_code" (a runnable live-coding task with starter_code and tests).`;
-    if (slot.kind === "concept") r += ` It MUST be kind "concept" (a spoken answer, no coding task).`;
+    if (slot.kind === "python_code") r += ` It MUST be kind "python_code" (a runnable live-coding task with examples, starter_code and tests).`;
+    if (slot.kind === "api_code") r += ` It MUST be kind "api_code" (a requests-based task against JSONPlaceholder or httpbin with tests, entry and mutants).`;
+    if (slot.kind === "concept") r += ` It MUST be kind "concept" (multiple choice with 4 options).`;
     return r;
   }
   function applySlot(q, slot){
@@ -447,10 +519,16 @@ When Python is among the skills, make about half of the Python questions "python
   }
 
   function normQ(q){
-    q.kind = ["concept","python_code","code"].includes(q.kind) ? q.kind : "concept";
+    q.kind = ["concept","python_code","api_code","code"].includes(q.kind) ? q.kind : "concept";
     q.tests = Array.isArray(q.tests) ? q.tests.filter(t => typeof t === "string" && t.trim()) : [];
     q.starter_code = typeof q.starter_code === "string" ? q.starter_code : "";
+    q.examples = Array.isArray(q.examples) ? q.examples.filter(e => e && e.input != null) : [];
+    q.mutants = Array.isArray(q.mutants) ? q.mutants.filter(m => m && m.label) : [];
+    if (!(Array.isArray(q.options) && q.options.length >= 2 && Number.isInteger(q.answer) && q.answer >= 0 && q.answer < q.options.length)){
+      delete q.options; delete q.answer;
+    }
     if (q.kind === "python_code" && !q.starter_code) q.starter_code = "# Write your solution here\n";
+    if (q.kind === "api_code" && !q.starter_code) q.starter_code = "import requests\n\n";
     return q;
   }
 
@@ -461,8 +539,8 @@ When Python is among the skills, make about half of the Python questions "python
     let s = run.error ? "Error while running the code:\n" + run.error : "";
     if (run.results?.length){
       const passed = run.results.filter(r => r.ok).length;
-      s += `${s ? "\n" : ""}Tests: ${passed}/${run.results.length} passed.`;
-      run.results.filter(r => !r.ok).forEach(r => { s += `\nFAILED ${r.test}${r.got ? " (got " + r.got + ")" : ""}${r.err ? " " + r.err : ""}`; });
+      s += `${s ? "\n" : ""}Checks: ${passed}/${run.results.length} passed${run.mode ? " (" + run.mode + " API)" : ""}.`;
+      run.results.filter(r => !r.ok).forEach(r => { s += `\nFAILED ${r.label || r.test}${r.got ? " (got " + r.got + ")" : ""}${r.err ? " " + r.err : ""}`; });
     }
     if (run.stdout) s += `\nstdout:\n${run.stdout.slice(0,1500)}`;
     return s || "Ran with no output.";
@@ -470,7 +548,8 @@ When Python is among the skills, make about half of the Python questions "python
 
   async function gradeAnswer(item){
     const last = S.items.length >= S.total;
-    const prompt = `${RULES}\n\n${context()}\n\nCurrent question [${item.q.topic}, ${item.q.difficulty}]: ${item.q.question}\nWhat it tests: ${item.q.what_tested}${item.q.tests?.length ? "\nHidden tests:\n" + item.q.tests.join("\n") : ""}\n\nCandidate's spoken/written answer:\n"""${item.answer || (item.code && item.code.trim() !== (item.q.starter_code||"").trim() ? "(none, see code)" : "(no answer: the candidate asked to see the answer)")}"""${item.code && item.code.trim() !== (item.q.starter_code||"").trim() ? `\n\nCandidate's code:\n\`\`\`python\n${item.code.slice(0,6000)}\n\`\`\`\nExecution result (real Python run in the browser):\n${item.q.kind === "code" ? "Not executed (Playwright/API code is reviewed only)." : runSummary(item.run)}` : ""}\n\nFor coding answers: correctness comes first (use the execution result as ground truth; failing tests cap the score at 2, an error at 1), then readability, edge cases and complexity. Mention the time complexity in the tightened answer.\n\nGrade it on this scale: 1 = wrong or missing, 2 = textbook only / vague / key gaps, 3 = correct, practical, explains why (meets the ${S.level} bar), 4 = adds trade-offs, gotchas, real-project detail. Be strict: vague answers are 2. Factually wrong claims must be called out in gaps.\nThe "tightened" answer must keep the candidate's own voice and ideas, fixed and upgraded to a 4; if the answer was empty, write a model answer. Use Markdown with \`\`\`python fences for any code.\n${last ? 'This is the final question, so set "next" to null.' : 'Also write the next question in "next". ${slotRule(S.plan[S.items.length])}'}\nReply with only JSON: {"score": 1-4, "verdict": string (one short line), "strengths": [string], "gaps": [string], "tightened": string (Markdown), "follow_up": string (what an interviewer would ask next about this answer), "next": ${last ? "null" : QSHAPE}}`;
+    const coded = item.code && item.code.trim() !== (item.q.starter_code||"").trim();
+    const prompt = `${RULES}\n\n${context()}\n\nCurrent question [${item.q.topic}, ${item.q.kind}]: ${item.q.question}\nWhat it tests: ${item.q.what_tested}${item.q.tests?.length ? "\nHidden checks:\n" + item.q.tests.join("\n") : ""}\n\nCandidate's written answer:\n"""${item.answer || (coded ? "(none, see code)" : "(no answer)")}"""${coded ? `\n\nCandidate's code:\n\`\`\`python\n${item.code.slice(0,6000)}\n\`\`\`\nExecution result (real Python run in the browser):\n${runSummary(item.run)}` : ""}\n\nCorrectness comes first (the execution result is ground truth; failing checks cap the score at 2, an error at 1), then readability, edge cases and complexity.\n\nGrade on this scale: 1 = wrong or missing, 2 = partly right / key gaps, 3 = correct and practical (meets the ${S.level} bar), 4 = correct plus trade-offs and real-project detail.\nThe "tightened" answer keeps the candidate's own approach, fixed and upgraded; if they wrote nothing, give a model answer. Use Markdown with \`\`\`python fences for code.\n${last ? 'This is the final question, so set "next" to null.' : `Also write the next question in "next". ${slotRule(S.plan[S.items.length])}\n\n${KINDS}`}\nReply with only JSON: {"score": 1-4, "verdict": string (one short line), "strengths": [string], "gaps": [string], "tightened": string (Markdown), "follow_up": string, "next": ${last ? "null" : QSHAPE}}`;
     const g = await sample.json(prompt, {signal: ctl.signal, cache:false});
     if (!g || typeof g.score === "undefined") throw {code:"invalid_json"};
     g.score = Math.max(1, Math.min(4, Math.round(+g.score || 1)));
@@ -478,10 +557,40 @@ When Python is among the skills, make about half of the Python questions "python
   }
 
   async function summarize(){
-    const lines = S.items.map((it,i)=>`Q${i+1} [${it.q.topic}] score ${it.grade?.score ?? "skipped"}. ${it.q.question}\nGaps: ${(it.grade?.gaps||[]).join("; ")}`).join("\n");
+    const lines = S.items.map((it,i)=>`Q${i+1} [${it.q.topic}, ${it.q.kind}] ${outcomeOf(it) || "unanswered"}. ${it.q.question}`).join("\n");
     const prompt = `You are an interview coach. Level: ${S.level}. Session results:\n${lines}\n\nWrite a short debrief in Markdown with exactly three bullet lists under bold labels: **Strengths** (2-3 bullets), **Gaps to fix** (2-3 bullets, specific), **Drill next** (2-3 concrete topics or exercises). Keep it under 160 words. No preamble.`;
     const {text} = await sample(prompt, {signal: ctl.signal, cache:false});
     return text;
+  }
+
+  // ---------- Scoring ----------
+  const OUTCOME = {
+    correct:   {label: "Correct",        icon: "✓", cls: "ok"},
+    partial:   {label: "Partly correct", icon: "◐", cls: "part"},
+    incorrect: {label: "Incorrect",      icon: "✗", cls: "no"},
+    skipped:   {label: "Skipped",        icon: "–", cls: "skip"},
+  };
+  function isMCQ(it){ return it.q.kind === "concept" && Array.isArray(it.q.options) && it.q.options.length >= 2; }
+  function isCoding(it){ return ["python_code", "api_code", "code"].includes(it.q.kind); }
+  function outcomeOf(it){
+    if (!it) return null;
+    if (it.skipped) return "skipped";
+    if (!it.grade) return null;
+    if (isMCQ(it)) return it.choice === it.q.answer ? "correct" : "incorrect";
+    if ((it.q.kind === "python_code" || it.q.kind === "api_code") && it.run && !it.run.unavailable){
+      if (it.run.timeout || it.run.error) return "incorrect";
+      const res = it.run.results || [];
+      if (!res.length) return "incorrect";
+      const p = res.filter(r => r.ok).length;
+      return p === res.length ? "correct" : p > 0 ? "partial" : "incorrect";
+    }
+    const s = it.grade.score;
+    if (s) return s >= 3 ? "correct" : s === 2 ? "partial" : "incorrect";
+    return "skipped";
+  }
+  function badgeHTML(o, extra){
+    const m = OUTCOME[o] || OUTCOME.skipped;
+    return `<div class="vbadge ${m.cls}"><span class="vi" aria-hidden="true">${m.icon}</span><b>${m.label}</b>${extra ? `<span>${esc(extra)}</span>` : ""}</div>`;
   }
 
   // ---------- Views ----------
@@ -496,8 +605,9 @@ When Python is among the skills, make about half of the Python questions "python
     let h = "";
     for (let i=0;i<S.total;i++){
       const it = S.items[i];
-      const cls = it && it.grade ? "done" : (i === S.items.length-1 ? "cur" : "");
-      h += `<span class="pip ${cls}" title="${esc(S.plan?.[i]?.topic || "")}"></span>`;
+      const o = it ? outcomeOf(it) : null;
+      const cls = o ? "done o-" + o : (i === S.items.length-1 ? "cur" : "");
+      h += `<span class="pip ${cls}" title="${esc((S.plan?.[i]?.topic || "") + (o ? " · " + OUTCOME[o].label : ""))}"></span>`;
     }
     const n = Math.min(S.items.length, S.total);
     const mix = S.plan?.length ? " · " + mixText(allocate(S.tracks, S.total)) : "";
@@ -524,58 +634,118 @@ When Python is among the skills, make about half of the Python questions "python
   }
   function isFatal(e){ return ["not_granted","sampling_disabled","capability_disabled","not_declared","capability_removed"].includes(e?.code); }
 
+  const KIND_LABEL = {concept: "Multiple choice", python_code: "Python coding", api_code: "API coding", code: "Code review"};
+
+  function mcqHTML(it, graded){
+    if (!Array.isArray(it.order) || it.order.length !== it.q.options.length){ it.order = shuffle(it.q.options.map((_, i) => i)); save(); }
+    const label = it.q.topic === "Behavioral" ? "Pick the strongest approach" : "Choose the best answer";
+    return `<p class="label" id="optLabel" style="margin:0 0 8px">${label}</p><div class="opts" role="radiogroup" aria-labelledby="optLabel">` +
+      it.order.map((oi, pos) => {
+        const chosen = it.choice === oi, isAns = oi === it.q.answer;
+        let cls = "opt";
+        if (graded){ if (isAns) cls += " right"; else if (chosen) cls += " wrong"; }
+        else if (chosen) cls += " picked";
+        const mark = graded && isAns ? `<span class="mark" aria-label="correct answer">✓</span>` : graded && chosen ? `<span class="mark" aria-label="your answer">✗</span>` : "";
+        return `<button type="button" class="${cls}" role="radio" aria-checked="${chosen}" data-oi="${oi}" ${graded ? "disabled" : ""}><span class="key">${"ABCDEF"[pos]}</span><span class="otext">${esc(it.q.options[oi])}</span>${mark}</button>`;
+      }).join("") + `</div>`;
+  }
+
+  function taskHTML(it){
+    const q = it.q;
+    let h = "";
+    if (q.endpoint) h += `<div class="endpoint"><span class="label">Endpoint</span><code>${esc(q.endpoint)}</code></div>`;
+    if (q.examples?.length){
+      h += `<div class="examples">` + q.examples.map((ex, i) => `<div class="ex"><div class="exh">Example ${i + 1}</div>
+        <div class="exrow"><span class="exk">Input</span><pre>${esc(ex.input)}</pre></div>
+        <div class="exrow"><span class="exk">Output</span><pre>${esc(ex.output)}</pre></div></div>`).join("") + `</div>`;
+    }
+    let how = "";
+    if (q.kind === "api_code"){
+      how = q.mutants?.length
+        ? `Graded by running your code against the API, then against ${q.mutants.length} deliberately broken responses your test must catch.`
+        : `Graded by running ${q.tests.length} check${q.tests.length === 1 ? "" : "s"} against the API.`;
+    } else if (q.kind === "python_code"){
+      how = `${q.tests?.length || 0} hidden tests check your solution.`;
+    }
+    if (how) h += `<p class="hint" style="margin:0 0 12px">${how}</p>`;
+    return h;
+  }
+
   function renderQuestion(){
     const it = S.items[S.items.length-1];
     renderProgress();
     if (!it){ return; }
     const q = it.q;
     const graded = !!(it.grade || it.skipped);
+    const mcq = isMCQ(it), coding = isCoding(it);
+    let body;
+    if (mcq) body = mcqHTML(it, graded);
+    else if (coding) body = taskHTML(it) + ideHTML(it) +
+      `<label class="label" for="answer" style="display:block;margin-bottom:6px">Explain your approach (optional)</label>
+       <textarea id="answer" rows="3" style="min-height:84px" placeholder="Talk through your approach, edge cases and complexity." ${graded?"readonly":""}>${esc(it.answer||"")}</textarea>`;
+    else body = `<label class="label" for="answer" style="display:block;margin-bottom:6px">Your answer</label>
+       <textarea id="answer" rows="8" placeholder="Answer as you would out loud." ${graded?"readonly":""}>${esc(it.answer||"")}</textarea>`;
     $("#qBody").innerHTML = `
-      <div class="qmeta"><span class="tag topic">${esc(q.topic)}</span><span class="tag">${esc(q.difficulty||"core")}</span></div>
+      <div class="qmeta"><span class="tag topic">${esc(q.topic)}</span><span class="tag">${esc(KIND_LABEL[q.kind] || "")}</span><span class="tag">${esc(q.difficulty||"core")}</span></div>
       <p class="question">${esc(q.question)}</p>
       <p class="tested">Assesses: ${esc(q.what_tested||"")}</p>
       ${q.hint ? `<div class="hintbox" id="hintBox" hidden><b>Hint:</b> ${esc(q.hint)}</div>` : ""}
-      ${ideHTML(it)}
-      <label class="label" for="answer" style="display:block;margin-bottom:6px">${isCoding(it) ? "Explain your approach (optional)" : "Your answer"}</label>
-      <textarea id="answer" rows="${isCoding(it) ? 3 : 8}" style="${isCoding(it) ? "min-height:84px" : ""}" placeholder="${isCoding(it) ? "Talk through your approach, edge cases and complexity, as you would to an interviewer." : "Answer as you would out loud."}" ${graded?"readonly":""}>${esc(it.answer||"")}</textarea>
+      ${body}
       <div class="actions">
-        ${graded ? (S.items.length >= S.total ? `<button class="btn primary" id="finishBtn" type="button">See summary</button>` : `<button class="btn primary" id="nextBtn" type="button">Next question</button>`)
-                 : `<button class="btn primary" id="submitBtn" type="button">Submit answer</button>
+        ${graded ? (S.items.length >= S.total ? `<button class="btn primary" id="finishBtn" type="button">See report</button>` : `<button class="btn primary" id="nextBtn" type="button">Next question</button>`)
+                 : `<button class="btn primary" id="submitBtn" type="button" ${mcq && it.choice == null ? "disabled" : ""}>${mcq ? "Check answer" : "Submit"}</button>
                     ${q.hint ? `<button class="btn ghost" id="hintBtn" type="button">Hint</button>`:""}
-                    ${!isCoding(it) ? `<button class="btn ghost" id="addCodeBtn" type="button">Add Python code</button>` : ""}
-                    <button class="btn ghost" id="dunnoBtn" type="button">${S.offline ? "Show model answer" : "I don't know, show me"}</button>
-                    <span class="grow"></span><span class="kbd">Ctrl + Enter to submit</span>`}
+                    <button class="btn ghost" id="dunnoBtn" type="button">Skip and show answer</button>
+                    <span class="grow"></span><span class="kbd">${mcq ? "Keys A–D to pick" : "Ctrl + Enter to submit"}</span>`}
       </div>`;
     wireIde(it);
     const ta = $("#answer");
-    ta.addEventListener("input", () => { it.answer = ta.value; save(); });
-    ta.addEventListener("keydown", e => { if ((e.ctrlKey||e.metaKey) && e.key==="Enter" && !graded) submit(false); });
-    $("#addCodeBtn") && ($("#addCodeBtn").onclick = () => { it.showIde = true; if (it.code == null) it.code = "# Python 3.12 scratchpad: write and run code to support your answer\n"; save(); renderQuestion(); $("#code")?.focus(); });
+    if (ta){
+      ta.addEventListener("input", () => { it.answer = ta.value; save(); });
+      ta.addEventListener("keydown", e => { if ((e.ctrlKey||e.metaKey) && e.key==="Enter" && !graded) submit(false); });
+    }
+    if (mcq && !graded){
+      $("#qBody").querySelectorAll(".opt").forEach(b => b.onclick = () => {
+        it.choice = +b.dataset.oi; save();
+        $("#qBody").querySelectorAll(".opt").forEach(x => { const on = +x.dataset.oi === it.choice; x.classList.toggle("picked", on); x.setAttribute("aria-checked", on); });
+        $("#submitBtn").disabled = false;
+      });
+    }
     $("#submitBtn") && ($("#submitBtn").onclick = () => submit(false));
     $("#dunnoBtn") && ($("#dunnoBtn").onclick = () => submit(true));
     $("#hintBtn") && ($("#hintBtn").onclick = () => { $("#hintBox").hidden = false; it.hintUsed = true; save(); });
     $("#nextBtn") && ($("#nextBtn").onclick = next);
     $("#finishBtn") && ($("#finishBtn").onclick = finish);
-    if (!graded) (isCoding(it) ? $("#code") : ta)?.focus();
+    if (!graded){ (coding ? $("#code") : mcq ? $("#qBody .opt") : ta)?.focus(); }
+    else $("#nextBtn, #finishBtn")?.focus();
   }
 
+  // Keyboard shortcuts for multiple choice
+  document.addEventListener("keydown", e => {
+    if ($("#sessionView").hidden || e.ctrlKey || e.metaKey || e.altKey) return;
+    if (["TEXTAREA", "INPUT"].includes(document.activeElement?.tagName)) return;
+    const it = S.items[S.items.length-1];
+    if (!it || !isMCQ(it) || it.grade || it.skipped) return;
+    const pos = "abcdef".indexOf(e.key.toLowerCase());
+    if (pos >= 0 && pos < (it.order || []).length){ $(`#qBody .opt[data-oi="${it.order[pos]}"]`)?.click(); e.preventDefault(); }
+    else if (e.key === "Enter" && it.choice != null){ submit(false); e.preventDefault(); }
+  });
+
   // ---------- Code editor ----------
-  function isCoding(it){ return it.q.kind === "python_code" || it.q.kind === "code"; }
-  function ideShown(it){ return isCoding(it) || it.showIde; }
-  function runnable(it){ return it.q.kind !== "code"; }
+  function runnable(it){ return it.q.kind === "python_code" || it.q.kind === "api_code"; }
 
   function ideHTML(it){
-    if (!ideShown(it)) return "";
+    if (!isCoding(it)) return "";
     if (it.code == null) it.code = it.q.starter_code || "";
     const q = it.q;
-    const file = q.kind === "python_code" ? "solution.py" : q.kind === "code" ? "test_" + (q.topic === "API testing" ? "api" : "ui") + ".py" : "scratch.py";
-    const note = !runnable(it) ? "Reviewed by AI · not executed" : q.tests?.length ? `Python 3.12 · ${q.tests.length} hidden tests` : "Python 3.12 · standard library";
+    const file = q.kind === "python_code" ? "solution.py" : q.kind === "api_code" ? "test_api.py" : "test_ui.py";
+    const note = !runnable(it) ? "Reviewed by AI · not executed" : q.kind === "api_code" ? "Python 3.12 · requests · live API" : `Python 3.12 · ${q.tests?.length || 0} hidden tests`;
     return `<div class="ide">
       <div class="ide-bar">
         <span class="file">${file}</span><span class="note">${note}</span><span class="grow"></span>
         ${runnable(it) ? `<span class="runpill" id="pyState"></span>` : ""}
         <button class="btn sm ghost" type="button" id="resetCode">Reset</button>
-        ${runnable(it) ? `<button class="btn sm primary" type="button" id="runBtn">${q.tests?.length ? "Run tests" : "Run"}</button>` : ""}
+        ${runnable(it) ? `<button class="btn sm primary" type="button" id="runBtn">Run tests</button>` : ""}
       </div>
       <div class="ide-wrap"><div class="gutter" id="gutter" aria-hidden="true"></div>
         <textarea class="code" id="code" spellcheck="false" autocapitalize="off" autocomplete="off" aria-label="Code editor">${esc(it.code)}</textarea></div>
@@ -629,9 +799,10 @@ When Python is among the skills, make about half of the Python questions "python
     const btn = $("#runBtn"), con = $("#console");
     if (!btn || btn.disabled) return;
     btn.disabled = true; con.hidden = false;
-    con.innerHTML = `<div class="muted">${PY.state === "ready" ? "Running…" : "Loading Python runtime (first run takes a few seconds)…"}</div>`;
+    const api = it.q.kind === "api_code" ? {entry: it.q.entry || null, mutants: it.q.mutants || [], live: true} : null;
+    con.innerHTML = `<div class="muted">${PY.state !== "ready" ? "Loading Python runtime (first run takes a few seconds)…" : api ? "Calling the API…" : "Running…"}</div>`;
     pyPill();
-    const run = await runPython(it.code || "", it.q.tests || []);
+    const run = await runPython(it.code || "", it.q.tests || [], api);
     run.code = it.code;
     it.run = run; save();
     if (btn.isConnected) btn.disabled = false;
@@ -642,14 +813,16 @@ When Python is among the skills, make about half of the Python questions "python
   function renderRun(run){
     const con = $("#console"); if (!con) return;
     con.hidden = false;
-    if (run.unavailable){ con.innerHTML = `<div class="no">The Python runner couldn't start in this view. Submit anyway: the AI will review your code without running it.</div>`; return; }
-    if (run.timeout){ con.innerHTML = `<div class="no">Stopped after 10 seconds. Check for an infinite loop.</div>`; return; }
+    if (run.unavailable){ con.innerHTML = `<div class="no">The Python runner couldn't start in this view${run.error ? ": " + esc(run.error) : ""}. Submit anyway to see the model answer.</div>`; return; }
+    if (run.timeout){ con.innerHTML = `<div class="no">Stopped after the time limit. Check for an infinite loop or a request without a timeout.</div>`; return; }
     let h = "";
+    if (run.mode === "live") h += `<div class="ok" style="margin-bottom:6px">● Ran against the live API</div>`;
+    else if (run.mode === "recorded") h += `<div class="muted" style="margin-bottom:6px">● The live API isn't reachable from this view, so this ran against a recorded copy of it</div>`;
     const res = run.results || [];
     if (res.length){
       const pass = res.filter(r => r.ok).length;
-      h += `<div class="sum ${pass===res.length ? "ok" : "no"}">${pass}/${res.length} tests passed${run.ms != null ? ` <span class="muted">· ${run.ms} ms</span>` : ""}</div>`;
-      h += res.map(r => `<div class="row"><span class="${r.ok ? "ok" : "no"}">${r.ok ? "✓" : "✗"}</span><span>${esc(r.test)}${!r.ok ? `<br><span class="muted">${r.got ? "got " + esc(r.got) : esc(r.err || "assertion failed")}</span>` : ""}</span></div>`).join("");
+      h += `<div class="sum ${pass===res.length ? "ok" : "no"}">${pass}/${res.length} checks passed${run.ms != null ? ` <span class="muted">· ${run.ms} ms</span>` : ""}</div>`;
+      h += res.map(r => `<div class="row"><span class="${r.ok ? "ok" : "no"}">${r.ok ? "✓" : "✗"}</span><span>${esc(r.label || r.test)}${!r.ok ? `<br><span class="muted">${r.got ? "got " + esc(r.got) : esc(r.err || "assertion failed")}</span>` : ""}</span></div>`).join("");
     }
     if (run.error) h += `<pre class="no">${esc(run.error)}</pre>`;
     if (run.stdout) h += `<div class="muted" style="margin-top:6px">stdout</div><pre>${esc(run.stdout.slice(0, 4000))}</pre>`;
@@ -660,6 +833,7 @@ When Python is among the skills, make about half of the Python questions "python
   // ---------- Python runtime (Pyodide in a worker) ----------
   const PY = { worker:null, state:"idle", seq:0, pending:new Map(), bootP:null };
   const INDEX = (() => { try { return new URL("pyodide/", location.href).href; } catch(e){ return "pyodide/"; } })();
+  const ASSETS = (() => { try { return new URL("./", location.href).href; } catch(e){ return "./"; } })();
   function pyWorker(){
     if (PY.worker) return PY.worker;
     const w = new Worker("py-worker.js");
@@ -673,7 +847,7 @@ When Python is among the skills, make about half of the Python questions "python
       const id = ++PY.seq;
       const timer = setTimeout(() => { PY.pending.delete(id); killPy(); resolve({ok:false, timeout:true}); }, timeout);
       PY.pending.set(id, d => { clearTimeout(timer); resolve(d); });
-      try { pyWorker().postMessage(Object.assign({}, msg, {id, indexURL: INDEX})); }
+      try { pyWorker().postMessage(Object.assign({}, msg, {id, indexURL: INDEX, assetBase: ASSETS})); }
       catch(e){ clearTimeout(timer); PY.pending.delete(id); resolve({ok:false, fatal:true, error:String(e)}); }
     });
   }
@@ -689,36 +863,52 @@ When Python is among the skills, make about half of the Python questions "python
     }
     return PY.bootP;
   }
-  async function runPython(code, tests){
+  async function runPython(code, tests, api){
     const ok = await bootPy();
     if (!ok) return {unavailable:true};
-    const d = await pyCall({type:"run", code, tests}, 10000);
+    const d = await pyCall({type:"run", code, tests, api}, api ? 45000 : 10000);
     if (d.timeout) return {timeout:true};
-    if (!d.ok) return {unavailable:true};
-    return {stdout:d.stdout || "", error:d.error || null, results:d.results || [], ms:d.ms};
+    if (!d.ok) return {unavailable:true, error: d.error};
+    return {stdout:d.stdout || "", error:d.error || null, results:d.results || [], ms:d.ms, mode:d.mode || null};
   }
 
   function renderFeedback(){
     const it = S.items[S.items.length-1];
-    const g = it?.grade;
-    if (!g){
-      $("#fBody").innerHTML = `<div class="empty"><h3>Feedback appears here</h3><p>Answer in your own words, the way you would in the room. You'll get a score, what was strong, what was missing, and a tightened version of your answer.</p></div>`;
+    if (!it){ return; }
+    const g = it.grade;
+    const o = outcomeOf(it);
+    if (!g && !it.skipped){
+      const msg = isMCQ(it) ? "Pick an answer and check it. You'll see straight away whether you were right, and why."
+        : it.q.kind === "api_code" ? "Write your test with requests, click Run tests to call the API, then submit."
+        : isCoding(it) ? "Write your solution, click Run tests to check it against the hidden tests, then submit."
+        : "Answer in your own words, then submit for feedback.";
+      $("#fBody").innerHTML = `<div class="empty"><h3>Feedback appears here</h3><p>${msg}</p></div>`;
       return;
     }
-    if (g.offline){
+    const explanation = it.q.model || it.q.explanation || "";
+    if (isMCQ(it)){
+      const right = it.q.options[it.q.answer];
       $("#fBody").innerHTML = `<div class="fb">
-        <div><h4>Model answer</h4><div class="model rich">${rich(g.tightened)}</div></div>
-        <div><h4>Rate yourself</h4><p class="hint" style="margin:0 0 8px">Compare honestly. Did you cover the same points with a real example?</p>
-          <div class="seg" id="selfRate">${[1,2,3,4].map(n=>`<button type="button" data-v="${n}" aria-pressed="${g.score===n}">${n}</button>`).join("")}</div></div>
+        ${badgeHTML(o, o === "correct" ? "" : "")}
+        ${o !== "correct" ? `<div><h4>Correct answer</h4><p style="margin:0">${esc(right)}</p></div>` : ""}
+        <div><h4>Explanation</h4><div class="model rich">${rich(explanation)}</div></div>
       </div>`;
-      $("#selfRate").onclick = e => { const b=e.target.closest("button"); if(!b) return; g.score=+b.dataset.v; save(); renderFeedback(); };
+      return;
+    }
+    const res = it.run?.results || [];
+    const passInfo = res.length ? `${res.filter(r => r.ok).length}/${res.length} checks passed` : it.skipped ? "" : "";
+    if (!g || g.auto || it.skipped){
+      $("#fBody").innerHTML = `<div class="fb">
+        ${badgeHTML(o, passInfo)}
+        <div><h4>${it.skipped ? "Answer" : "Reference solution"}</h4><div class="model rich">${rich(explanation || "No reference answer for this question.")}</div></div>
+      </div>`;
       return;
     }
     $("#fBody").innerHTML = `<div class="fb">
-      <div class="score sc${g.score}"><div class="num">${g.score}</div><div class="verdict"><b>${["","No hire","Weak","Meets the bar","Strong hire"][g.score]}</b><span>${esc(g.verdict||"")}</span></div></div>
+      ${badgeHTML(o, passInfo || g.verdict || "")}
       ${g.strengths?.length ? `<div><h4>What was strong</h4><ul class="good">${g.strengths.map(s=>`<li>${esc(s)}</li>`).join("")}</ul></div>`:""}
       ${g.gaps?.length ? `<div><h4>What was missing</h4><ul class="bad">${g.gaps.map(s=>`<li>${esc(s)}</li>`).join("")}</ul></div>`:""}
-      <div><h4>${it.answer ? "Your answer, tightened" : "Model answer"}</h4><div class="model rich">${rich(g.tightened)}</div></div>
+      <div><h4>${it.answer || it.code ? "Your answer, tightened" : "Model answer"}</h4><div class="model rich">${rich(g.tightened)}</div></div>
       ${g.follow_up ? `<div><h4>Likely follow-up</h4><p style="margin:0">${esc(g.follow_up)}</p></div>`:""}
     </div>`;
   }
@@ -727,26 +917,19 @@ When Python is among the skills, make about half of the Python questions "python
   function pickOffline(){
     const used = new Set(S.items.map(x=>x.q.question));
     const slot = (S.plan || [])[S.items.length];
+    const rnd = a => a[Math.floor(Math.random() * a.length)];
     if (slot){
       const seen = seenIds();
       let fits = BANK.filter(b => b.topic === slot.topic && !used.has(b.question));
-      const fresh = fits.filter(b => !seen.has(b.id));
-      if (fresh.length) fits = fresh;
-      let exact = fits.filter(b => !slot.kind || (b.kind || "concept") === slot.kind);
-      const firstOfTopic = !S.items.some(x => x.q.topic === slot.topic);
-      const warm = exact.filter(b => b.difficulty === "warm-up");
-      if (firstOfTopic && warm.length) exact = warm;
-      const rnd = a => a[Math.floor(Math.random() * a.length)];
+      let exact = fits.filter(b => (b.kind || "concept") === slot.kind);
+      const fresh = exact.filter(b => !seen.has(b.id));
+      if (fresh.length) exact = fresh;
       const pick = exact.length ? rnd(exact) : fits.length ? rnd(fits) : null;
       if (pick) return pick;
     }
     let pool = BANK.filter(b => S.tracks.includes(b.topic) && !used.has(b.question));
     if (!pool.length) pool = BANK.filter(b => !used.has(b.question));
-    const order = {"warm-up":0,"core":1,"deep":2};
-    pool.sort((a,b)=>order[a.difficulty]-order[b.difficulty]);
-    // rotate topics
-    const lastTopic = S.items.at(-1)?.q.topic;
-    return pool.find(p=>p.topic!==lastTopic) || pool[0] || BANK[0];
+    return pool.length ? rnd(pool) : BANK[0];
   }
 
   async function start(e){
@@ -761,13 +944,13 @@ When Python is among the skills, make about half of the Python questions "python
     S.plan = buildPlan(S.tracks, S.total);
     show("session");
     renderProgress();
-    renderFeedback();
+    $("#fBody").innerHTML = "";
     await loadQuestion();
   }
 
   async function loadQuestion(nextQ){
     if (nextQ){ S.items.push({q: nextQ}); save(); renderQuestion(); renderFeedback(); return; }
-    if (S.offline){ const pq = pickOffline(); markSeen(pq.id); S.items.push({q: normQ({...pq})}); save(); renderQuestion(); renderFeedback(); return; }
+    if (S.offline){ const pq = pickOffline(); markSeen(pq.id); S.items.push({q: normQ(JSON.parse(JSON.stringify(pq)))}); save(); renderQuestion(); renderFeedback(); return; }
     ctl = new AbortController();
     const stop = thinking($("#qBody"), "Preparing a question…");
     $("#fBody").innerHTML = `<div class="empty"><h3>Feedback appears here</h3><p>The first call may ask you to allow this page to use Claude.</p></div>`;
@@ -776,7 +959,7 @@ When Python is among the skills, make about half of the Python questions "python
       stop(); S.items.push({q}); save(); renderQuestion(); renderFeedback();
     }catch(err){
       stop();
-      if (isFatal(err)){ S.offline = true; setAI("off"); S.items.push({q: normQ({...pickOffline()})}); save(); renderQuestion(); renderFeedback(); return; }
+      if (isFatal(err)){ S.offline = true; setAI("off"); const pq = pickOffline(); S.items.push({q: normQ(JSON.parse(JSON.stringify(pq)))}); save(); renderQuestion(); renderFeedback(); return; }
       $("#qBody").innerHTML = `<div class="err">${esc(errCopy(err))}</div><div class="actions"><button class="btn primary" type="button" id="retryQ">Try again</button></div>`;
       $("#retryQ").onclick = () => loadQuestion();
     }
@@ -784,21 +967,23 @@ When Python is among the skills, make about half of the Python questions "python
 
   async function submit(dunno){
     const it = S.items[S.items.length-1];
-    it.answer = $("#answer").value.trim();
+    if (!it || it.grade || it.skipped) return;
+    if (dunno){ it.skipped = true; it.grade = {auto: true}; save(); renderQuestion(); renderFeedback(); return; }
+    if (isMCQ(it)){
+      if (it.choice == null) return;
+      it.grade = {auto: true}; save(); renderQuestion(); renderFeedback(); return;
+    }
+    it.answer = $("#answer")?.value.trim() || "";
     const codeChanged = it.code != null && it.code.trim() !== (it.q.starter_code || "").trim();
-    if (!dunno && !it.answer && !codeChanged){ (isCoding(it) ? $("#code") : $("#answer")).focus(); return; }
-    if (!dunno && codeChanged && runnable(it) && PY.state !== "failed" && (!it.run || it.run.code !== it.code)){
+    if (!it.answer && !codeChanged){ (isCoding(it) ? $("#code") : $("#answer"))?.focus(); return; }
+    if (codeChanged && runnable(it) && PY.state !== "failed" && (!it.run || it.run.code !== it.code)){
       $("#submitBtn").disabled = true;
       await doRun(it);
     }
-    if (dunno && !it.answer) it.answer = "";
     save();
-    if (S.offline){
-      it.grade = {offline:true, score: null, tightened: it.q.model || "No model answer for this question."};
-      save(); renderQuestion(); renderFeedback(); return;
-    }
+    if (S.offline){ it.grade = {auto: true}; save(); renderQuestion(); renderFeedback(); return; }
     ctl = new AbortController();
-    $("#submitBtn").disabled = true; $("#dunnoBtn").disabled = true; $("#answer").readOnly = true;
+    $("#submitBtn").disabled = true; $("#dunnoBtn").disabled = true; if ($("#answer")) $("#answer").readOnly = true;
     const stop = thinking($("#fBody"), "Grading your answer…");
     try{
       const g = await gradeAnswer(it);
@@ -808,10 +993,10 @@ When Python is among the skills, make about half of the Python questions "python
       renderQuestion(); renderFeedback();
     }catch(err){
       stop();
-      if (isFatal(err)){ S.offline = true; setAI("off"); it.grade = {offline:true, score:null, tightened: "AI grading isn't available here. Compare your answer with the strong points for this topic in the question bank, then rate yourself."}; save(); renderQuestion(); renderFeedback(); return; }
+      if (isFatal(err)){ S.offline = true; setAI("off"); it.grade = {auto: true}; save(); renderQuestion(); renderFeedback(); return; }
       $("#fBody").innerHTML = `<div class="err">${esc(errCopy(err))}</div><div class="actions"><button class="btn primary" type="button" id="retryG">Grade again</button></div>`;
-      $("#answer").readOnly = false;
-      $("#retryG").onclick = () => submit(dunno);
+      if ($("#answer")) $("#answer").readOnly = false;
+      $("#retryG").onclick = () => submit(false);
       $("#submitBtn").disabled = false; $("#dunnoBtn").disabled = false;
     }
   }
@@ -823,30 +1008,88 @@ When Python is among the skills, make about half of the Python questions "python
     await loadQuestion(n && n.question ? applySlot(normQ(n), S.plan[S.items.length]) : null);
   }
 
+  // ---------- Report: pie charts ----------
+  const SECTION_ORDER = ["Python", "Playwright", "API testing", "Pytest & framework design", "CI, debugging & flakiness", "Behavioral"];
+  const SECTION_VAR = {"Python": "--c1", "Playwright": "--c2", "API testing": "--c3", "Pytest & framework design": "--c4", "CI, debugging & flakiness": "--c5", "Behavioral": "--c6"};
+
+  function pieSVG(slices, centerBig, centerSmall, title){
+    const total = slices.reduce((a, s) => a + s.value, 0);
+    const R = 90, r = 56, C = 100;
+    const pt = (ang, rad) => [C + rad * Math.cos(ang), C + rad * Math.sin(ang)];
+    let a0 = -Math.PI / 2, paths = "";
+    const live = slices.filter(s => s.value > 0);
+    live.forEach(s => {
+      const frac = s.value / total;
+      const tip = `${s.label}: ${s.value} (${Math.round(frac * 100)}%)`;
+      if (live.length === 1){
+        paths += `<circle cx="${C}" cy="${C}" r="${(R + r) / 2}" fill="none" stroke="var(${s.color})" stroke-width="${R - r}"><title>${esc(tip)}</title></circle>`;
+        return;
+      }
+      const a1 = a0 + frac * 2 * Math.PI, large = frac > 0.5 ? 1 : 0;
+      const [x0, y0] = pt(a0, R), [x1, y1] = pt(a1, R), [x2, y2] = pt(a1, r), [x3, y3] = pt(a0, r);
+      paths += `<path class="slice" d="M${x0.toFixed(2)} ${y0.toFixed(2)} A${R} ${R} 0 ${large} 1 ${x1.toFixed(2)} ${y1.toFixed(2)} L${x2.toFixed(2)} ${y2.toFixed(2)} A${r} ${r} 0 ${large} 0 ${x3.toFixed(2)} ${y3.toFixed(2)} Z" fill="var(${s.color})" stroke="var(--surface)" stroke-width="2" stroke-linejoin="round"><title>${esc(tip)}</title></path>`;
+      a0 = a1;
+    });
+    return `<svg viewBox="0 0 200 200" class="pie" role="img" aria-label="${esc(title)}">${paths}
+      <text x="${C}" y="${C - 2}" text-anchor="middle" class="pie-big">${esc(centerBig)}</text>
+      <text x="${C}" y="${C + 18}" text-anchor="middle" class="pie-small">${esc(centerSmall)}</text></svg>`;
+  }
+  function legendHTML(rows){
+    return `<ul class="legend">` + rows.map(r => `<li><span class="sw" style="background:var(${r.color})"></span><span class="lg-l">${r.icon ? `<span aria-hidden="true">${r.icon}</span> ` : ""}${esc(r.label)}</span><span class="lg-v">${esc(r.value)}</span></li>`).join("") + `</ul>`;
+  }
+
   async function finish(){
     S.phase = "summary"; save();
     show("summary");
-    const graded = S.items.filter(x => x.grade && x.grade.score);
-    const avg = graded.length ? graded.reduce((a,x)=>a+x.grade.score,0)/graded.length : 0;
-    $("#avgScore").innerHTML = `${graded.length ? avg.toFixed(1) : "–"}<small> / 4</small>`;
-    const label = avg>=3.5 ? "Strong hire range" : avg>=2.75 ? "At the bar" : avg>=2 ? "Below the bar, close" : graded.length ? "Needs more prep" : "No graded answers yet";
-    $("#sumTitle").textContent = label;
+    const outs = S.items.map(outcomeOf);
+    const count = k => outs.filter(o => o === k).length;
+    const asked = S.items.length;
+    const unanswered = Math.max(0, S.total - asked) + outs.filter(o => o === null).length;
+    const c = count("correct"), p = count("partial"), w = count("incorrect"), sk = count("skipped") + unanswered;
+    const totalQ = c + p + w + sk;
+    const pct = totalQ ? Math.round((c + 0.5 * p) / totalQ * 100) : 0;
+    $("#avgScore").innerHTML = `${pct}<small>%</small>`;
+    $("#sumTitle").textContent = pct >= 80 ? "Interview ready" : pct >= 60 ? "Nearly there" : pct >= 40 ? "Keep practising" : totalQ ? "Needs more prep" : "No answers yet";
     const mins = S.startedAt ? Math.max(1, Math.round((Date.now()-S.startedAt)/60000)) : 0;
-    $("#sumMeta").textContent = `${S.level} · ${graded.length} of ${S.items.length} answers scored${mins ? " · "+mins+" min" : ""}`;
-    // bars per topic
-    const by = {};
-    graded.forEach(x => { (by[x.q.topic] ||= []).push(x.grade.score); });
-    $("#bars").innerHTML = Object.keys(by).length ? Object.entries(by).map(([t,a]) => {
-      const v = a.reduce((x,y)=>x+y,0)/a.length;
-      return `<div class="bar"><span>${esc(t)}</span><div class="track"><div class="fill" style="width:${(v/4*100).toFixed(0)}%"></div></div><span class="v">${v.toFixed(1)}</span></div>`;
-    }).join("") : `<p class="hint" style="margin:0">Scores will appear once answers are graded.</p>`;
-    $("#log").innerHTML = S.items.map((x,i) => `<div class="logrow"><span class="n">Q${i+1}</span><span><b>${esc(x.q.topic)}</b> · ${esc(x.q.question)}</span><span class="s" style="color:var(--s${x.grade?.score||1})">${x.grade?.score ?? "–"}</span></div>`).join("");
-    // coach notes
+    $("#sumMeta").textContent = `${S.level} · ${c} correct, ${p} partly correct, ${w} incorrect, ${sk} skipped${mins ? " · " + mins + " min" : ""}`;
+
+    // Pie 1: overall result (status colours, each with icon + label)
+    const overall = [
+      {label: "Correct", value: c, color: "--good", icon: "✓"},
+      {label: "Partly correct", value: p, color: "--warn", icon: "◐"},
+      {label: "Incorrect", value: w, color: "--crit", icon: "✗"},
+      {label: "Skipped", value: sk, color: "--neutral", icon: "–"},
+    ];
+    $("#pieOverall").innerHTML = totalQ
+      ? pieSVG(overall, `${c}/${totalQ}`, "correct", "Overall result") + legendHTML(overall.map(s => ({...s, value: `${s.value} · ${totalQ ? Math.round(s.value / totalQ * 100) : 0}%`})))
+      : `<p class="hint">Answer a few questions to see your results.</p>`;
+
+    // Pie 2: questions by section, with correct counts per section
+    const secs = SECTION_ORDER.map(t => {
+      const its = S.items.filter(x => x.q.topic === t);
+      const ok = its.filter(x => outcomeOf(x) === "correct").length;
+      const part = its.filter(x => outcomeOf(x) === "partial").length;
+      return {label: SHORT[t] || t, topic: t, value: its.length, ok, part, color: SECTION_VAR[t]};
+    }).filter(s => s.value > 0);
+    $("#pieSections").innerHTML = secs.length
+      ? pieSVG(secs.map(s => ({...s, value: s.value, label: `${s.label}: ${s.ok} of ${s.value} correct`})), `${secs.length}`, secs.length === 1 ? "section" : "sections", "Questions by section")
+        + legendHTML(secs.map(s => ({label: s.label, color: s.color, value: `${s.ok}/${s.value} correct${s.part ? ` (+${s.part} partly)` : ""} · ${Math.round((s.ok + 0.5 * s.part) / s.value * 100)}%`})))
+      : `<p class="hint">No questions answered yet.</p>`;
+
+    $("#log").innerHTML = S.items.map((x,i) => {
+      const o = outcomeOf(x) || "skipped", m = OUTCOME[o];
+      return `<div class="logrow"><span class="n">Q${i+1}</span><span><b>${esc(SHORT[x.q.topic] || x.q.topic)}</b> · <span class="muted">${esc(KIND_LABEL[x.q.kind] || "")}</span> · ${esc(x.q.question)}</span><span class="s o-${o}" title="${m.label}"><span aria-hidden="true">${m.icon}</span> ${m.label}</span></div>`;
+    }).join("");
+
     const coach = $("#coach");
     if (S.summary){ coach.innerHTML = rich(S.summary); return; }
-    if (S.offline || !graded.length){
-      const weak = Object.entries(by).filter(([,a])=>a.reduce((x,y)=>x+y,0)/a.length<3).map(([t])=>t);
-      coach.innerHTML = rich(graded.length ? `**Drill next**\n\n${(weak.length?weak:["Real-project examples in every answer"]).map(w=>"- "+w).join("\n")}` : "Answer and rate a few questions to get coaching notes.");
+    if (S.offline || !asked){
+      const ranked = secs.map(s => ({...s, acc: (s.ok + 0.5 * s.part) / s.value})).sort((a, b) => a.acc - b.acc);
+      const weak = ranked.filter(s => s.acc < 0.7).map(s => s.label);
+      const strong = ranked.filter(s => s.acc >= 0.8).map(s => s.label);
+      coach.innerHTML = rich(asked
+        ? `**Strengths**\n\n${(strong.length ? strong : ["Keep going: no section above 80% yet"]).map(s => "- " + s).join("\n")}\n\n**Drill next**\n\n${(weak.length ? weak : ["Mix in deeper questions and timed coding tasks"]).map(s => "- " + s).join("\n")}`
+        : "Answer a few questions to get coaching notes.");
       return;
     }
     ctl = new AbortController();
@@ -856,10 +1099,10 @@ When Python is among the skills, make about half of the Python questions "python
   }
 
   function summaryText(){
-    const graded = S.items.filter(x=>x.grade && x.grade.score);
-    const avg = graded.length ? (graded.reduce((a,x)=>a+x.grade.score,0)/graded.length).toFixed(1) : "–";
-    return `SDET mock interview · ${S.level} · average ${avg}/4\n\n` +
-      S.items.map((x,i)=>`Q${i+1} [${x.q.topic}] ${x.grade?.score ?? "–"}/4 — ${x.q.question}`).join("\n") +
+    const outs = S.items.map(outcomeOf);
+    const c = outs.filter(o => o === "correct").length;
+    return `SDET mock interview · ${S.level} · ${c}/${S.total} correct\n\n` +
+      S.items.map((x,i)=>`Q${i+1} [${SHORT[x.q.topic] || x.q.topic} · ${KIND_LABEL[x.q.kind] || ""}] ${OUTCOME[outs[i] || "skipped"].label} — ${x.q.question}`).join("\n") +
       (S.summary ? "\n\n" + S.summary : "");
   }
 

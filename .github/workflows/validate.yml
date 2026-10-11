@@ -2,9 +2,12 @@ name: Validate question bank
 
 on:
   push:
-    paths: ["data/**", "tools/**", ".github/workflows/validate.yml"]
+    paths: ["data/**", "tools/**", "pyharness/**", ".github/workflows/validate.yml"]
   pull_request:
-    paths: ["data/**", "tools/**", ".github/workflows/validate.yml"]
+    paths: ["data/**", "tools/**", "pyharness/**", ".github/workflows/validate.yml"]
+  schedule:
+    - cron: "17 3 * * 1"   # weekly: also check API tasks against the live public APIs
+  workflow_dispatch:
 
 jobs:
   validate:
@@ -14,5 +17,9 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Check questions and run every coding task's tests
+      - run: pip install "requests==2.32.3"
+      - name: Check questions, run coding tasks, grade API tasks against recorded APIs
         run: python tools/validate_bank.py
+      - name: Check API tasks against the live APIs (weekly / manual)
+        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+        run: python tools/validate_bank.py --live

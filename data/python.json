@@ -7,6 +7,16 @@
   "question": "Write reverse_words(sentence) that reverses the order of words in a sentence, collapsing extra spaces.",
   "what_tested": "String splitting and joining",
   "hint": "str.split() with no argument handles repeated spaces.",
+  "examples": [
+   {
+    "input": "reverse_words('hello world')",
+    "output": "'world hello'"
+   },
+   {
+    "input": "reverse_words('  hello   world ')",
+    "output": "'world hello'"
+   }
+  ],
   "starter_code": "def reverse_words(sentence):\n    \"\"\"reverse_words(\"  hello   world \") -> \"world hello\" \"\"\"\n    pass\n",
   "tests": [
    "assert reverse_words('hello world') == 'world hello'",
@@ -28,6 +38,16 @@
   "question": "Write is_palindrome(text) that returns True if text reads the same forwards and backwards, ignoring case, spaces and punctuation.",
   "what_tested": "String normalisation, two-pointer thinking",
   "hint": "Keep only alphanumeric characters, lower-cased.",
+  "examples": [
+   {
+    "input": "is_palindrome('A man, a plan, a canal: Panama')",
+    "output": "True"
+   },
+   {
+    "input": "is_palindrome('race a car')",
+    "output": "False"
+   }
+  ],
   "starter_code": "def is_palindrome(text):\n    \"\"\"is_palindrome(\"A man, a plan, a canal: Panama\") -> True\"\"\"\n    pass\n",
   "tests": [
    "assert is_palindrome('A man, a plan, a canal: Panama') is True",
@@ -49,6 +69,16 @@
   "question": "Write char_frequency(text) that returns a dict of how many times each character occurs, ignoring spaces.",
   "what_tested": "Dict counting",
   "hint": "A dict with .get(c, 0) + 1, or collections.Counter.",
+  "examples": [
+   {
+    "input": "char_frequency('aab c')",
+    "output": "{'a': 2, 'b': 1, 'c': 1}"
+   },
+   {
+    "input": "char_frequency('')",
+    "output": "{}"
+   }
+  ],
   "starter_code": "def char_frequency(text):\n    \"\"\"char_frequency(\"aab c\") -> {'a': 2, 'b': 1, 'c': 1}\"\"\"\n    pass\n",
   "tests": [
    "assert char_frequency('aab c') == {'a': 2, 'b': 1, 'c': 1}",
@@ -71,6 +101,16 @@
   "question": "Write most_frequent_char(text) that returns the character that occurs most often (ignore spaces). On a tie, return the one that appears first in the text. Return None for empty input.",
   "what_tested": "Counting plus tie-breaking",
   "hint": "Count first, then walk the original string to break ties by first appearance.",
+  "examples": [
+   {
+    "input": "most_frequent_char('abbccc')",
+    "output": "'c'"
+   },
+   {
+    "input": "most_frequent_char('abab')",
+    "output": "'a'"
+   }
+  ],
   "starter_code": "def most_frequent_char(text):\n    \"\"\"most_frequent_char(\"abbccc\") -> 'c'; most_frequent_char(\"abab\") -> 'a'\"\"\"\n    pass\n",
   "tests": [
    "assert most_frequent_char('abbccc') == 'c'",
@@ -93,6 +133,16 @@
   "question": "Write are_anagrams(a, b) that returns True if two strings are anagrams of each other, ignoring case and spaces.",
   "what_tested": "Sorting or counting characters",
   "hint": "Two strings are anagrams if their sorted characters match.",
+  "examples": [
+   {
+    "input": "are_anagrams('Listen', 'Silent')",
+    "output": "True"
+   },
+   {
+    "input": "are_anagrams('Dormitory', 'dirty room')",
+    "output": "True"
+   }
+  ],
   "starter_code": "def are_anagrams(a, b):\n    \"\"\"are_anagrams(\"Listen\", \"Silent\") -> True\"\"\"\n    pass\n",
   "tests": [
    "assert are_anagrams('Listen', 'Silent') is True",
@@ -114,6 +164,16 @@
   "question": "Write first_non_repeating(text) that returns the first character that appears exactly once, or None if there isn't one.",
   "what_tested": "Two-pass counting",
   "hint": "Count everything in one pass, then find the first count of 1 in a second pass.",
+  "examples": [
+   {
+    "input": "first_non_repeating('swiss')",
+    "output": "'w'"
+   },
+   {
+    "input": "first_non_repeating('aabb')",
+    "output": "None"
+   }
+  ],
   "starter_code": "def first_non_repeating(text):\n    \"\"\"first_non_repeating(\"swiss\") -> 'w'\"\"\"\n    pass\n",
   "tests": [
    "assert first_non_repeating('swiss') == 'w'",
@@ -135,6 +195,16 @@
   "question": "Write count_vowels(text) that returns the number of vowels (a, e, i, o, u, either case).",
   "what_tested": "Iteration, membership tests",
   "hint": "A set of vowels makes membership checks fast and readable.",
+  "examples": [
+   {
+    "input": "count_vowels('Playwright Python')",
+    "output": "3"
+   },
+   {
+    "input": "count_vowels('')",
+    "output": "0"
+   }
+  ],
   "starter_code": "def count_vowels(text):\n    \"\"\"count_vowels(\"Playwright Python\") -> 3\"\"\"\n    pass\n",
   "tests": [
    "assert count_vowels('Playwright Python') == 3",
@@ -156,6 +226,16 @@
   "question": "Write compress(text) that performs run-length encoding: 'aaabcc' becomes 'a3b1c2'. Return the original string if the compressed one isn't shorter.",
   "what_tested": "Run tracking, string building",
   "hint": "Track the current character and its run length; flush when it changes.",
+  "examples": [
+   {
+    "input": "compress('aaabccccc')",
+    "output": "'a3b1c5'"
+   },
+   {
+    "input": "compress('abc')",
+    "output": "'abc'"
+   }
+  ],
   "starter_code": "def compress(text):\n    \"\"\"compress(\"aaabccccc\") -> \"a3b1c5\"; compress(\"abc\") -> \"abc\" \"\"\"\n    pass\n",
   "tests": [
    "assert compress('aaabccccc') == 'a3b1c5'",
@@ -177,6 +257,16 @@
   "question": "Write longest_unique_substring(text) that returns the length of the longest substring without repeating characters.",
   "what_tested": "Sliding window",
   "hint": "Keep a window [start, i] and the last index where each character was seen.",
+  "examples": [
+   {
+    "input": "longest_unique_substring('abcabcbb')",
+    "output": "3"
+   },
+   {
+    "input": "longest_unique_substring('bbbbb')",
+    "output": "1"
+   }
+  ],
   "starter_code": "def longest_unique_substring(text):\n    \"\"\"longest_unique_substring(\"abcabcbb\") -> 3  (\"abc\")\"\"\"\n    pass\n",
   "tests": [
    "assert longest_unique_substring('abcabcbb') == 3",
@@ -200,6 +290,16 @@
   "question": "Write can_form_palindrome(text) that returns True if the characters of text can be rearranged into a palindrome.",
   "what_tested": "Counting parity",
   "hint": "At most one character may have an odd count.",
+  "examples": [
+   {
+    "input": "can_form_palindrome('carrace')",
+    "output": "True"
+   },
+   {
+    "input": "can_form_palindrome('abc')",
+    "output": "False"
+   }
+  ],
   "starter_code": "def can_form_palindrome(text):\n    \"\"\"can_form_palindrome(\"carrace\") -> True (\"racecar\")\"\"\"\n    pass\n",
   "tests": [
    "assert can_form_palindrome('carrace') is True",
@@ -221,6 +321,16 @@
   "question": "Write is_balanced(expr) that returns True if every bracket in expr ((), [], {}) is properly opened and closed. Ignore other characters.",
   "what_tested": "Stack usage",
   "hint": "Push opening brackets; on a closing bracket, the top of the stack must match.",
+  "examples": [
+   {
+    "input": "is_balanced('{[()]}')",
+    "output": "True"
+   },
+   {
+    "input": "is_balanced('([)]')",
+    "output": "False"
+   }
+  ],
   "starter_code": "def is_balanced(expr):\n    \"\"\"is_balanced(\"{[()]}\") -> True; is_balanced(\"([)]\") -> False\"\"\"\n    pass\n",
   "tests": [
    "assert is_balanced('{[()]}') is True",
@@ -244,6 +354,16 @@
   "question": "Write title_case(text) that capitalises the first letter of every word and lower-cases the rest, keeping single spaces between words.",
   "what_tested": "String methods",
   "hint": "Split, capitalise each word, join.",
+  "examples": [
+   {
+    "input": "title_case('hELLO  wORLD')",
+    "output": "'Hello World'"
+   },
+   {
+    "input": "title_case('')",
+    "output": "''"
+   }
+  ],
   "starter_code": "def title_case(text):\n    \"\"\"title_case(\"hELLO  wORLD\") -> \"Hello World\" \"\"\"\n    pass\n",
   "tests": [
    "assert title_case('hELLO  wORLD') == 'Hello World'",
@@ -265,6 +385,16 @@
   "question": "Write word_frequency(text, n) that returns the n most common words (case-insensitive, punctuation removed) as a list of (word, count) tuples, most common first; break ties alphabetically.",
   "what_tested": "Text cleaning, sorting with keys",
   "hint": "Normalise words, count them, then sort by (-count, word).",
+  "examples": [
+   {
+    "input": "word_frequency('The cat and the hat.', 2)",
+    "output": "[('the', 2), ('and', 1)]"
+   },
+   {
+    "input": "word_frequency('', 3)",
+    "output": "[]"
+   }
+  ],
   "starter_code": "def word_frequency(text, n):\n    \"\"\"word_frequency(\"The cat and the hat.\", 2) -> [('the', 2), ('and', 1)]\"\"\"\n    pass\n",
   "tests": [
    "assert word_frequency('The cat and the hat.', 2) == [('the', 2), ('and', 1)]",
@@ -287,6 +417,16 @@
   "question": "Write remove_duplicate_chars(text) that removes repeated characters, keeping the first occurrence of each.",
   "what_tested": "Order-preserving dedupe",
   "hint": "Track seen characters in a set.",
+  "examples": [
+   {
+    "input": "remove_duplicate_chars('programming')",
+    "output": "'progamin'"
+   },
+   {
+    "input": "remove_duplicate_chars('')",
+    "output": "''"
+   }
+  ],
   "starter_code": "def remove_duplicate_chars(text):\n    \"\"\"remove_duplicate_chars(\"programming\") -> \"progamin\" \"\"\"\n    pass\n",
   "tests": [
    "assert remove_duplicate_chars('programming') == 'progamin'",
@@ -308,6 +448,16 @@
   "question": "Write is_rotation(a, b) that returns True if b is a rotation of a (e.g. 'waterbottle' and 'erbottlewat').",
   "what_tested": "String insight",
   "hint": "Any rotation of a appears inside a + a.",
+  "examples": [
+   {
+    "input": "is_rotation('waterbottle', 'erbottlewat')",
+    "output": "True"
+   },
+   {
+    "input": "is_rotation('abc', 'acb')",
+    "output": "False"
+   }
+  ],
   "starter_code": "def is_rotation(a, b):\n    \"\"\"is_rotation(\"waterbottle\", \"erbottlewat\") -> True\"\"\"\n    pass\n",
   "tests": [
    "assert is_rotation('waterbottle', 'erbottlewat') is True",
@@ -329,6 +479,16 @@
   "question": "Write mask_card(number) that masks all but the last four digits of a card number with '*', keeping any spaces or dashes in place.",
   "what_tested": "String processing, test-data hygiene",
   "hint": "Count digits from the right; only digits get masked.",
+  "examples": [
+   {
+    "input": "mask_card('4111 1111 1111 1234')",
+    "output": "'**** **** **** 1234'"
+   },
+   {
+    "input": "mask_card('4111-1111-1111-1234')",
+    "output": "'****-****-****-1234'"
+   }
+  ],
   "starter_code": "def mask_card(number):\n    \"\"\"mask_card(\"4111 1111 1111 1234\") -> \"**** **** **** 1234\" \"\"\"\n    pass\n",
   "tests": [
    "assert mask_card('4111 1111 1111 1234') == '**** **** **** 1234'",
@@ -351,6 +511,16 @@
   "question": "Write second_largest(nums) that returns the second largest distinct value, or None if there isn't one. Don't sort the list.",
   "what_tested": "Single-pass tracking",
   "hint": "Track the largest and second largest as you go; skip values equal to the largest.",
+  "examples": [
+   {
+    "input": "second_largest([4, 1, 7, 7, 3])",
+    "output": "4"
+   },
+   {
+    "input": "second_largest([5, 5, 5])",
+    "output": "None"
+   }
+  ],
   "starter_code": "def second_largest(nums):\n    \"\"\"second_largest([4, 1, 7, 7, 3]) -> 4\"\"\"\n    pass\n",
   "tests": [
    "assert second_largest([4, 1, 7, 7, 3]) == 4",
@@ -373,6 +543,16 @@
   "question": "Write missing_number(nums) for a list containing every number from 1 to n except one (in any order). Return the missing number.",
   "what_tested": "Arithmetic insight",
   "hint": "The sum of 1..n is n*(n+1)//2, where n is len(nums) + 1.",
+  "examples": [
+   {
+    "input": "missing_number([3, 7, 1, 2, 8, 4, 5])",
+    "output": "6"
+   },
+   {
+    "input": "missing_number([2])",
+    "output": "1"
+   }
+  ],
   "starter_code": "def missing_number(nums):\n    \"\"\"missing_number([3, 7, 1, 2, 8, 4, 5]) -> 6\"\"\"\n    pass\n",
   "tests": [
    "assert missing_number([3, 7, 1, 2, 8, 4, 5]) == 6",
@@ -395,6 +575,16 @@
   "question": "Write two_sum(nums, target) that returns the indices (i, j) with i < j of two numbers that add up to target, or None if no pair exists.",
   "what_tested": "Hash map lookup",
   "hint": "For each number, check whether target - number has already been seen.",
+  "examples": [
+   {
+    "input": "two_sum([2, 7, 11, 15], 9)",
+    "output": "(0, 1)"
+   },
+   {
+    "input": "two_sum([3, 2, 4], 6)",
+    "output": "(1, 2)"
+   }
+  ],
   "starter_code": "def two_sum(nums, target):\n    \"\"\"two_sum([2, 7, 11, 15], 9) -> (0, 1)\"\"\"\n    pass\n",
   "tests": [
    "assert two_sum([2, 7, 11, 15], 9) == (0, 1)",
@@ -417,6 +607,16 @@
   "question": "Write max_profit(prices) that returns the best profit from one buy followed by one later sell. Return 0 if no profit is possible.",
   "what_tested": "Running minimum",
   "hint": "Track the lowest price so far and the best profit if you sold today.",
+  "examples": [
+   {
+    "input": "max_profit([7, 1, 5, 3, 6, 4])",
+    "output": "5"
+   },
+   {
+    "input": "max_profit([7, 6, 4, 3, 1])",
+    "output": "0"
+   }
+  ],
   "starter_code": "def max_profit(prices):\n    \"\"\"max_profit([7, 1, 5, 3, 6, 4]) -> 5\"\"\"\n    pass\n",
   "tests": [
    "assert max_profit([7, 1, 5, 3, 6, 4]) == 5",
@@ -438,6 +638,16 @@
   "question": "Write move_zeros(nums) that returns a new list with all zeros moved to the end, keeping the order of the other elements.",
   "what_tested": "List partitioning",
   "hint": "Collect non-zeros, then pad with the right number of zeros.",
+  "examples": [
+   {
+    "input": "move_zeros([0, 1, 0, 3, 12])",
+    "output": "[1, 3, 12, 0, 0]"
+   },
+   {
+    "input": "move_zeros([])",
+    "output": "[]"
+   }
+  ],
   "starter_code": "def move_zeros(nums):\n    \"\"\"move_zeros([0, 1, 0, 3, 12]) -> [1, 3, 12, 0, 0]\"\"\"\n    pass\n",
   "tests": [
    "assert move_zeros([0, 1, 0, 3, 12]) == [1, 3, 12, 0, 0]",
@@ -459,6 +669,16 @@
   "question": "Write merge_sorted(a, b) that merges two already-sorted lists into one sorted list without calling sort().",
   "what_tested": "Two-pointer merge",
   "hint": "Compare the heads of both lists and take the smaller one.",
+  "examples": [
+   {
+    "input": "merge_sorted([1, 4, 9], [2, 3, 10])",
+    "output": "[1, 2, 3, 4, 9, 10]"
+   },
+   {
+    "input": "merge_sorted([], [1, 2])",
+    "output": "[1, 2]"
+   }
+  ],
   "starter_code": "def merge_sorted(a, b):\n    \"\"\"merge_sorted([1, 4, 9], [2, 3, 10]) -> [1, 2, 3, 4, 9, 10]\"\"\"\n    pass\n",
   "tests": [
    "assert merge_sorted([1, 4, 9], [2, 3, 10]) == [1, 2, 3, 4, 9, 10]",
@@ -481,6 +701,16 @@
   "question": "Write rotate_list(items, k) that rotates a list to the right by k positions (k can be larger than the list length).",
   "what_tested": "Slicing, modulo",
   "hint": "Rotating by len(items) gives the same list, so use k % len(items).",
+  "examples": [
+   {
+    "input": "rotate_list([1, 2, 3, 4, 5], 2)",
+    "output": "[4, 5, 1, 2, 3]"
+   },
+   {
+    "input": "rotate_list([1, 2, 3], 4)",
+    "output": "[3, 1, 2]"
+   }
+  ],
   "starter_code": "def rotate_list(items, k):\n    \"\"\"rotate_list([1, 2, 3, 4, 5], 2) -> [4, 5, 1, 2, 3]\"\"\"\n    pass\n",
   "tests": [
    "assert rotate_list([1, 2, 3, 4, 5], 2) == [4, 5, 1, 2, 3]",
@@ -502,6 +732,16 @@
   "question": "Write find_duplicates(items) that returns a sorted list of values that appear more than once.",
   "what_tested": "Counting",
   "hint": "Count occurrences, keep values with count > 1.",
+  "examples": [
+   {
+    "input": "find_duplicates([3, 1, 3, 2, 1, 3])",
+    "output": "[1, 3]"
+   },
+   {
+    "input": "find_duplicates([1, 2, 3])",
+    "output": "[]"
+   }
+  ],
   "starter_code": "def find_duplicates(items):\n    \"\"\"find_duplicates([3, 1, 3, 2, 1, 3]) -> [1, 3]\"\"\"\n    pass\n",
   "tests": [
    "assert find_duplicates([3, 1, 3, 2, 1, 3]) == [1, 3]",
@@ -523,6 +763,16 @@
   "question": "Write is_prime(n) that returns True if n is a prime number.",
   "what_tested": "Loops, efficiency",
   "hint": "You only need to test divisors up to the square root of n.",
+  "examples": [
+   {
+    "input": "is_prime(29)",
+    "output": "True"
+   },
+   {
+    "input": "is_prime(1)",
+    "output": "False"
+   }
+  ],
   "starter_code": "def is_prime(n):\n    \"\"\"is_prime(29) -> True\"\"\"\n    pass\n",
   "tests": [
    "assert is_prime(29) is True",
@@ -546,6 +796,16 @@
   "question": "Write fibonacci(n) that returns a list of the first n Fibonacci numbers, starting 0, 1.",
   "what_tested": "Iteration",
   "hint": "Keep the last two values and build forward.",
+  "examples": [
+   {
+    "input": "fibonacci(7)",
+    "output": "[0, 1, 1, 2, 3, 5, 8]"
+   },
+   {
+    "input": "fibonacci(0)",
+    "output": "[]"
+   }
+  ],
   "starter_code": "def fibonacci(n):\n    \"\"\"fibonacci(7) -> [0, 1, 1, 2, 3, 5, 8]\"\"\"\n    pass\n",
   "tests": [
    "assert fibonacci(7) == [0, 1, 1, 2, 3, 5, 8]",
@@ -567,6 +827,16 @@
   "question": "Write factorial(n) for a non-negative integer, raising ValueError for negative input.",
   "what_tested": "Loops, input validation",
   "hint": "Multiply 1..n; factorial(0) is 1.",
+  "examples": [
+   {
+    "input": "factorial(5)",
+    "output": "120"
+   },
+   {
+    "input": "factorial(0)",
+    "output": "1"
+   }
+  ],
   "starter_code": "def factorial(n):\n    \"\"\"factorial(5) -> 120\"\"\"\n    pass\n",
   "tests": [
    "assert factorial(5) == 120",
@@ -588,6 +858,16 @@
   "question": "Write to_binary(n) that converts a non-negative integer to its binary string without using bin() or format().",
   "what_tested": "Repeated division",
   "hint": "Take n % 2 for each bit, then divide by 2; reverse at the end.",
+  "examples": [
+   {
+    "input": "to_binary(10)",
+    "output": "'1010'"
+   },
+   {
+    "input": "to_binary(0)",
+    "output": "'0'"
+   }
+  ],
   "starter_code": "def to_binary(n):\n    \"\"\"to_binary(10) -> \"1010\" \"\"\"\n    pass\n",
   "tests": [
    "assert to_binary(10) == '1010'",
@@ -609,6 +889,16 @@
   "question": "Write reverse_int(n) that reverses the digits of an integer, keeping the sign. reverse_int(-120) is -21.",
   "what_tested": "Digit manipulation",
   "hint": "Work with abs(n), then restore the sign.",
+  "examples": [
+   {
+    "input": "reverse_int(1234)",
+    "output": "4321"
+   },
+   {
+    "input": "reverse_int(-120)",
+    "output": "-21"
+   }
+  ],
   "starter_code": "def reverse_int(n):\n    \"\"\"reverse_int(1234) -> 4321\"\"\"\n    pass\n",
   "tests": [
    "assert reverse_int(1234) == 4321",
@@ -630,6 +920,16 @@
   "question": "Write sorted_by_one_move(nums) that returns True if the list can be sorted in increasing order by moving exactly one element to another position (an already-sorted list returns True).",
   "what_tested": "Array reasoning",
   "hint": "Remove each candidate element and check whether the rest is sorted; then think about doing it faster.",
+  "examples": [
+   {
+    "input": "sorted_by_one_move([1, 5, 2, 3, 4])",
+    "output": "True"
+   },
+   {
+    "input": "sorted_by_one_move([1, 2, 3])",
+    "output": "True"
+   }
+  ],
   "starter_code": "def sorted_by_one_move(nums):\n    \"\"\"sorted_by_one_move([1, 5, 2, 3, 4]) -> True (move 5 to the end)\"\"\"\n    pass\n",
   "tests": [
    "assert sorted_by_one_move([1, 5, 2, 3, 4]) is True",
@@ -652,6 +952,16 @@
   "question": "Write max_subarray_sum(nums) that returns the largest sum of any contiguous non-empty subarray.",
   "what_tested": "Kadane's algorithm",
   "hint": "At each element, either extend the current run or start fresh.",
+  "examples": [
+   {
+    "input": "max_subarray_sum([-2, 1, -3, 4, -1, 2, 1, -5, 4])",
+    "output": "6"
+   },
+   {
+    "input": "max_subarray_sum([-3, -1, -2])",
+    "output": "-1"
+   }
+  ],
   "starter_code": "def max_subarray_sum(nums):\n    \"\"\"max_subarray_sum([-2, 1, -3, 4, -1, 2, 1, -5, 4]) -> 6\"\"\"\n    pass\n",
   "tests": [
    "assert max_subarray_sum([-2, 1, -3, 4, -1, 2, 1, -5, 4]) == 6",
@@ -674,6 +984,16 @@
   "question": "Write bubble_sort(nums) that returns a new sorted list using bubble sort (don't call sort() or sorted()).",
   "what_tested": "Basic sorting algorithm",
   "hint": "Repeatedly swap neighbours that are out of order; stop early if a pass makes no swaps.",
+  "examples": [
+   {
+    "input": "bubble_sort([5, 2, 9, 1])",
+    "output": "[1, 2, 5, 9]"
+   },
+   {
+    "input": "bubble_sort([])",
+    "output": "[]"
+   }
+  ],
   "starter_code": "def bubble_sort(nums):\n    \"\"\"bubble_sort([5, 2, 9, 1]) -> [1, 2, 5, 9]\"\"\"\n    pass\n",
   "tests": [
    "assert bubble_sort([5, 2, 9, 1]) == [1, 2, 5, 9]",
@@ -695,6 +1015,16 @@
   "question": "Write is_armstrong(n) that returns True if n equals the sum of its digits each raised to the power of the number of digits (e.g. 153 = 1³ + 5³ + 3³).",
   "what_tested": "Digit handling",
   "hint": "Convert to a string to get the digits and the digit count.",
+  "examples": [
+   {
+    "input": "is_armstrong(153)",
+    "output": "True"
+   },
+   {
+    "input": "is_armstrong(9474)",
+    "output": "True"
+   }
+  ],
   "starter_code": "def is_armstrong(n):\n    \"\"\"is_armstrong(153) -> True\"\"\"\n    pass\n",
   "tests": [
    "assert is_armstrong(153) is True",
@@ -716,6 +1046,16 @@
   "question": "Write intersection(a, b) that returns the sorted list of values present in both lists, without duplicates.",
   "what_tested": "Sets",
   "hint": "Set intersection does the heavy lifting.",
+  "examples": [
+   {
+    "input": "intersection([1, 2, 2, 3], [2, 3, 4])",
+    "output": "[2, 3]"
+   },
+   {
+    "input": "intersection([], [1])",
+    "output": "[]"
+   }
+  ],
   "starter_code": "def intersection(a, b):\n    \"\"\"intersection([1, 2, 2, 3], [2, 3, 4]) -> [2, 3]\"\"\"\n    pass\n",
   "tests": [
    "assert intersection([1, 2, 2, 3], [2, 3, 4]) == [2, 3]",
@@ -737,6 +1077,16 @@
   "question": "Write transpose(matrix) that returns the transpose of a rectangular list-of-lists matrix.",
   "what_tested": "Nested lists, zip",
   "hint": "Row i of the result is column i of the input.",
+  "examples": [
+   {
+    "input": "transpose([[1, 2, 3], [4, 5, 6]])",
+    "output": "[[1, 4], [2, 5], [3, 6]]"
+   },
+   {
+    "input": "transpose([])",
+    "output": "[]"
+   }
+  ],
   "starter_code": "def transpose(matrix):\n    \"\"\"transpose([[1, 2, 3], [4, 5, 6]]) -> [[1, 4], [2, 5], [3, 6]]\"\"\"\n    pass\n",
   "tests": [
    "assert transpose([[1, 2, 3], [4, 5, 6]]) == [[1, 4], [2, 5], [3, 6]]",
@@ -758,6 +1108,16 @@
   "question": "Write dedupe(items) that removes duplicates from a list while keeping the original order.",
   "what_tested": "Sets vs order preservation, edge cases",
   "hint": "A set tells you what you've seen; a list keeps the order.",
+  "examples": [
+   {
+    "input": "dedupe([3, 1, 3, 2, 1])",
+    "output": "[3, 1, 2]"
+   },
+   {
+    "input": "dedupe([])",
+    "output": "[]"
+   }
+  ],
   "starter_code": "def dedupe(items):\n    \"\"\"Return items without duplicates, keeping first-seen order.\"\"\"\n    pass\n",
   "tests": [
    "assert dedupe([3, 1, 3, 2, 1]) == [3, 1, 2]",
@@ -779,6 +1139,16 @@
   "question": "Write failed_tests(log) that takes pytest-style log lines and returns a dict mapping each test file to its number of FAILED tests, highest count first.",
   "what_tested": "String parsing, dicts, sorting",
   "hint": "Split on '::' to get the file; collections.Counter helps.",
+  "examples": [
+   {
+    "input": "failed_tests([])",
+    "output": "{}"
+   },
+   {
+    "input": "failed_tests(['PASSED tests/a.py::t1'])",
+    "output": "{}"
+   }
+  ],
   "starter_code": "def failed_tests(log):\n    \"\"\"log: list of lines like 'FAILED tests/test_login.py::test_bad_pwd - AssertionError'.\n    Return {file: failed_count}, highest count first.\"\"\"\n    pass\n",
   "tests": [
    "assert failed_tests([]) == {}",
@@ -801,6 +1171,16 @@
   "question": "Write flatten(nested) that flattens an arbitrarily nested list into one flat list.",
   "what_tested": "Recursion, type checks",
   "hint": "If an element is a list, flatten it too.",
+  "examples": [
+   {
+    "input": "flatten([1, [2, [3, 4]], 5])",
+    "output": "[1, 2, 3, 4, 5]"
+   },
+   {
+    "input": "flatten([])",
+    "output": "[]"
+   }
+  ],
   "starter_code": "def flatten(nested):\n    \"\"\"flatten([1, [2, [3, 4]], 5]) -> [1, 2, 3, 4, 5]\"\"\"\n    pass\n",
   "tests": [
    "assert flatten([1, [2, [3, 4]], 5]) == [1, 2, 3, 4, 5]",
@@ -822,6 +1202,16 @@
   "question": "Write backoff_delays(base, factor, retries, cap) that returns the list of wait times for exponential backoff, never exceeding cap.",
   "what_tested": "Loops, arithmetic, retry logic",
   "hint": "Delay n is base * factor ** n, limited by cap.",
+  "examples": [
+   {
+    "input": "backoff_delays(1, 2, 5, 10)",
+    "output": "[1, 2, 4, 8, 10]"
+   },
+   {
+    "input": "backoff_delays(0.5, 3, 3, 100)",
+    "output": "[0.5, 1.5, 4.5]"
+   }
+  ],
   "starter_code": "def backoff_delays(base, factor, retries, cap):\n    \"\"\"backoff_delays(1, 2, 5, 10) -> [1, 2, 4, 8, 10]\"\"\"\n    pass\n",
   "tests": [
    "assert backoff_delays(1, 2, 5, 10) == [1, 2, 4, 8, 10]",
@@ -843,6 +1233,16 @@
   "question": "Write mask_secrets(payload, keys) that returns a copy of a nested dict/list where the values of any key in `keys` are replaced with '***'. The original must not change.",
   "what_tested": "Recursion over JSON, immutability",
   "hint": "Handle dicts and lists recursively; build new objects instead of editing in place.",
+  "examples": [
+   {
+    "input": "mask_secrets({'user': 'a', 'password': 'p'}, {'password'})",
+    "output": "{'user': 'a', 'password': '***'}"
+   },
+   {
+    "input": "mask_secrets({'items': [{'token': 't', 'id': 1}]}, {'token'})",
+    "output": "{'items': [{'token': '***', 'id': 1}]}"
+   }
+  ],
   "starter_code": "def mask_secrets(payload, keys):\n    \"\"\"Mask values of sensitive keys anywhere in a JSON-like structure.\"\"\"\n    pass\n",
   "tests": [
    "assert mask_secrets({'user': 'a', 'password': 'p'}, {'password'}) == {'user': 'a', 'password': '***'}",
@@ -865,6 +1265,16 @@
   "question": "Write chunk(items, size) that splits a list into consecutive chunks of length `size` (the last chunk may be shorter).",
   "what_tested": "Slicing, ranges",
   "hint": "range(0, len(items), size) gives the start of each chunk.",
+  "examples": [
+   {
+    "input": "chunk([1, 2, 3, 4, 5], 2)",
+    "output": "[[1, 2], [3, 4], [5]]"
+   },
+   {
+    "input": "chunk([], 3)",
+    "output": "[]"
+   }
+  ],
   "starter_code": "def chunk(items, size):\n    \"\"\"chunk([1, 2, 3, 4, 5], 2) -> [[1, 2], [3, 4], [5]]\"\"\"\n    pass\n",
   "tests": [
    "assert chunk([1, 2, 3, 4, 5], 2) == [[1, 2], [3, 4], [5]]",
@@ -886,6 +1296,16 @@
   "question": "Write group_by_status(results) that takes a list of dicts like {'name': 'test_x', 'status': 'passed'} and returns {status: [names...]} with names sorted alphabetically.",
   "what_tested": "Dict grouping, defaultdict",
   "hint": "collections.defaultdict(list) saves the 'if key not in' check.",
+  "examples": [
+   {
+    "input": "group_by_status([])",
+    "output": "{}"
+   },
+   {
+    "input": "group_by_status([{'name': 'b', 'status': 'failed'}, {'name': 'a', 'status': 'failed'}])",
+    "output": "{'failed': ['a', 'b']}"
+   }
+  ],
   "starter_code": "def group_by_status(results):\n    \"\"\"Return {status: sorted list of test names}.\"\"\"\n    pass\n",
   "tests": [
    "assert group_by_status([]) == {}",
@@ -907,6 +1327,16 @@
   "question": "Write parse_query(url) that returns the query parameters of a URL as a dict. Repeated keys become lists; a URL with no query returns {}.",
   "what_tested": "String parsing, standard library",
   "hint": "urllib.parse has most of what you need.",
+  "examples": [
+   {
+    "input": "parse_query('https://x.com/s?q=pw&page=2')",
+    "output": "{'q': 'pw', 'page': '2'}"
+   },
+   {
+    "input": "parse_query('https://x.com/')",
+    "output": "{}"
+   }
+  ],
   "starter_code": "def parse_query(url):\n    \"\"\"parse_query('https://x.com/s?q=pw&page=2') -> {'q': 'pw', 'page': '2'}\"\"\"\n    pass\n",
   "tests": [
    "assert parse_query('https://x.com/s?q=pw&page=2') == {'q': 'pw', 'page': '2'}",
@@ -928,6 +1358,16 @@
   "question": "Write get_path(data, path, default=None) that reads a value from nested dicts/lists using a dotted path like 'orders.0.items.1.sku'. Return default if any step is missing.",
   "what_tested": "Safe nested access",
   "hint": "Split on '.', and use an int index when the current value is a list.",
+  "examples": [
+   {
+    "input": "get_path({'a': [{'b': 5}]}, 'a.0.b')",
+    "output": "5"
+   },
+   {
+    "input": "get_path({'a': {'b': None}}, 'a.b', 'x')",
+    "output": "None"
+   }
+  ],
   "starter_code": "def get_path(data, path, default=None):\n    \"\"\"get_path({'a': [{'b': 5}]}, 'a.0.b') -> 5\"\"\"\n    pass\n",
   "tests": [
    "assert get_path({'a': [{'b': 5}]}, 'a.0.b') == 5",
@@ -951,6 +1391,16 @@
   "question": "Write flatten_dict(data) that flattens nested dicts into a single dict with dotted keys. Lists are left as values.",
   "what_tested": "Recursion, key building",
   "hint": "Recurse into dict values, prefixing keys with 'parent.'.",
+  "examples": [
+   {
+    "input": "flatten_dict({'a': 1, 'b': {'c': 2, 'd': {'e': 3}}})",
+    "output": "{'a': 1, 'b.c': 2, 'b.d.e': 3}"
+   },
+   {
+    "input": "flatten_dict({})",
+    "output": "{}"
+   }
+  ],
   "starter_code": "def flatten_dict(data):\n    \"\"\"flatten_dict({'a': 1, 'b': {'c': 2, 'd': {'e': 3}}}) -> {'a': 1, 'b.c': 2, 'b.d.e': 3}\"\"\"\n    pass\n",
   "tests": [
    "assert flatten_dict({'a': 1, 'b': {'c': 2, 'd': {'e': 3}}}) == {'a': 1, 'b.c': 2, 'b.d.e': 3}",
@@ -973,6 +1423,16 @@
   "question": "Write diff_dicts(expected, actual) that returns a sorted list of human-readable differences between two flat dicts: 'missing: key', 'extra: key', or 'changed: key (expected → actual)'.",
   "what_tested": "Set operations on keys, reporting",
   "hint": "Compare the key sets first, then the values of shared keys.",
+  "examples": [
+   {
+    "input": "diff_dicts({'a': 1, 'b': 2}, {'a': 1, 'b': 3, 'c': 4})",
+    "output": "['changed: b (2 → 3)', 'extra: c']"
+   },
+   {
+    "input": "diff_dicts({'x': 1}, {})",
+    "output": "['missing: x']"
+   }
+  ],
   "starter_code": "def diff_dicts(expected, actual):\n    \"\"\"diff_dicts({'a': 1, 'b': 2}, {'a': 1, 'b': 3, 'c': 4})\n    -> ['changed: b (2 → 3)', 'extra: c']\"\"\"\n    pass\n",
   "tests": [
    "assert diff_dicts({'a': 1, 'b': 2}, {'a': 1, 'b': 3, 'c': 4}) == ['changed: b (2 → 3)', 'extra: c']",
@@ -995,6 +1455,16 @@
   "question": "Write compare_versions(a, b) that compares version strings like '1.10.0' and '1.9.2'. Return 1 if a > b, -1 if a < b, 0 if equal. Missing parts count as 0.",
   "what_tested": "Parsing, numeric vs string comparison",
   "hint": "Compare the parts as integers, padding the shorter one with zeros.",
+  "examples": [
+   {
+    "input": "compare_versions('1.10.0', '1.9.2')",
+    "output": "1"
+   },
+   {
+    "input": "compare_versions('1.0', '1.0.0')",
+    "output": "0"
+   }
+  ],
   "starter_code": "def compare_versions(a, b):\n    \"\"\"compare_versions(\"1.10.0\", \"1.9.2\") -> 1\"\"\"\n    pass\n",
   "tests": [
    "assert compare_versions('1.10.0', '1.9.2') == 1",
@@ -1016,6 +1486,16 @@
   "question": "Write slow_tests(results, threshold) that takes (name, seconds) tuples and returns the names of tests slower than threshold, slowest first.",
   "what_tested": "Filtering and sorting with keys",
   "hint": "Filter, then sort by duration descending.",
+  "examples": [
+   {
+    "input": "slow_tests([('a', 1.2), ('b', 9.5), ('c', 4.0)], 3)",
+    "output": "['b', 'c']"
+   },
+   {
+    "input": "slow_tests([], 1)",
+    "output": "[]"
+   }
+  ],
   "starter_code": "def slow_tests(results, threshold):\n    \"\"\"slow_tests([(\"a\", 1.2), (\"b\", 9.5), (\"c\", 4.0)], 3) -> [\"b\", \"c\"]\"\"\"\n    pass\n",
   "tests": [
    "assert slow_tests([('a', 1.2), ('b', 9.5), ('c', 4.0)], 3) == ['b', 'c']",
@@ -1038,6 +1518,16 @@
   "question": "Write summarize(results) that takes a list of status strings ('passed', 'failed', 'skipped') and returns {'total', 'passed', 'failed', 'skipped', 'pass_rate'}, where pass_rate is passed / (passed + failed) as a percentage rounded to 1 decimal (0.0 when nothing ran).",
   "what_tested": "Counting, division edge cases",
   "hint": "Skipped tests shouldn't count toward the pass rate.",
+  "examples": [
+   {
+    "input": "summarize(['passed', 'failed', 'passed', 'skipped'])",
+    "output": "{'total': 4, 'passed': 2, 'failed': 1, 'skipped': 1, 'pass_rate': 66.7}"
+   },
+   {
+    "input": "summarize([])",
+    "output": "{'total': 0, 'passed': 0, 'failed': 0, 'skipped': 0, 'pass_rate': 0.0}"
+   }
+  ],
   "starter_code": "def summarize(results):\n    \"\"\"summarize([\"passed\", \"failed\", \"passed\", \"skipped\"])\n    -> {'total': 4, 'passed': 2, 'failed': 1, 'skipped': 1, 'pass_rate': 66.7}\"\"\"\n    pass\n",
   "tests": [
    "assert summarize(['passed', 'failed', 'passed', 'skipped']) == {'total': 4, 'passed': 2, 'failed': 1, 'skipped': 1, 'pass_rate': 66.7}",
@@ -1059,6 +1549,16 @@
   "question": "Write total_amount(amounts) that sums a list of money strings like '10.10' and returns the total as a string with exactly 2 decimal places. It must not suffer from float rounding errors.",
   "what_tested": "Decimal arithmetic for money",
   "hint": "Floats can't represent 0.1 exactly; the decimal module can.",
+  "examples": [
+   {
+    "input": "total_amount(['0.10', '0.20'])",
+    "output": "'0.30'"
+   },
+   {
+    "input": "total_amount([])",
+    "output": "'0.00'"
+   }
+  ],
   "starter_code": "def total_amount(amounts):\n    \"\"\"total_amount([\"0.10\", \"0.20\"]) -> \"0.30\" \"\"\"\n    pass\n",
   "tests": [
    "assert total_amount(['0.10', '0.20']) == '0.30'",
@@ -1081,6 +1581,16 @@
   "question": "Write business_days(start, end) that counts weekdays (Mon–Fri) between two datetime.date values, inclusive of both ends. Return 0 if end is before start.",
   "what_tested": "datetime, date arithmetic",
   "hint": "date.weekday() returns 0–4 for Monday–Friday.",
+  "examples": [
+   {
+    "input": "business_days(date(2026, 10, 9), date(2026, 10, 13))",
+    "output": "3   # Fri, Mon, Tue"
+   },
+   {
+    "input": "business_days(date(2026, 10, 10), date(2026, 10, 11))",
+    "output": "0   # Sat, Sun"
+   }
+  ],
   "starter_code": "from datetime import date\n\ndef business_days(start, end):\n    \"\"\"business_days(date(2026, 10, 9), date(2026, 10, 13)) -> 3  (Fri, Mon, Tue)\"\"\"\n    pass\n",
   "tests": [
    "from datetime import date\nassert business_days(date(2026, 10, 9), date(2026, 10, 13)) == 3",
@@ -1104,6 +1614,16 @@
   "question": "Write validate_user(payload) that checks an API payload and returns a sorted list of error strings. Rules: 'id' is a positive int, 'email' is a string containing exactly one '@' with text on both sides, 'roles' is a non-empty list of strings. Missing fields produce 'missing: <field>'; wrong values produce 'invalid: <field>'.",
   "what_tested": "Manual schema validation, type checks",
   "hint": "Check presence first, then type and value. Remember that bool is a subclass of int.",
+  "examples": [
+   {
+    "input": "validate_user({'id': 1, 'email': 'a@b.com', 'roles': ['admin']})",
+    "output": "[]"
+   },
+   {
+    "input": "validate_user({})",
+    "output": "['missing: email', 'missing: id', 'missing: roles']"
+   }
+  ],
   "starter_code": "def validate_user(payload):\n    \"\"\"validate_user({'id': 1, 'email': 'a@b.com', 'roles': ['admin']}) -> []\"\"\"\n    pass\n",
   "tests": [
    "assert validate_user({'id': 1, 'email': 'a@b.com', 'roles': ['admin']}) == []",
@@ -1126,6 +1646,16 @@
   "question": "Write parse_log_levels(lines) that counts log lines by level. A line looks like '2026-10-11 10:00:01 ERROR Payment failed'. Return a dict of level -> count, ignoring lines that don't match the format.",
   "what_tested": "Regex parsing, robustness",
   "hint": "A regex with a group for the level; skip lines where it doesn't match.",
+  "examples": [
+   {
+    "input": "parse_log_levels(['2026-10-11 10:00:01 ERROR x', 'junk'])",
+    "output": "{'ERROR': 1}"
+   },
+   {
+    "input": "parse_log_levels([])",
+    "output": "{}"
+   }
+  ],
   "starter_code": "def parse_log_levels(lines):\n    \"\"\"parse_log_levels([\"2026-10-11 10:00:01 ERROR x\", \"junk\"]) -> {'ERROR': 1}\"\"\"\n    pass\n",
   "tests": [
    "assert parse_log_levels(['2026-10-11 10:00:01 ERROR x', 'junk']) == {'ERROR': 1}",
@@ -1148,6 +1678,16 @@
   "question": "Implement a Stack class with push(x), pop(), peek(), is_empty() and __len__. pop() and peek() on an empty stack must raise IndexError.",
   "what_tested": "Classes, dunder methods, error handling",
   "hint": "Wrap a Python list; the end of the list is the top of the stack.",
+  "examples": [
+   {
+    "input": "s = Stack(); s.push(1); s.push(2); s.pop()",
+    "output": "2"
+   },
+   {
+    "input": "Stack().pop()",
+    "output": "IndexError"
+   }
+  ],
   "starter_code": "class Stack:\n    def push(self, x):\n        pass\n    def pop(self):\n        pass\n    def peek(self):\n        pass\n    def is_empty(self):\n        pass\n",
   "tests": [
    "s = Stack(); s.push(1); s.push(2); assert s.pop() == 2 and s.peek() == 1",
@@ -1171,6 +1711,16 @@
   "question": "Implement a Queue class using two stacks (Python lists), with enqueue(x), dequeue() and __len__. dequeue() on an empty queue raises IndexError.",
   "what_tested": "Data-structure design, amortised complexity",
   "hint": "Push onto an 'in' stack; when the 'out' stack is empty, move everything across so the order reverses.",
+  "examples": [
+   {
+    "input": "q = Queue(); q.enqueue(1); q.enqueue(2); q.dequeue()",
+    "output": "1"
+   },
+   {
+    "input": "Queue().dequeue()",
+    "output": "IndexError"
+   }
+  ],
   "starter_code": "class Queue:\n    def enqueue(self, x):\n        pass\n    def dequeue(self):\n        pass\n",
   "tests": [
    "q = Queue(); q.enqueue(1); q.enqueue(2); q.enqueue(3); assert q.dequeue() == 1 and q.dequeue() == 2",
@@ -1193,6 +1743,16 @@
   "question": "Implement LRUCache(capacity) with get(key) (returns -1 if missing) and put(key, value). When full, putting a new key evicts the least recently used one. Both get and put count as 'use'.",
   "what_tested": "OrderedDict, cache eviction",
   "hint": "collections.OrderedDict has move_to_end() and popitem(last=False).",
+  "examples": [
+   {
+    "input": "c = LRUCache(2); c.put('a', 1); c.put('b', 2); c.get('a'); c.put('c', 3); c.get('b')",
+    "output": "-1   # 'b' was least recently used"
+   },
+   {
+    "input": "LRUCache(2).get('x')",
+    "output": "-1"
+   }
+  ],
   "starter_code": "class LRUCache:\n    def __init__(self, capacity):\n        pass\n    def get(self, key):\n        pass\n    def put(self, key, value):\n        pass\n",
   "tests": [
    "c = LRUCache(2); c.put('a', 1); c.put('b', 2); c.get('a'); c.put('c', 3); assert c.get('b') == -1 and c.get('a') == 1 and c.get('c') == 3",
@@ -1215,6 +1775,16 @@
   "question": "Write a decorator retry(times) that calls the wrapped function up to `times` times, retrying only when it raises AssertionError, and re-raises the last error if all attempts fail. Preserve the function's name.",
   "what_tested": "Decorators with arguments, functools.wraps",
   "hint": "A decorator factory: retry(times) returns a decorator, which returns a wrapper.",
+  "examples": [
+   {
+    "input": "@retry(3) on a function that fails twice with AssertionError, then returns 'ok'",
+    "output": "'ok' after 3 calls"
+   },
+   {
+    "input": "@retry(5) on a function raising ValueError",
+    "output": "ValueError after 1 call (not retried)"
+   }
+  ],
   "starter_code": "import functools\n\ndef retry(times):\n    pass\n",
   "tests": [
    "calls = []\n@retry(3)\ndef flaky():\n    calls.append(1)\n    if len(calls) < 3:\n        raise AssertionError('not yet')\n    return 'ok'\nassert flaky() == 'ok' and len(calls) == 3",
@@ -1236,6 +1806,16 @@
   "question": "Write read_in_batches(items, size) as a generator that yields lists of at most `size` items. It must work on any iterable, including another generator, without converting it to a list first.",
   "what_tested": "Generators, itertools",
   "hint": "itertools.islice(iterator, size) takes the next `size` items.",
+  "examples": [
+   {
+    "input": "list(read_in_batches(range(5), 2))",
+    "output": "[[0, 1], [2, 3], [4]]"
+   },
+   {
+    "input": "list(read_in_batches([], 3))",
+    "output": "[]"
+   }
+  ],
   "starter_code": "def read_in_batches(items, size):\n    \"\"\"list(read_in_batches(range(5), 2)) -> [[0, 1], [2, 3], [4]]\"\"\"\n    pass\n",
   "tests": [
    "assert list(read_in_batches(range(5), 2)) == [[0, 1], [2, 3], [4]]",
@@ -1257,6 +1837,16 @@
   "question": "Write a context manager class Timer that records how long the `with` block took in seconds as `elapsed`, and still records it if the block raises.",
   "what_tested": "Context manager protocol",
   "hint": "__enter__ stores the start time; __exit__ computes elapsed and returns False so exceptions propagate.",
+  "examples": [
+   {
+    "input": "with Timer() as t: sum(range(200000))",
+    "output": "t.elapsed > 0  (a float, in seconds)"
+   },
+   {
+    "input": "with Timer() as t: raise KeyError",
+    "output": "KeyError propagates; t.elapsed is still set"
+   }
+  ],
   "starter_code": "import time\n\nclass Timer:\n    pass\n",
   "tests": [
    "with Timer() as t:\n    sum(range(200000))\nassert t.elapsed > 0",
@@ -1278,6 +1868,16 @@
   "question": "Write a decorator memoize that caches a function's results by its positional arguments, and exposes the number of real calls as wrapper.calls.",
   "what_tested": "Closures, caching, function attributes",
   "hint": "Store results in a dict keyed by the args tuple.",
+  "examples": [
+   {
+    "input": "@memoize def sq(x): ...;  sq(4); sq(4); sq.calls",
+    "output": "1"
+   },
+   {
+    "input": "@memoize def fib(n): ...;  fib(30); fib.calls",
+    "output": "31"
+   }
+  ],
   "starter_code": "import functools\n\ndef memoize(fn):\n    pass\n",
   "tests": [
    "@memoize\ndef sq(x):\n    return x * x\nassert sq(4) == 16 and sq(4) == 16 and sq.calls == 1",
@@ -1299,6 +1899,16 @@
   "question": "Create a dataclass TestResult with name (str), status (str) and duration (float, default 0.0), plus a property `passed` that is True when status is 'passed'. Then write fastest_passed(results) returning the name of the quickest passing result, or None.",
   "what_tested": "dataclasses, properties",
   "hint": "@dataclass generates __init__ and __eq__; @property adds a computed attribute.",
+  "examples": [
+   {
+    "input": "TestResult('x', 'passed', 1.0)",
+    "output": "TestResult('x', 'passed', 1.0)"
+   },
+   {
+    "input": "fastest_passed([TestResult('a', 'failed', 1)])",
+    "output": "None"
+   }
+  ],
   "starter_code": "from dataclasses import dataclass\n\nclass TestResult:\n    pass\n\ndef fastest_passed(results):\n    pass\n",
   "tests": [
    "r = TestResult('a', 'passed', 1.5); assert r.passed is True and r.duration == 1.5",
@@ -1321,6 +1931,13 @@
   "kind": "concept",
   "question": "What's the difference between a list and a tuple, and when do you use each?",
   "what_tested": "Mutability, intent",
+  "options": [
+   "There's no real difference; tuples are just faster lists",
+   "Lists can only hold one data type; tuples can hold mixed types",
+   "Tuples are mutable; lists are immutable",
+   "Lists are mutable; tuples are immutable and hashable"
+  ],
+  "answer": 3,
   "model": "A list is mutable (you can add, remove and change items); a tuple is immutable once created. Use a list for a collection that changes, like results you append to. Use a tuple for a fixed record, like `(host, port)` or a row of test data in `pytest.mark.parametrize`. Because tuples are immutable they're hashable (if their contents are), so they can be dict keys or set members, and they're slightly smaller and faster to create.",
   "tags": [
    "basics"
@@ -1333,6 +1950,13 @@
   "kind": "concept",
   "question": "Which Python types are mutable and which are immutable? Why does it matter?",
   "what_tested": "Object model",
+  "options": [
+   "All built-in types are immutable",
+   "str and tuple are mutable; list and dict are immutable",
+   "str, int, tuple immutable; list, dict, set mutable",
+   "Only user-defined classes are mutable"
+  ],
+  "answer": 2,
   "model": "Immutable: int, float, bool, str, tuple, frozenset, bytes. Mutable: list, dict, set, bytearray and most user-defined objects. It matters because names are references: if two variables point at the same list, changing it through one changes it for both. It's also why only immutable (hashable) objects can be dict keys, and why a mutable default argument leaks state between calls. In test code, shared mutable test data is a common cause of order-dependent failures.",
   "tags": [
    "basics"
@@ -1345,6 +1969,13 @@
   "kind": "concept",
   "question": "What's the problem with `def add(item, items=[])`, and how do you fix it?",
   "what_tested": "Mutable default arguments",
+  "options": [
+   "Python raises a SyntaxError for list defaults",
+   "Default arguments must always be strings",
+   "A new list is created on every call, so nothing ever accumulates",
+   "The default list is shared across calls; use None"
+  ],
+  "answer": 3,
   "model": "Default values are evaluated once, when the function is defined, so every call shares the same list and items leak between calls. Use `items=None` and create a new list inside: `if items is None: items = []`. In test code this shows up as state leaking between tests through helper functions.",
   "tags": [
    "basics",
@@ -1358,6 +1989,13 @@
   "kind": "concept",
   "question": "What's the difference between `is` and `==`?",
   "what_tested": "Identity vs equality",
+  "options": [
+   "== compares values; is compares identity",
+   "is only works with numbers",
+   "They are identical; is is just shorter syntax",
+   "is compares values; == compares memory addresses"
+  ],
+  "answer": 0,
   "model": "`==` compares values (it calls `__eq__`); `is` compares identity, meaning whether both names point to the same object. Use `is` only for singletons like `None` (`if x is None`). Gotcha: `a = 256; b = 256; a is b` is True because CPython caches small integers, but that's an implementation detail you should never rely on.",
   "tags": [
    "basics",
@@ -1371,6 +2009,13 @@
   "kind": "concept",
   "question": "Shallow copy vs deep copy: when does the difference bite you?",
   "what_tested": "Object references, copy module",
+  "options": [
+   "Both copy only the variable name, not the data",
+   "A shallow copy copies every level recursively",
+   "Shallow copies share nested objects",
+   "A deep copy shares nested objects with the original"
+  ],
+  "answer": 2,
   "model": "A shallow copy (`list(x)`, `dict.copy()`, `copy.copy`) makes a new outer container but shares the nested objects. A deep copy (`copy.deepcopy`) copies everything recursively. It bites with nested test data: you copy a base payload, change a nested field for one test, and the base payload changes for every other test too. For nested payload templates, use `deepcopy` or build them fresh from a factory function.",
   "tags": [
    "basics",
@@ -1384,6 +2029,13 @@
   "kind": "concept",
   "question": "Why does `grid = [[0] * 3] * 3` behave strangely when you set `grid[0][0] = 1`?",
   "what_tested": "List multiplication and references",
+  "options": [
+   "Python creates three independent rows, so only grid[0][0] changes",
+   "All three rows are the same list object",
+   "Integers are mutable, so 0 changes everywhere",
+   "It raises an IndexError"
+  ],
+  "answer": 1,
   "model": "`[[0] * 3] * 3` creates one inner list and three references to it, so changing `grid[0][0]` changes the first element of every row. Build independent rows with a comprehension instead: `[[0] * 3 for _ in range(3)]`. The outer `* 3` copies references, not objects. This is a favourite trick question because the output surprises people who haven't hit it.",
   "tags": [
    "gotchas"
@@ -1396,6 +2048,13 @@
   "kind": "concept",
   "question": "How are arguments passed to functions in Python: by value or by reference?",
   "what_tested": "Call semantics",
+  "options": [
+   "Everything is passed by reference like C++ references, so rebinding changes the caller's variable",
+   "Only immutable types can be passed to functions",
+   "Everything is copied (pass by value), so callers never see changes",
+   "References passed by value: mutation is visible"
+  ],
+  "answer": 3,
   "model": "Neither, exactly: Python passes object references by value (often called 'pass by object reference'). The function gets a new name bound to the same object. If the object is mutable and the function changes it in place (`items.append(x)`), the caller sees the change. If the function rebinds the name (`items = [...]`), the caller doesn't. So whether a change is visible depends on mutation vs reassignment, not on the type alone.",
   "tags": [
    "basics"
@@ -1408,6 +2067,13 @@
   "kind": "concept",
   "question": "Explain Python's variable scope rules (LEGB). When do you need `global` or `nonlocal`?",
   "what_tested": "Scope resolution",
+  "options": [
+   "global is needed to read any module-level variable",
+   "nonlocal refers to module-level variables",
+   "Local, Enclosing, Global, Built-in lookup order",
+   "Python looks up Global first, then Local"
+  ],
+  "answer": 2,
   "model": "Names are looked up Local, then Enclosing function, then Global (module), then Built-ins. Reading an outer variable just works. Assigning to a name inside a function makes it local, so to rebind a module-level name you need `global`, and to rebind a variable of an enclosing function (in a closure) you need `nonlocal`. In practice, needing `global` usually signals a design problem; pass values in and return them instead.",
   "tags": [
    "basics"
@@ -1420,6 +2086,13 @@
   "kind": "concept",
   "question": "What's the difference between a list comprehension and a generator expression?",
   "what_tested": "Eager vs lazy evaluation",
+  "options": [
+   "List comprehensions can't contain conditions",
+   "List comp is eager; generator expr is lazy",
+   "They're identical apart from bracket style",
+   "A generator expression builds the whole list in memory immediately"
+  ],
+  "answer": 1,
   "model": "`[x * 2 for x in data]` builds the whole list in memory immediately. `(x * 2 for x in data)` creates a lazy generator that produces values one at a time as you iterate. Use a list when you need to index it, iterate it more than once or check its length. Use a generator for one pass over large data, or when feeding a function like `sum()` or `any()`, which can then short-circuit.",
   "tags": [
    "basics",
@@ -1433,6 +2106,13 @@
   "kind": "concept",
   "question": "What are lambda functions, and when shouldn't you use them?",
   "what_tested": "Anonymous functions",
+  "options": [
+   "Functions that run in a separate thread",
+   "A way to declare constants",
+   "Functions that can contain several statements and loops",
+   "One-expression anonymous functions, e.g. sort keys"
+  ],
+  "answer": 3,
   "model": "A lambda is a small anonymous function limited to one expression: `lambda r: r.duration`. They're ideal as short key functions for `sorted`, `min` and `max`, or as callbacks such as `page.route(..., lambda route: route.abort())`. Don't use them for anything with logic worth naming or testing, and don't assign them to a variable (`f = lambda ...`); write a `def`, which gives a proper name in tracebacks.",
   "tags": [
    "basics",
@@ -1446,6 +2126,13 @@
   "kind": "concept",
   "question": "Explain map, filter and reduce. Would you use them in modern Python?",
   "what_tested": "Functional tools vs comprehensions",
+  "options": [
+   "map sorts a list, filter removes duplicates, reduce shrinks memory use",
+   "They only work on dictionaries",
+   "Transform, keep matches, fold; comprehensions preferred",
+   "They are deprecated and removed in Python 3"
+  ],
+  "answer": 2,
   "model": "`map(f, items)` applies f to every item, `filter(pred, items)` keeps items where pred is true, and `functools.reduce(f, items)` folds items into one value. All of them are lazy, except reduce. In modern Python, comprehensions are usually clearer: `[f(x) for x in items if pred(x)]`. `map` is fine with an existing named function (`map(str.strip, lines)`). For reduce, a built-in like `sum`, `max` or `any` is almost always more readable.",
   "tags": [
    "basics",
@@ -1459,6 +2146,13 @@
   "kind": "concept",
   "question": "What do `*args` and `**kwargs` do, and when are they useful in test helpers?",
   "what_tested": "Variadic arguments",
+  "options": [
+   "Extra positional args tuple and keyword args dict",
+   "*args collects keyword args; **kwargs collects positional args",
+   "They make all arguments optional and typed",
+   "They create pointers to arguments"
+  ],
+  "answer": 0,
   "model": "`*args` collects extra positional arguments into a tuple; `**kwargs` collects extra keyword arguments into a dict. They also unpack: `f(*items, **options)`. In test helpers they let a wrapper pass options through without knowing them, for example a `create_user(**overrides)` factory that merges overrides into default fields, or a decorator that forwards any call signature to the wrapped function.",
   "tags": [
    "functions"
@@ -1471,6 +2165,13 @@
   "kind": "concept",
   "question": "How does slicing work, and what does `text[::-1]` do?",
   "what_tested": "Sequence slicing",
+  "options": [
+   "Slicing raises IndexError when bounds are out of range",
+   "start:stop:step; step -1 gives a reversed copy",
+   "Slicing modifies the original string in place",
+   "text[::-1] removes the last character"
+  ],
+  "answer": 1,
   "model": "The syntax is `seq[start:stop:step]`. Start is inclusive, stop is exclusive, and any part can be omitted. Negative indices count from the end, and a negative step walks backwards, so `text[::-1]` returns a reversed copy. Slicing never raises IndexError for out-of-range bounds; it just returns what exists, which is handy but can hide bugs. Slices of lists are shallow copies.",
   "tags": [
    "basics"
@@ -1483,6 +2184,13 @@
   "kind": "concept",
   "question": "What's the difference between `list.sort()` and `sorted()`?",
   "what_tested": "In-place vs new list",
+  "options": [
+   "sort() is in place, returns None; sorted() is new",
+   "sorted() sorts in place; list.sort() returns a new list",
+   "list.sort() is stable but sorted() isn't",
+   "sorted() only works on lists of numbers"
+  ],
+  "answer": 0,
   "model": "`list.sort()` sorts the list in place and returns `None` (a classic bug is `result = items.sort()`). `sorted(iterable)` returns a new list and works on any iterable, including dict keys or a generator. Both accept `key=` and `reverse=`, and both are stable: equal elements keep their original order, which lets you sort by several keys in passes. Both use Timsort, O(n log n).",
   "tags": [
    "basics",
@@ -1496,6 +2204,13 @@
   "kind": "concept",
   "question": "How would you sort a list of test results by status, then by duration descending?",
   "what_tested": "Sort keys",
+  "options": [
+   "sorted(results, key=lambda r: (r.status, -r.duration))",
+   "sorted(results, key=lambda r: r.status + r.duration)",
+   "results.sort(reverse=True) twice",
+   "sorted(results, key=lambda r: (-r.status, r.duration))"
+  ],
+  "answer": 0,
   "model": "Use a tuple key: `sorted(results, key=lambda r: (r.status, -r.duration))`. Tuples compare element by element, so this sorts by status first, then by duration. Negating works for numbers; for strings in reverse you can rely on stability and sort twice (first by the secondary key, then by the primary). `operator.attrgetter('status')` is a slightly faster alternative to a lambda.",
   "tags": [
    "sorting"
@@ -1508,6 +2223,13 @@
   "kind": "concept",
   "question": "What does 'truthy' and 'falsy' mean in Python? Name the falsy values.",
   "what_tested": "Truth testing",
+  "options": [
+   "The string '0' and 'False' are falsy",
+   "Only None and False are falsy",
+   "Empty lists are truthy because they exist",
+   "None, False, zeros and empty collections"
+  ],
+  "answer": 3,
   "model": "Any object can be used in an `if`. Falsy values are: `None`, `False`, zero of any numeric type (`0`, `0.0`), and empty collections (`''`, `[]`, `{}`, `set()`, `()`, `range(0)`). Everything else is truthy unless a class defines `__bool__` or `__len__`. Gotcha in tests: `if response_body:` treats an empty list and a missing value the same way. When 0 or an empty list is a valid result, compare explicitly (`is None`).",
   "tags": [
    "basics"
@@ -1520,6 +2242,13 @@
   "kind": "concept",
   "question": "How do dictionaries work internally, and what makes an object usable as a dict key?",
   "what_tested": "Hashing",
+  "options": [
+   "A hash table; keys must be hashable",
+   "It's a sorted list searched with binary search; any object can be a key",
+   "It's a linked list; only strings can be keys",
+   "Lists make the best keys because they're ordered"
+  ],
+  "answer": 0,
   "model": "A dict is a hash table: the key's `__hash__` picks a slot, and `__eq__` resolves collisions, so lookups, inserts and deletes are O(1) on average. A key must be hashable: its hash must not change during its lifetime, and equal objects must have equal hashes. That's why lists and dicts can't be keys but tuples of immutable values can. Since Python 3.7, dicts officially preserve insertion order.",
   "tags": [
    "dicts",
@@ -1533,6 +2262,13 @@
   "kind": "concept",
   "question": "When would you use a set, and what are its main operations?",
   "what_tested": "Sets",
+  "options": [
+   "Storing unhashable items such as lists",
+   "Fast membership checks and deduplication",
+   "Keeping items in insertion order with duplicates",
+   "Indexing items by position like a list"
+  ],
+  "answer": 1,
   "model": "Use a set for fast membership tests (O(1) average versus O(n) for a list), for removing duplicates, and for comparing collections. Operations: union `a | b`, intersection `a & b`, difference `a - b`, symmetric difference `a ^ b`, and subset checks `a <= b`. In tests, `set(actual_ids) == set(expected_ids)` compares contents while ignoring order, and `expected - actual` tells you exactly what's missing. Sets are unordered and their items must be hashable.",
   "tags": [
    "sets"
@@ -1545,6 +2281,13 @@
   "kind": "concept",
   "question": "Name some useful classes from the collections module and when you'd use each.",
   "what_tested": "Standard library",
+  "options": [
+   "Array, Matrix and Vector",
+   "Thread, Lock and Queue are all in collections",
+   "HashMap, ArrayList and LinkedList",
+   "Counter, defaultdict, deque, namedtuple"
+  ],
+  "answer": 3,
   "model": "`Counter` counts hashable items (`Counter(statuses).most_common(3)`). `defaultdict(list)` groups values without checking for keys first. `deque` gives O(1) appends and pops at both ends, good for queues or a sliding window, and `deque(maxlen=n)` keeps the last n items. `namedtuple` gives lightweight immutable records with named fields. `OrderedDict` is mostly superseded by plain dicts but still has `move_to_end`, handy for an LRU cache.",
   "tags": [
    "stdlib"
@@ -1557,6 +2300,13 @@
   "kind": "concept",
   "question": "Why is building a string with `+=` in a loop discouraged, and what should you do instead?",
   "what_tested": "String immutability, performance",
+  "options": [
+   "Strings are mutable, so += corrupts shared data",
+   "join() is slower than += for large text",
+   "+= raises an error on strings inside loops",
+   "Strings are immutable; use ''.join()"
+  ],
+  "answer": 3,
   "model": "Strings are immutable, so each `+=` can create a new string and copy everything so far, which is potentially O(n²) for many pieces. CPython sometimes optimises this, but you shouldn't rely on it. Collect the pieces in a list and call `''.join(parts)` once, which is O(n). For formatting, use f-strings. For building large text such as reports, `io.StringIO` is another option.",
   "tags": [
    "strings",
@@ -1570,6 +2320,13 @@
   "kind": "concept",
   "question": "What are f-strings, and what's a handy debugging trick with them?",
   "what_tested": "String formatting",
+  "options": [
+   "Strings that are automatically translated",
+   "A way to read files faster",
+   "f'{value!}' prints the variable's memory address",
+   "Inline expressions; {x=} prints name and value"
+  ],
+  "answer": 3,
   "model": "f-strings (Python 3.6+) embed expressions directly: `f\"{user} has {len(items)} items\"`. They support format specs, e.g. `f\"{rate:.1f}%\"`, `f\"{amount:,.2f}\"` and `f\"{n:05d}\"`. The debugging trick (3.8+) is `f\"{response.status=}\"`, which prints both the expression and its value, e.g. `response.status=404`. That's very useful in quick log lines inside tests.",
   "tags": [
    "strings"
@@ -1582,6 +2339,13 @@
   "kind": "concept",
   "question": "What do `enumerate` and `zip` do, and what happens when zip gets lists of different lengths?",
   "what_tested": "Iteration helpers",
+  "options": [
+   "Index pairs and pairing; zip stops at shortest",
+   "zip pads the shorter list with None by default",
+   "zip raises ValueError on different lengths by default",
+   "enumerate sorts items before numbering them"
+  ],
+  "answer": 0,
   "model": "`enumerate(items, start=1)` yields `(index, item)` pairs, so you don't need `range(len(...))`. `zip(a, b)` pairs items from several iterables. It stops at the shortest one, silently dropping the extra items, which can hide data bugs in tests that compare expected and actual lists. Use `zip(a, b, strict=True)` (3.10+) to raise if the lengths differ, or `itertools.zip_longest` to pad.",
   "tags": [
    "iteration"
@@ -1594,6 +2358,13 @@
   "kind": "concept",
   "question": "What's the difference between an iterable and an iterator?",
   "what_tested": "Iterator protocol",
+  "options": [
+   "They're the same thing",
+   "Only lists are iterables",
+   "An iterator can be looped over many times; an iterable only once",
+   "Iterables make iterators; iterators are single-use"
+  ],
+  "answer": 3,
   "model": "An iterable can produce an iterator: it implements `__iter__`, as lists, dicts, strings and files do. An iterator produces values one at a time with `__next__` and raises `StopIteration` when done; it's also its own iterable. The practical difference is that iterators are single-use: once exhausted, iterating again yields nothing. That's a common bug when a generator is passed to two functions or checked with `list()` while debugging.",
   "tags": [
    "iteration",
@@ -1607,6 +2378,13 @@
   "kind": "concept",
   "question": "What's a generator, and where would you use one in a test framework?",
   "what_tested": "Lazy iteration, yield",
+  "options": [
+   "A function that generates random test data automatically",
+   "Lazy values via yield, e.g. yield fixtures",
+   "A class that creates other classes",
+   "A function that runs in parallel by default"
+  ],
+  "answer": 1,
   "model": "A generator uses `yield` to produce values lazily, keeping its state between values, so it saves memory on large data. In pytest, `yield` fixtures are the everyday example: code before `yield` is setup and code after is teardown. I also use generators to stream large CSV test data or walk paginated API results without loading everything at once.",
   "tags": [
    "generators"
@@ -1619,6 +2397,13 @@
   "kind": "concept",
   "question": "What does `yield from` do?",
   "what_tested": "Generator delegation",
+  "options": [
+   "It imports a generator from another module",
+   "It stops a generator immediately",
+   "Delegates to and yields from another iterable",
+   "It converts a generator into a list"
+  ],
+  "answer": 2,
   "model": "`yield from sub_iterable` yields every value from another iterable or generator, as if you'd written a loop around `yield`. It's neat for recursive generators, like walking nested JSON: `yield from walk(child)`. With generators it also passes through values sent with `.send()` and returns the sub-generator's return value, which is the mechanism older coroutine-based async code was built on.",
   "tags": [
    "generators"
@@ -1631,6 +2416,13 @@
   "kind": "concept",
   "question": "Explain decorators. What problem does functools.wraps solve?",
   "what_tested": "Higher-order functions",
+  "options": [
+   "Decorators only work on classes; wraps adds type checking",
+   "Wraps a function; wraps keeps its metadata",
+   "Decorators run once at startup; wraps makes them run on every call",
+   "wraps converts a function into a coroutine"
+  ],
+  "answer": 1,
   "model": "A decorator is a function that takes a function and returns a replacement, usually a wrapper that adds behaviour before or after the call: timing, logging, retries, auth checks. `@timer` above a def is shorthand for `fn = timer(fn)`. Without `functools.wraps`, the wrapper replaces the original's `__name__`, docstring and signature, so tracebacks, pytest reports and introspection show 'wrapper' instead of the real function. `@functools.wraps(fn)` copies that metadata across.",
   "tags": [
    "decorators"
@@ -1643,6 +2435,13 @@
   "kind": "concept",
   "question": "What is a closure?",
   "what_tested": "Functions capturing state",
+  "options": [
+   "A function that can't be called after it's defined",
+   "A function that closes files automatically",
+   "Inner function that keeps enclosing variables",
+   "A class with no methods"
+  ],
+  "answer": 2,
   "model": "A closure is an inner function that remembers variables from the enclosing function's scope even after that function has returned. For example, `make_multiplier(3)` returns a function that multiplies by 3. Decorators and factory fixtures in pytest rely on closures. Gotcha: closures created in a loop capture the variable, not its value at the time, so `[lambda: i for i in range(3)]` all return 2. Bind the value with a default argument (`lambda i=i: i`).",
   "tags": [
    "functions",
@@ -1656,6 +2455,13 @@
   "kind": "concept",
   "question": "How do context managers work, and how would you write one for a temporary environment variable in tests?",
   "what_tested": "__enter__/__exit__, contextlib",
+  "options": [
+   "__exit__ runs only if no exception occurs",
+   "with only works with files",
+   "__enter__/__exit__ run even on errors",
+   "You must call cleanup manually after a with block"
+  ],
+  "answer": 2,
   "model": "`with` calls `__enter__` on entry and `__exit__` on exit, even if an exception is raised, so cleanup always runs. The quickest way to write one is `contextlib.contextmanager`: set the variable, `yield`, and restore the old value in a `finally` block. In pytest you'd usually use the built-in `monkeypatch.setenv`, which restores the value for you.",
   "tags": [
    "context-managers"
@@ -1668,6 +2474,13 @@
   "kind": "concept",
   "question": "When do you use try / except / else / finally, and what's wrong with a bare `except:`?",
   "what_tested": "Exception handling",
+  "options": [
+   "else on success, finally always; bare except hides bugs",
+   "else runs when an exception is caught",
+   "finally runs only when an exception occurs",
+   "A bare except is best practice because it catches everything"
+  ],
+  "answer": 0,
   "model": "`try` holds the risky code, `except` handles specific exceptions, `else` runs only if nothing was raised (keep the success path there), and `finally` always runs, for cleanup. A bare `except:` also catches `KeyboardInterrupt` and `SystemExit` and hides real bugs, so catch the narrowest exception you expect. In test code, swallowing exceptions can make a broken test pass silently.",
   "tags": [
    "exceptions"
@@ -1680,6 +2493,13 @@
   "kind": "concept",
   "question": "How and why would you create custom exceptions in a test framework?",
   "what_tested": "Exception design",
+  "options": [
+   "Python doesn't allow custom exceptions",
+   "Custom exceptions must subclass BaseException directly",
+   "Raise strings instead of exception classes",
+   "Subclass Exception for clear, catchable errors"
+  ],
+  "answer": 3,
   "model": "Subclass `Exception` (or a more specific built-in): `class EnvironmentNotReady(Exception): pass`. Custom exceptions make failures self-explanatory in reports and let callers catch a category of error precisely. A framework might define a base `FrameworkError` with subclasses like `TestDataError` or `ApiContractError`, so a CI report clearly separates 'product bug' from 'test setup problem'. Use `raise NewError(...) from err` to keep the original cause in the traceback.",
   "tags": [
    "exceptions"
@@ -1692,6 +2512,13 @@
   "kind": "concept",
   "question": "What does `raise ... from ...` do?",
   "what_tested": "Exception chaining",
+  "options": [
+   "It retries the failed code once",
+   "Chains the original exception as __cause__",
+   "It suppresses all previous exceptions permanently",
+   "It imports an exception from another module"
+  ],
+  "answer": 1,
   "model": "`raise ConfigError(\"missing BASE_URL\") from err` sets the new exception's `__cause__`, so the traceback shows both: 'The above exception was the direct cause of the following exception'. That keeps the root cause visible when you translate a low-level error into a meaningful one. `raise X from None` suppresses the original context when it's just noise. Without `from`, Python still chains implicitly (`__context__`), but labels it as an error that happened during handling.",
   "tags": [
    "exceptions"
@@ -1704,6 +2531,13 @@
   "kind": "concept",
   "question": "What does `if __name__ == \"__main__\":` do?",
   "what_tested": "Module execution",
+  "options": [
+   "It's required in every Python file",
+   "Runs only when the file is executed directly",
+   "It runs only when the module is imported",
+   "It makes the module run faster"
+  ],
+  "answer": 1,
   "model": "Every module has a `__name__`. It's `\"__main__\"` when the file is run directly (`python script.py`) and the module's import name when it's imported. Code under that check runs only when the file is executed as a script, so you can import its functions elsewhere, including from tests, without triggering side effects such as starting a run or making network calls.",
   "tags": [
    "modules"
@@ -1716,6 +2550,13 @@
   "kind": "concept",
   "question": "What's the difference between a module and a package? What is `__init__.py` for?",
   "what_tested": "Code organisation",
+  "options": [
+   "__init__.py is where tests must live",
+   "A package is a single file; a module is a folder",
+   "Modules can't be imported without __init__.py",
+   "Module is a file; package is a directory"
+  ],
+  "answer": 3,
   "model": "A module is a single `.py` file; a package is a directory of modules. `__init__.py` marks a directory as a regular package and runs when the package is imported, so it can expose a public API (`from .client import ApiClient`). Without it you get a namespace package, which works for imports but can confuse tools. In pytest projects, `__init__.py` files in test directories also affect how test modules with the same name are told apart.",
   "tags": [
    "modules"
@@ -1728,6 +2569,13 @@
   "kind": "concept",
   "question": "Why use virtual environments, and how do you manage dependencies for a test project?",
   "what_tested": "Environment management",
+  "options": [
+   "To make Python run faster",
+   "Isolated, pinned dependencies per project",
+   "To share one global set of packages across all projects",
+   "Because pip only works inside virtual environments"
+  ],
+  "answer": 1,
   "model": "A virtual environment (`python -m venv .venv`) isolates a project's packages from the system and from other projects, so versions don't clash. Pin dependencies in `requirements.txt` or `pyproject.toml` (with a lock file from pip-tools, Poetry or uv) so CI and every engineer run the same versions. For Playwright, also pin the `playwright` package and run `playwright install` in CI, because browser builds are tied to the package version.",
   "tags": [
    "tooling"
@@ -1740,6 +2588,13 @@
   "kind": "concept",
   "question": "How does Python manage memory? What is reference counting?",
   "what_tested": "Memory management",
+  "options": [
+   "Reference counting plus a cycle collector",
+   "You must call free() manually",
+   "Memory is never freed until the program exits",
+   "Only a mark-and-sweep collector runs every 10 seconds"
+  ],
+  "answer": 0,
   "model": "CPython counts references to each object; when the count drops to zero the object is freed immediately. A separate cyclic garbage collector finds groups of objects that reference each other but are unreachable. In practice this means files and connections are often closed promptly, but you shouldn't rely on it. Use `with` blocks for deterministic cleanup. Memory leaks in long test runs usually come from caches or global lists that keep growing.",
   "tags": [
    "internals"
@@ -1752,6 +2607,13 @@
   "kind": "concept",
   "question": "Explain the GIL. Does it matter for running tests in parallel?",
   "what_tested": "Concurrency model",
+  "options": [
+   "The GIL is a pytest plugin for locking tests",
+   "The GIL blocks all parallel test runs",
+   "The GIL speeds up CPU-bound threads",
+   "One thread runs bytecode; xdist uses processes"
+  ],
+  "answer": 3,
   "model": "The Global Interpreter Lock lets only one thread run Python bytecode at a time in CPython, so threads don't speed up CPU-bound work. They still help with I/O-bound work (network calls, browser commands), because the GIL is released while waiting. `pytest-xdist` uses separate processes, each with its own interpreter and GIL, so the GIL isn't the bottleneck for parallel test runs. The real limits are shared test data and environment capacity. Python 3.13 also has an experimental free-threaded build.",
   "tags": [
    "concurrency"
@@ -1764,6 +2626,13 @@
   "kind": "concept",
   "question": "Threading vs multiprocessing vs asyncio: when would you use each?",
   "what_tested": "Concurrency choices",
+  "options": [
+   "multiprocessing shares memory freely between processes",
+   "Threads for CPU-bound work because of the GIL",
+   "Threads I/O, processes CPU, asyncio async I/O",
+   "asyncio for CPU-heavy number crunching"
+  ],
+  "answer": 2,
   "model": "Threading suits I/O-bound work with blocking libraries, such as calling many REST endpoints with `requests` through a `ThreadPoolExecutor`. Multiprocessing suits CPU-bound work, because each process has its own GIL. asyncio suits many concurrent I/O operations with async libraries (httpx, Playwright's async API) at low overhead, but everything in the chain must be async and one blocking call stalls the event loop. For test runs, xdist processes are simplest; asyncio fits load-style API checks.",
   "tags": [
    "concurrency"
@@ -1776,6 +2645,13 @@
   "kind": "concept",
   "question": "What are common pitfalls when using asyncio in test automation?",
   "what_tested": "Async in tests",
+  "options": [
+   "async functions can't raise exceptions",
+   "Blocking the event loop and missing await",
+   "You can freely mix Playwright's sync and async APIs in one thread",
+   "asyncio makes every test run in parallel automatically"
+  ],
+  "answer": 1,
   "model": "Calling a blocking function (`time.sleep`, `requests.get`) inside async code freezes the whole event loop. Forgetting `await` gives you a coroutine object instead of a result, and a 'coroutine was never awaited' warning. Mixing Playwright's sync and async APIs in one thread fails. Tests need an async-aware runner such as pytest-asyncio or anyio, with consistent event-loop scoping. Unhandled exceptions in background tasks can disappear silently. For most UI suites the sync API is simpler and parallelism comes from xdist instead.",
   "tags": [
    "concurrency",
@@ -1789,6 +2665,13 @@
   "kind": "concept",
   "question": "What are type hints, and do they affect runtime behaviour?",
   "what_tested": "Typing",
+  "options": [
+   "Checked by tools, not enforced at runtime",
+   "They raise TypeError at runtime when violated",
+   "They're required for every function",
+   "They make Python statically compiled"
+  ],
+  "answer": 0,
   "model": "Type hints (`def get_user(id: int) -> dict[str, Any]:`) document expected types. Python doesn't enforce them at runtime; tools such as mypy or pyright check them statically, and editors use them for autocompletion. In a test framework they catch mistakes like passing a page object where a locator is expected before anything runs, and they make shared fixtures and helpers self-documenting. Libraries like pydantic do use hints at runtime for validation.",
   "tags": [
    "typing"
@@ -1801,6 +2684,13 @@
   "kind": "concept",
   "question": "What is duck typing?",
   "what_tested": "Dynamic typing philosophy",
+  "options": [
+   "Objects must inherit from a common base class to be used interchangeably",
+   "Converting objects to the right type automatically",
+   "Behaviour matters, not the class",
+   "A typing module for defining interfaces only"
+  ],
+  "answer": 2,
   "model": "'If it walks like a duck and quacks like a duck, it's a duck': Python cares whether an object has the methods you call, not what class it is. Any object with `read()` can be used where a file is expected. That's why test doubles work so easily: a fake object with the same methods can replace a real API client. `typing.Protocol` lets you describe these structural interfaces so type checkers understand them too.",
   "tags": [
    "oop",
@@ -1814,6 +2704,13 @@
   "kind": "concept",
   "question": "What's the walrus operator, and where is it useful?",
   "what_tested": "Assignment expressions",
+  "options": [
+   "It defines a constant",
+   "It swaps two variables",
+   "Assigns inside an expression with :=",
+   "It compares two values for identity"
+  ],
+  "answer": 2,
   "model": "`:=` (Python 3.8+) assigns and returns a value inside an expression. Typical uses: `if (m := pattern.search(line)):` to use the match immediately, `while (chunk := f.read(8192)):` for read loops, and filtering a comprehension without computing a value twice, e.g. `[y for x in data if (y := transform(x)) is not None]`. Use it sparingly; readability comes first.",
   "tags": [
    "basics"
@@ -1826,6 +2723,13 @@
   "kind": "concept",
   "question": "What does structural pattern matching (`match`/`case`) add in Python 3.10?",
   "what_tested": "Modern syntax",
+  "options": [
+   "A faster switch that only compares integers",
+   "Matches and destructures values by pattern",
+   "Regex matching built into the language",
+   "A replacement for if statements that removes else"
+  ],
+  "answer": 1,
   "model": "`match` compares a value against patterns and can destructure it at the same time: literal values, sequences, mappings, class patterns and guards (`case {\"status\": 200, \"data\": data}:`). It's handy for branching on the shape of API responses or parsing commands. It isn't just a switch statement: patterns bind variables, and a bare name in a case captures rather than compares, which is a common gotcha (use dotted constants or literals to compare).",
   "tags": [
    "basics"
@@ -1838,6 +2742,13 @@
   "kind": "concept",
   "question": "How do you read and write files safely in Python?",
   "what_tested": "File I/O",
+  "options": [
+   "Rely on the default encoding, which is the same on every OS",
+   "Read every file with read() into memory",
+   "open() without with, then call close() at the end",
+   "with open(..., encoding='utf-8')"
+  ],
+  "answer": 3,
   "model": "Use `with open(path, encoding=\"utf-8\") as f:` so the file is closed even if an error occurs, and always pass an encoding explicitly, because the default differs between Windows and Linux CI machines. Iterate over `f` line by line for large files instead of `read()`. `pathlib.Path` makes paths cross-platform (`Path(\"data\") / \"users.csv\"`), and `path.read_text()` / `write_text()` are convenient for small files.",
   "tags": [
    "io"
@@ -1850,6 +2761,13 @@
   "kind": "concept",
   "question": "How do you work with JSON in Python? What's the difference between dumps/loads and dump/load?",
   "what_tested": "json module",
+  "options": [
+   "There's no difference",
+   "loads reads files; load reads strings",
+   "s-versions use strings; others use files",
+   "dumps validates JSON; dump formats it"
+  ],
+  "answer": 2,
   "model": "`json.loads(text)` parses a string into Python objects and `json.dumps(obj)` serialises to a string. `json.load(f)` and `json.dump(obj, f)` do the same with file objects. Useful options: `indent=2` for readable output, `sort_keys=True` for stable diffs, `ensure_ascii=False` for non-English text, and `default=str` to serialise dates. Note that JSON objects become dicts and `null` becomes `None`; tuples, sets and Decimal need converting.",
   "tags": [
    "json"
@@ -1862,6 +2780,13 @@
   "kind": "concept",
   "question": "Why shouldn't you use floats for money, and what do you use instead?",
   "what_tested": "Decimal precision",
+  "options": [
+   "Floats are inexact; use Decimal from strings",
+   "Floats are fine if you round to two decimals",
+   "Use int for everything and ignore fractions",
+   "Decimal(19.99) built from a float is the safest choice"
+  ],
+  "answer": 0,
   "model": "Floats are binary and can't represent most decimal fractions exactly: `0.1 + 0.2 == 0.30000000000000004`. In finance tests this causes false failures, or worse, false passes when you compare with a tolerance. Use `decimal.Decimal`, built from strings (`Decimal(\"19.99\")`, never `Decimal(19.99)`), and round explicitly with `quantize` and a chosen rounding mode. Alternatively, store amounts as integer minor units (paise or cents).",
   "tags": [
    "finance",
@@ -1875,6 +2800,13 @@
   "kind": "concept",
   "question": "What are common pitfalls with dates and times in tests?",
   "what_tested": "datetime and time zones",
+  "options": [
+   "Only leap years cause problems",
+   "time.sleep fixes all date issues",
+   "Dates are always handled identically on every machine",
+   "Time zones, naive datetimes, 'today' at midnight"
+  ],
+  "answer": 3,
   "model": "Naive datetimes (no time zone) compared with aware ones raise errors, and naive times silently mean 'whatever the machine's zone is', which differs between a laptop in IST and a CI runner in UTC. Use aware UTC datetimes internally (`datetime.now(timezone.utc)`) and `zoneinfo` for display zones. Tests that depend on 'today' break around midnight and month ends, so inject or freeze the clock (e.g. freezegun or time-machine). Also watch DST transitions and leap years.",
   "tags": [
    "dates"
@@ -1887,6 +2819,13 @@
   "kind": "concept",
   "question": "What is `self` in a Python class, and what does `__init__` do?",
   "what_tested": "Classes basics",
+  "options": [
+   "__init__ creates the object and returns it",
+   "self must be passed explicitly in every method call",
+   "self is a reserved keyword that refers to the class",
+   "self is the instance; __init__ initialises it"
+  ],
+  "answer": 3,
   "model": "`self` is the instance a method is called on; Python passes it automatically, so `page.login(user)` becomes `LoginPage.login(page, user)`. The name is a convention, not a keyword. `__init__` is the initialiser that runs after the object is created and sets up its attributes, such as storing `self.page = page` and defining locators in a page object. It doesn't create the object (that's `__new__`) and it shouldn't return anything.",
   "tags": [
    "oop"
@@ -1899,6 +2838,13 @@
   "kind": "concept",
   "question": "What's the difference between class attributes and instance attributes? Where's the trap?",
   "what_tested": "Attribute lookup",
+  "options": [
+   "Class attributes can't be read from instances",
+   "Class attributes are shared by all instances",
+   "There's no difference in Python",
+   "Instance attributes are shared across all objects"
+  ],
+  "answer": 1,
   "model": "Instance attributes (set via `self.x = ...`) belong to one object; class attributes (defined in the class body) are shared by all instances. Lookup checks the instance first, then the class. The trap is a mutable class attribute such as `results = []`: appending to it through any instance changes it for all of them, so test objects silently share state. Define mutable state in `__init__`.",
   "tags": [
    "oop",
@@ -1912,6 +2858,13 @@
   "kind": "concept",
   "question": "What's the difference between instance methods, @classmethod and @staticmethod? Give a test-framework example of each.",
   "what_tested": "Method types",
+  "options": [
+   "self, cls, or neither",
+   "All three behave identically",
+   "Class methods can only be called on instances",
+   "Static methods receive the class automatically"
+  ],
+  "answer": 0,
   "model": "An instance method receives `self` and works with one object's state, e.g. `LoginPage.login(user)`. A `@classmethod` receives the class (`cls`) and is typical for alternative constructors, e.g. `User.from_json(data)` or `Config.from_env()`, and it respects subclasses. A `@staticmethod` receives neither; it's a plain function namespaced in the class, such as a `BasePage.slugify(text)` helper. If a static method doesn't relate to the class, it can simply be a module-level function.",
   "tags": [
    "oop"
@@ -1924,6 +2877,13 @@
   "kind": "concept",
   "question": "How does inheritance work in Python, and what does `super()` do?",
   "what_tested": "Inheritance",
+  "options": [
+   "Subclasses inherit; super() follows the MRO",
+   "super() always calls object.__init__ only",
+   "super() creates a new parent object",
+   "Python doesn't support inheritance"
+  ],
+  "answer": 0,
   "model": "A subclass inherits attributes and methods from its parent and can override them. `super().__init__(page)` calls the next class in the method resolution order, so the parent's setup runs before the subclass adds its own. In a test framework, a `BasePage` might hold shared helpers (navigation, waiting for a toast) that `LoginPage` and `DashboardPage` inherit. Keep hierarchies shallow; deep inheritance trees in page objects get hard to follow.",
   "tags": [
    "oop"
@@ -1936,6 +2896,13 @@
   "kind": "concept",
   "question": "What is the MRO, and how does Python handle multiple inheritance?",
   "what_tested": "Method resolution order",
+  "options": [
+   "Methods are resolved alphabetically",
+   "C3-linearised method lookup order",
+   "Python forbids multiple inheritance",
+   "The order classes are defined in the file"
+  ],
+  "answer": 1,
   "model": "The method resolution order is the sequence of classes Python searches for an attribute, computed with the C3 linearisation algorithm. It guarantees a child comes before its parents and keeps the order the bases were listed in. You can inspect it with `ClassName.__mro__`. With multiple inheritance (mixins), `super()` follows the MRO rather than the literal parent, which is what makes cooperative mixins such as `LoggingMixin` and `RetryMixin` work, provided each one calls `super()`.",
   "tags": [
    "oop"
@@ -1948,6 +2915,13 @@
   "kind": "concept",
   "question": "How does Python handle encapsulation? What do `_name` and `__name` mean?",
   "what_tested": "Access conventions",
+  "options": [
+   "_ is convention; __ mangles names",
+   "__name makes an attribute truly private and inaccessible",
+   "_name raises an error if accessed outside the class",
+   "Python has public, private and protected keywords"
+  ],
+  "answer": 0,
   "model": "Python has no true private members. A single underscore (`_session`) is a convention meaning 'internal, don't rely on this'. A double underscore (`__token`) triggers name mangling to `_ClassName__token`, mainly to avoid accidental clashes in subclasses, not for security. In a framework, expose a clean public API on page objects and clients and mark helpers with a single underscore; reviewers then know what's safe to call from tests.",
   "tags": [
    "oop"
@@ -1960,6 +2934,13 @@
   "kind": "concept",
   "question": "What does @property do, and when would you use it?",
   "what_tested": "Computed attributes",
+  "options": [
+   "Exposes a method as an attribute",
+   "It turns a method into a static method",
+   "It caches a method's results forever",
+   "It makes an attribute read-only for the class only"
+  ],
+  "answer": 0,
   "model": "`@property` turns a method into an attribute you access without parentheses: `result.passed` instead of `result.passed()`. Use it for cheap computed values, or to add validation or lazy loading later without changing every caller. A setter (`@x.setter`) can validate assignments. Avoid putting slow work behind a property, such as an API call or a browser query, because callers won't expect attribute access to be expensive.",
   "tags": [
    "oop"
@@ -1972,6 +2953,13 @@
   "kind": "concept",
   "question": "What's the difference between `__str__` and `__repr__`?",
   "what_tested": "Object representation",
+  "options": [
+   "__str__ is used in the debugger; __repr__ by print",
+   "__repr__ is only used for logging",
+   "They're identical",
+   "__repr__ for developers; __str__ for display"
+  ],
+  "answer": 3,
   "model": "`__repr__` is for developers: an unambiguous representation, ideally something that could recreate the object, shown in the REPL, in debuggers and inside containers. `__str__` is for readable output via `print()` and f-strings, and it falls back to `__repr__` if not defined. Defining a good `__repr__` on test-data classes makes pytest failure messages far more useful than `<User object at 0x...>`. `@dataclass` generates one for you.",
   "tags": [
    "oop"
@@ -1984,6 +2972,13 @@
   "kind": "concept",
   "question": "If you override `__eq__`, why should you also think about `__hash__`?",
   "what_tested": "Equality and hashing contract",
+  "options": [
+   "Overriding __eq__ automatically updates __hash__ correctly",
+   "__hash__ is unrelated to equality",
+   "Equal objects need equal hashes",
+   "Only lists need __hash__"
+  ],
+  "answer": 2,
   "model": "Objects that compare equal must have equal hashes, or sets and dicts behave incorrectly. If you define `__eq__` without `__hash__`, Python sets `__hash__` to `None`, making instances unhashable, which is a safe default for mutable objects. For immutable value objects, define `__hash__` from the same fields used in `__eq__`, or use `@dataclass(frozen=True)`, which does this for you.",
   "tags": [
    "oop"
@@ -1996,6 +2991,13 @@
   "kind": "concept",
   "question": "What are abstract base classes, and how could you use one in a framework?",
   "what_tested": "abc module",
+  "options": [
+   "Classes that are compiled to C",
+   "Classes that can't have any methods",
+   "Classes that automatically mock their methods",
+   "Classes with methods subclasses must implement"
+  ],
+  "answer": 3,
   "model": "`abc.ABC` with `@abstractmethod` defines an interface that subclasses must implement; trying to instantiate a class with unimplemented abstract methods raises TypeError. In a framework, a `BaseApiClient` might declare `authenticate()` as abstract, so every service client is forced to implement it consistently, or a `ReportPublisher` base could have Slack and email implementations. For purely structural typing without inheritance, `typing.Protocol` is the alternative.",
   "tags": [
    "oop"
@@ -2008,6 +3010,13 @@
   "kind": "concept",
   "question": "Composition vs inheritance: which do you prefer for page objects, and why?",
   "what_tested": "Design principles",
+  "options": [
+   "Avoid classes and use global functions only",
+   "Put every locator in one global BasePage",
+   "Composition with component objects",
+   "Deep inheritance chains for every page type"
+  ],
+  "answer": 2,
   "model": "Prefer composition for most things: a `CheckoutPage` that has a `HeaderComponent` and a `CartTable` reuses UI pieces wherever they appear, without forcing everything into one hierarchy. Inheritance is fine for a thin `BasePage` with truly common behaviour. Deep inheritance (`BasePage` → `AuthenticatedPage` → `AdminPage` → …) becomes brittle: changes ripple unexpectedly and it's hard to tell where a method comes from. Component objects map naturally onto modern component-based UIs.",
   "tags": [
    "oop",
@@ -2021,6 +3030,13 @@
   "kind": "concept",
   "question": "What is polymorphism? Give an example from test automation.",
   "what_tested": "OOP principles",
+  "options": [
+   "One class with many constructors",
+   "Many classes, one shared interface",
+   "Running the same test in several browsers",
+   "A class that changes its type at runtime"
+  ],
+  "answer": 1,
   "model": "Polymorphism means different classes can be used through the same interface. Example: `ChromeConfig`, `FirefoxConfig` and `MobileConfig` all implement `context_args()`, and the fixture calls it without caring which one it has. Another: several reporters (Allure, Slack, JUnit XML) all implement `publish(results)`. In Python this often comes from duck typing rather than a shared base class.",
   "tags": [
    "oop"
@@ -2033,6 +3049,13 @@
   "kind": "concept",
   "question": "What are dataclasses, and why are they useful for test data?",
   "what_tested": "dataclasses",
+  "options": [
+   "Auto-generated __init__, __repr__, __eq__",
+   "Classes that can only hold strings",
+   "A pytest plugin for loading CSV data",
+   "Classes that store data in a database"
+  ],
+  "answer": 0,
   "model": "`@dataclass` generates `__init__`, `__repr__` and `__eq__` from annotated fields, so a `User(name: str, role: str = \"viewer\")` class is a few lines. They make test data readable, give useful failure messages and compare by value. `field(default_factory=list)` avoids shared mutable defaults, `frozen=True` makes instances immutable and hashable, and `dataclasses.replace(user, role=\"admin\")` creates variations cleanly. For validation of external data, pydantic models go further.",
   "tags": [
    "oop",
@@ -2046,6 +3069,13 @@
   "kind": "concept",
   "question": "What do `__slots__` do?",
   "what_tested": "Memory and attributes",
+  "options": [
+   "Methods that run in parallel slots",
+   "Required for every dataclass",
+   "Fixed attributes, no per-instance __dict__",
+   "A way to declare private methods"
+  ],
+  "answer": 2,
   "model": "Defining `__slots__ = (\"name\", \"status\")` tells Python to store attributes in a fixed structure instead of a per-instance `__dict__`. That saves memory and slightly speeds up attribute access when you have millions of objects, and it also prevents typos from silently creating new attributes. The trade-offs: no dynamic attributes and some complications with inheritance. It's rarely needed in test code, but it's a common 'deep Python' interview question.",
   "tags": [
    "oop",
@@ -2059,6 +3089,13 @@
   "kind": "concept",
   "question": "What's the difference between `__new__` and `__init__`?",
   "what_tested": "Object creation",
+  "options": [
+   "__init__ creates the object; __new__ deletes it",
+   "__new__ creates; __init__ initialises",
+   "__new__ runs after __init__",
+   "They're aliases"
+  ],
+  "answer": 1,
   "model": "`__new__` is a static method that creates and returns the new instance; `__init__` then initialises that instance. You almost never override `__new__`, except when subclassing immutable types such as `str` or `tuple` (whose value must be set at creation), or implementing patterns like singletons. If `__new__` returns an object that isn't an instance of the class, `__init__` isn't called.",
   "tags": [
    "oop",
@@ -2072,6 +3109,13 @@
   "kind": "concept",
   "question": "What's the difference between mocks, stubs and fakes? Give an example of each.",
   "what_tested": "Test doubles",
+  "options": [
+   "Mocks run against the real system; stubs never return data",
+   "Canned data; call checks; working fakes",
+   "They're all the same thing",
+   "Fakes are only used in production code"
+  ],
+  "answer": 1,
   "model": "A stub returns canned answers, e.g. a payment gateway stub that always returns 'approved'. A mock also records how it was called so you can assert on interactions: `mock_email.send.assert_called_once_with(\"user@x.com\")`. A fake is a lightweight working implementation, such as an in-memory repository or a local SQLite database instead of the real one. Use stubs to control inputs, mocks to verify outgoing calls, and fakes when you need realistic behaviour without the real dependency.",
   "tags": [
    "testing",
@@ -2085,6 +3129,13 @@
   "kind": "concept",
   "question": "How does `unittest.mock.patch` work, and what is the 'patch where it's used' rule?",
   "what_tested": "Mocking",
+  "options": [
+   "patch permanently replaces the function for the whole run",
+   "Patch where the name is looked up",
+   "Always patch the module where the function is defined",
+   "patch only works on classes"
+  ],
+  "answer": 1,
   "model": "`patch(\"module.name\")` temporarily replaces an object with a `MagicMock` (or something you supply) for the duration of a `with` block, decorator or test. The rule: patch the name in the namespace where it's looked up, not where it's defined. If `report.py` does `from notifier import send`, patch `report.send`, not `notifier.send`, because `report` already holds its own reference. Getting this wrong means the real function still runs.",
   "tags": [
    "testing",
@@ -2098,6 +3149,13 @@
   "kind": "concept",
   "question": "What does `MagicMock(spec=SomeClass)` give you over a plain MagicMock?",
   "what_tested": "Safer mocks",
+  "options": [
+   "It records network traffic",
+   "It makes the mock run the real implementation",
+   "Only real attributes and calls are allowed",
+   "It speeds up the mock"
+  ],
+  "answer": 2,
   "model": "A plain `MagicMock` accepts any attribute or method call, so a typo like `client.get_usre()` silently succeeds and the test passes for the wrong reason. `spec=SomeClass` (or `autospec=True` with `patch`) restricts the mock to attributes that really exist and, with autospec, checks call signatures too. That keeps mocks in sync with the real interface as it changes.",
   "tags": [
    "testing",
@@ -2111,6 +3169,13 @@
   "kind": "concept",
   "question": "What is monkeypatching, and how does pytest's monkeypatch fixture help?",
   "what_tested": "Runtime patching",
+  "options": [
+   "Making tests run in a monkey-testing mode",
+   "Runtime patching that's undone after each test",
+   "Editing the source file during the test",
+   "Running tests with random data"
+  ],
+  "answer": 1,
   "model": "Monkeypatching means replacing attributes, functions or environment values at runtime, for example forcing `datetime.now` or an environment variable to a known value. pytest's `monkeypatch` fixture does it with automatic undo after the test: `monkeypatch.setenv(\"BASE_URL\", \"http://localhost\")`, `monkeypatch.setattr(module, \"func\", fake)`, `monkeypatch.delenv(...)`. That prevents one test's patch from leaking into the next, which is easy to get wrong with manual patching.",
   "tags": [
    "testing"
@@ -2123,6 +3188,13 @@
   "kind": "concept",
   "question": "How does pytest make plain `assert` statements show useful failure messages?",
   "what_tested": "Assertion rewriting",
+  "options": [
+   "It only works when running with -O",
+   "Python itself prints diffs for every assert",
+   "Assertion rewriting at import time",
+   "pytest replaces assert with assertEqual internally"
+  ],
+  "answer": 2,
   "model": "pytest rewrites assert statements in test modules (and conftest files) at import time, so a failure shows the values on both sides and a diff for lists, dicts and strings, without special methods like `assertEqual`. Assertions in helper modules aren't rewritten unless you register them with `pytest.register_assert_rewrite`. Also, Python strips `assert` statements when run with `-O`, so never use `assert` for production input validation.",
   "tags": [
    "testing",
@@ -2136,6 +3208,13 @@
   "kind": "concept",
   "question": "How do you test that a function raises the right exception?",
   "what_tested": "Exception testing",
+  "options": [
+   "pytest.fail() inside the function",
+   "with pytest.raises(Error, match=...)",
+   "assert func() == ValueError",
+   "try/except with assert True in the except block"
+  ],
+  "answer": 1,
   "model": "In pytest: `with pytest.raises(ValueError, match=\"must be positive\"):` around the call. `match` is a regex checked against the message, so you verify it's the right error and not just any ValueError. `excinfo = ...` lets you inspect attributes afterwards. Avoid try/except with an assert in the except block: if no exception is raised, that test passes silently unless you remember to add a `pytest.fail()`.",
   "tags": [
    "testing",
@@ -2149,6 +3228,13 @@
   "kind": "concept",
   "question": "What is logging, and why prefer it over print() in a test framework?",
   "what_tested": "logging module",
+  "options": [
+   "logging can't be configured per module",
+   "Levels, handlers and per-test capture",
+   "logging always writes to a database",
+   "print is better because it's faster"
+  ],
+  "answer": 1,
   "model": "The `logging` module gives levels (DEBUG, INFO, WARNING, ERROR), timestamps, logger names per module and configurable handlers (console, file, CI artifacts) without changing code. pytest captures logs and shows them only for failing tests, and `--log-cli-level=INFO` streams them live. With `print()` you lose levels and filtering, and output gets mixed up under xdist. Get a logger with `logging.getLogger(__name__)` and never log secrets.",
   "tags": [
    "tooling"
@@ -2161,6 +3247,13 @@
   "kind": "concept",
   "question": "How do you read configuration and secrets in a test framework?",
   "what_tested": "Config management",
+  "options": [
+   "Store them in the test names",
+   "Commit a secrets.json file to the repo",
+   "Hard-code them in conftest.py",
+   "Environment or vault, one validated config"
+  ],
+  "answer": 3,
   "model": "Read environment-specific values (base URL, credentials) from environment variables, set by CI secrets or a local `.env` file loaded with python-dotenv, and keep `.env` out of git. Wrap them in one config object, such as a pydantic `BaseSettings` or a dataclass built in a session fixture, so the rest of the code never touches `os.environ` directly. Fail fast with a clear message when a required value is missing, and never print secret values in logs or reports.",
   "tags": [
    "tooling",
@@ -2174,6 +3267,13 @@
   "kind": "concept",
   "question": "What are linters and formatters, and which would you use on a test codebase?",
   "what_tested": "Code quality tooling",
+  "options": [
+   "Style tools and bug finders, enforced in CI",
+   "They replace the need for tests",
+   "Linters change code style; formatters find runtime bugs",
+   "They're only for production code, not tests"
+  ],
+  "answer": 0,
   "model": "A formatter rewrites code to a consistent style (Black, or `ruff format`), which ends style debates in reviews. A linter finds likely bugs and bad patterns: unused imports, undefined names, mutable defaults, bare excepts. Ruff does both quickly. Add a type checker (mypy or pyright) for larger frameworks, and run all of them in pre-commit hooks and CI. Test code deserves the same standards as product code because it's maintained just as long.",
   "tags": [
    "tooling"
@@ -2186,6 +3286,13 @@
   "kind": "concept",
   "question": "How would you run a command-line tool from Python and check its output in a test?",
   "what_tested": "subprocess",
+  "options": [
+   "eval() the command string",
+   "subprocess.run with capture, timeout, returncode",
+   "os.system() and parse its return string",
+   "subprocess.run('cmd', shell=True) with no timeout"
+  ],
+  "answer": 1,
   "model": "Use `subprocess.run([\"cli\", \"--version\"], capture_output=True, text=True, timeout=30, check=False)`, then assert on `result.returncode`, `result.stdout` and `result.stderr`. Pass the command as a list rather than a shell string to avoid quoting problems and injection, always set a timeout so a hung process can't block CI, and use `check=True` when any non-zero exit should raise immediately.",
   "tags": [
    "stdlib"
@@ -2198,6 +3305,13 @@
   "kind": "concept",
   "question": "What does pathlib give you over os.path?",
   "what_tested": "File paths",
+  "options": [
+   "It only works on Windows",
+   "Automatic file encryption",
+   "Object-oriented cross-platform paths",
+   "Faster file reads in C"
+  ],
+  "answer": 2,
   "model": "`pathlib.Path` is an object-oriented path API: `Path(__file__).parent / \"data\" / \"users.json\"` builds cross-platform paths with `/`, and methods such as `.exists()`, `.read_text()`, `.glob(\"*.json\")`, `.mkdir(parents=True, exist_ok=True)` and `.suffix` replace scattered `os` and `os.path` calls. In test frameworks, building paths relative to `__file__` (or using pytest's `tmp_path` fixture) avoids tests that only work from one working directory.",
   "tags": [
    "stdlib",
@@ -2211,6 +3325,13 @@
   "kind": "concept",
   "question": "Name some useful functions from itertools and functools.",
   "what_tested": "Standard library",
+  "options": [
+   "itertools: sort, max; functools: print",
+   "itertools: Thread, Lock; functools: Queue",
+   "itertools: json, csv; functools: re",
+   "chain, islice, product; partial, lru_cache"
+  ],
+  "answer": 3,
   "model": "itertools: `chain` (concatenate iterables), `islice` (take n items lazily), `groupby` (group consecutive items, so sort first), `product` (combinations of test parameters), `combinations` and `permutations`, `zip_longest`, and `batched` (3.12). functools: `partial` (pre-fill arguments), `lru_cache` and `cache` (memoisation), `wraps` (decorators), `reduce`, `cached_property`, and `total_ordering`. `itertools.product` is handy for generating a test-data matrix such as browsers × roles × locales.",
   "tags": [
    "stdlib"
@@ -2223,6 +3344,13 @@
   "kind": "concept",
   "question": "What are regular expressions useful for in testing, and what are common mistakes?",
   "what_tested": "re module",
+  "options": [
+   "re.match searches anywhere in the string",
+   "Greedy .* is always the safest choice",
+   "Extract and validate; raw strings, search vs match",
+   "Regex is only for HTML parsing"
+  ],
+  "answer": 2,
   "model": "They're useful for extracting values from logs and responses (IDs, amounts, timestamps), validating formats, and flexible text assertions. In Playwright, `expect(locator).to_have_text(re.compile(r\"Order #\\d+\"))` is a common pattern. Common mistakes: forgetting raw strings (`r\"\\d\"`), using `re.match` (anchored at the start) when you meant `re.search`, greedy `.*` grabbing too much (use `.*?`), and writing an unreadable regex when a simple `in` check or `str.split` would do.",
   "tags": [
    "stdlib",
@@ -2236,6 +3364,13 @@
   "kind": "concept",
   "question": "What's the time complexity of common list and dict operations?",
   "what_tested": "Big-O awareness",
+  "options": [
+   "Everything is O(1) in Python",
+   "Appending to a list is O(n log n)",
+   "List 'in' is O(n); dict lookups O(1)",
+   "Dict lookups are O(n); list 'in' is O(1)"
+  ],
+  "answer": 2,
   "model": "List: indexing and `append` are O(1) (amortised); `insert(0, x)`, `pop(0)` and `x in list` are O(n); sorting is O(n log n). Dict and set: lookup, insert and delete are O(1) on average. So replacing `if x in big_list` inside a loop with a set lookup changes O(n²) to O(n), a frequent interview follow-up. Use `collections.deque` when you need O(1) pops from the front.",
   "tags": [
    "performance"
@@ -2248,6 +3383,13 @@
   "kind": "concept",
   "question": "What happens if you modify a list while iterating over it?",
   "what_tested": "Iteration gotcha",
+  "options": [
+   "It sorts the list first",
+   "Python automatically handles it safely",
+   "It always raises an error for lists",
+   "Elements get skipped; iterate a copy"
+  ],
+  "answer": 3,
   "model": "Removing items while iterating with `for x in items:` skips elements, because the indices shift under the loop. Adding items can cause an infinite loop. Changing a dict's size during iteration raises `RuntimeError`. Iterate over a copy (`for x in items[:]`) or, better, build a new list: `items = [x for x in items if keep(x)]`. A classic bug in test-data cleanup code.",
   "tags": [
    "gotchas"
@@ -2260,6 +3402,13 @@
   "kind": "concept",
   "question": "What is the difference between `range` in Python 3 and a list?",
   "what_tested": "Lazy sequences",
+  "options": [
+   "range can only be iterated once",
+   "range builds the full list in memory",
+   "A lazy sequence using constant memory",
+   "range doesn't support len() or indexing"
+  ],
+  "answer": 2,
   "model": "`range(10**9)` doesn't allocate a billion integers; it's a lazy, immutable sequence that computes values on demand, so it uses constant memory. It still supports indexing, slicing, `len()` and O(1) membership tests for integers. Use `list(range(...))` only when you really need a list. In Python 2, `range` built a list and `xrange` was lazy, which is why older code and older interview questions mention both.",
   "tags": [
    "basics"
@@ -2272,6 +3421,13 @@
   "kind": "concept",
   "question": "What's the difference between `copy`, `=` and `deepcopy` for dicts of test data?",
   "what_tested": "References in practice",
+  "options": [
+   "deepcopy only copies the keys",
+   "= creates a deep copy",
+   "Alias, shallow copy, full nested copy",
+   ".copy() copies all nested levels"
+  ],
+  "answer": 2,
   "model": "`b = a` creates a second name for the same dict, so changes through either are visible in both. `a.copy()` (or `dict(a)`, `{**a}`) creates a new top-level dict, but nested dicts and lists are still shared. `copy.deepcopy(a)` copies all nested levels. When you build a request payload from a template and tweak nested fields per test, deepcopy, or a factory function that returns a fresh dict each time, prevents tests from corrupting each other's data.",
   "tags": [
    "dicts",
@@ -2285,6 +3441,13 @@
   "kind": "concept",
   "question": "How would you make a function that accepts either one item or a list of items?",
   "what_tested": "API design",
+  "options": [
+   "Use recursion for every argument",
+   "Normalise input; treat strings specially",
+   "It's impossible in Python",
+   "Iterate over whatever is passed; strings work the same as lists"
+  ],
+  "answer": 1,
   "model": "Normalise at the top: `if isinstance(items, (str, bytes)) or not isinstance(items, Iterable): items = [items]`. Strings need special handling because they're iterable themselves, which is a frequent bug (each character becomes an item). Often a cleaner design is to always take an iterable, or to use `*items` so callers write `delete_users(u1, u2)`. Type hints like `str | list[str]` document the choice.",
   "tags": [
    "functions",
@@ -2298,6 +3461,13 @@
   "kind": "concept",
   "question": "What's the difference between `@functools.lru_cache` and `@functools.cached_property`?",
   "what_tested": "Caching tools",
+  "options": [
+   "They're identical",
+   "Per-arguments cache vs per-instance cache",
+   "cached_property caches across all instances by arguments",
+   "lru_cache only works on properties"
+  ],
+  "answer": 1,
   "model": "`lru_cache(maxsize=128)` memoises a function's results by its arguments, with optional size-bounded eviction; arguments must be hashable. `cached_property` computes a property once per instance and stores the result on the instance, which is useful for expensive, stable attributes like a parsed config. Gotcha: `lru_cache` on a method includes `self` in the key and keeps instances alive, which can leak memory in long test runs.",
   "tags": [
    "stdlib",
@@ -2311,6 +3481,13 @@
   "kind": "concept",
   "question": "How do you handle a CSV file of test data in Python?",
   "what_tested": "csv module",
+  "options": [
+   "Split each line on commas manually, which handles quoted fields",
+   "csv values are typed automatically",
+   "json.load() on the CSV file",
+   "csv.DictReader, then convert types"
+  ],
+  "answer": 3,
   "model": "Use `csv.DictReader` so each row becomes a dict keyed by the header: `with open(path, newline=\"\", encoding=\"utf-8\") as f: rows = list(csv.DictReader(f))`. Remember that every value is a string, so convert numbers, booleans and dates explicitly. Pass `newline=\"\"` when writing too, to avoid blank lines on Windows. For data-driven tests, load the rows once and feed them to `pytest.mark.parametrize`, with an id built from a meaningful column.",
   "tags": [
    "io",
@@ -2324,6 +3501,13 @@
   "kind": "concept",
   "question": "How would you speed up a slow pure-Python data-processing step in a test utility?",
   "what_tested": "Performance approach",
+  "options": [
+   "Rewrite everything in C first",
+   "Add threads immediately",
+   "Profile first, then fix the algorithm",
+   "Add time.sleep to reduce CPU load"
+  ],
+  "answer": 2,
   "model": "Measure first with `cProfile` (or `pytest --durations` for tests) to find the real hotspot. Then fix the algorithm, e.g. a set or dict lookup instead of nested loops, which usually beats micro-tuning. Use built-ins and the standard library (`sum`, `sorted`, `Counter`), which run in C. Stream with generators instead of building huge lists, and cache repeated work. Only then consider parallelism or libraries such as pandas or numpy for heavy data.",
   "tags": [
    "performance"
@@ -2336,6 +3520,13 @@
   "kind": "concept",
   "question": "What is `__name__`, `__file__` and `__doc__`?",
   "what_tested": "Module and object metadata",
+  "options": [
+   "Environment variables",
+   "Private variables set by pytest",
+   "Import name, source path, docstring",
+   "The class name, the folder name and the version"
+  ],
+  "answer": 2,
   "model": "`__name__` is a module's import name (or `\"__main__\"` when run directly) and, on functions and classes, their name. `__file__` is the path of the module's source file, useful for building paths to test data relative to the code (`Path(__file__).parent / \"data\"`). `__doc__` holds the docstring, which `help()`, IDEs and documentation tools read. pytest shows test docstrings in some reporters, so meaningful ones help.",
   "tags": [
    "modules"
@@ -2348,6 +3539,13 @@
   "kind": "concept",
   "question": "How do you avoid circular imports in a growing test framework?",
   "what_tested": "Module design",
+  "options": [
+   "Use from module import * everywhere",
+   "Circular imports are fine and never fail",
+   "Move shared code lower; import lazily",
+   "Add the same import twice"
+  ],
+  "answer": 2,
   "model": "Circular imports happen when module A imports B at import time and B imports A. Fix the structure first: move shared pieces (constants, base classes, types) into a lower-level module both can import, and keep dependencies flowing one way (tests → pages → components → core). As tactical fixes, import inside the function that needs it, or import only for type checking with `if TYPE_CHECKING:` and string annotations.",
   "tags": [
    "modules",

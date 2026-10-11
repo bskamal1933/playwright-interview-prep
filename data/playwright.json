@@ -6,6 +6,13 @@
   "kind": "concept",
   "question": "What is Playwright, and why do teams choose it for end-to-end testing?",
   "what_tested": "Tool overview",
+  "options": [
+   "Cross-browser automation with auto-waiting and tracing",
+   "A load-testing tool for APIs",
+   "A Selenium plugin that adds screenshots",
+   "A unit-testing framework for Python functions"
+  ],
+  "answer": 0,
   "model": "Playwright is an open-source browser automation library from Microsoft that drives Chromium, Firefox and WebKit through one API, with bindings for Python, JavaScript/TypeScript, Java and .NET. Teams pick it for auto-waiting (fewer flaky waits), fast isolated browser contexts, built-in network interception, tracing for debugging CI failures, and parallel-friendly design. In Python it's usually used with pytest through the pytest-playwright plugin.",
   "tags": [
    "fundamentals"
@@ -18,6 +25,13 @@
   "kind": "concept",
   "question": "Why would you choose Playwright over Selenium? Is there a case for staying with Selenium?",
   "what_tested": "Tool comparison",
+  "options": [
+   "Playwright supports more programming languages than any tool",
+   "Playwright only works with React apps",
+   "Auto-waiting, contexts, mocking; stay if migration costs more",
+   "Selenium can't run headless, so it's always worse"
+  ],
+  "answer": 2,
   "model": "Playwright gives auto-waiting with actionability checks, a cheap context per test for isolation, built-in network mocking, tracing, multi-tab and iframe handling without switching, and usually faster runs. Selenium still makes sense with a huge stable suite where migration cost outweighs the gains, a need for real branded browsers on a vendor grid (Safari on real Macs, old browser versions), or a team skilled in its ecosystem. I'd decide with data: flake rate, run time and maintenance hours.",
   "tags": [
    "fundamentals",
@@ -31,6 +45,13 @@
   "kind": "concept",
   "question": "Explain Playwright's architecture. How does it talk to the browser?",
   "what_tested": "Architecture",
+  "options": [
+   "It records screen pixels and simulates the mouse at OS level",
+   "It injects JavaScript into the page and polls it",
+   "One HTTP request per command through the W3C WebDriver protocol",
+   "A driver process using persistent browser protocols"
+  ],
+  "answer": 3,
   "model": "Your test code talks to a Playwright driver process (Node-based, bundled with the Python package) over a local connection. The driver controls browsers over persistent connections: the Chrome DevTools Protocol for Chromium, and Playwright's own patched protocols for Firefox and WebKit. Selenium sends one HTTP request per command through WebDriver. The persistent, event-driven connection is what enables auto-waiting, network interception and lower latency.",
   "tags": [
    "fundamentals",
@@ -44,6 +65,13 @@
   "kind": "concept",
   "question": "Which browsers does Playwright support, and what is a 'channel'?",
   "what_tested": "Browser support",
+  "options": [
+   "Chrome, Safari and Internet Explorer; channel is the network type",
+   "Any browser installed on the OS automatically",
+   "Chromium, Firefox, WebKit; channel picks branded browsers",
+   "Only Chrome; channel means a test tag"
+  ],
+  "answer": 2,
   "model": "Playwright drives Chromium, Firefox and WebKit (the engine behind Safari). By default it uses its own builds, downloaded with `playwright install`, which are pinned to the Playwright version. A `channel` lets you run branded browsers instead: `chrome`, `chrome-beta`, `msedge`. That's useful when you need to test exactly what users run. WebKit gives Safari-like behaviour on Linux and Windows, but it isn't identical to real Safari on macOS or iOS.",
   "tags": [
    "fundamentals"
@@ -56,6 +84,13 @@
   "kind": "concept",
   "question": "What's the difference between Playwright's sync and async APIs in Python?",
   "what_tested": "API styles",
+  "options": [
+   "They have completely different feature sets",
+   "Sync suits pytest; async suits asyncio code",
+   "The async API is required for parallel test runs",
+   "The sync API is deprecated"
+  ],
+  "answer": 1,
   "model": "The sync API (`playwright.sync_api`) reads like ordinary code and is what pytest-playwright fixtures give you; it suits most test suites. The async API (`playwright.async_api`) uses `await` and fits apps already built on asyncio, or cases where you want concurrency within a single test (driving several pages at once). You can't mix them in the same thread, and the sync API can't run inside an already-running event loop, such as a Jupyter cell.",
   "tags": [
    "fundamentals"
@@ -68,6 +103,13 @@
   "kind": "concept",
   "question": "How do you install Playwright for Python and set up a project?",
   "what_tested": "Setup",
+  "options": [
+   "npm install only; Python bindings don't exist",
+   "pip install selenium-playwright",
+   "pip install pytest-playwright; playwright install",
+   "Browsers download automatically on every test run"
+  ],
+  "answer": 2,
   "model": "`pip install pytest-playwright` (which pulls in `playwright`), then `playwright install` to download the browsers. On Linux CI add `--with-deps` to install the OS libraries too. Pin versions in requirements so local and CI runs match. A test then just requests the `page` fixture: `def test_home(page): page.goto(...)`. Configure defaults such as base URL, browsers and tracing via `pytest.ini` or `pyproject.toml` `addopts`.",
   "tags": [
    "setup"
@@ -80,6 +122,13 @@
   "kind": "concept",
   "question": "What's the difference between headless and headed mode, and can headless behave differently?",
   "what_tested": "Execution modes",
+  "options": [
+   "No window; viewport and timing can differ",
+   "Headless mode skips JavaScript execution",
+   "Headed mode can't take screenshots",
+   "They are always 100% identical"
+  ],
+  "answer": 0,
   "model": "Headless runs without a visible window; it's faster and the default, and it's what CI uses. Headed (`--headed`, with `--slowmo` to slow it down) shows the browser, which helps when writing and debugging tests. Behaviour is nearly identical, but differences do occur: default viewport size, fonts, GPU rendering, and occasionally timing. When a test passes headed but fails headless, check viewport and timing first, and use a trace to see the headless run.",
   "tags": [
    "setup"
@@ -92,6 +141,13 @@
   "kind": "concept",
   "question": "What is codegen, and how do you use its output responsibly?",
   "what_tested": "Test generation tool",
+  "options": [
+   "It generates complete production-ready tests with assertions",
+   "It converts Selenium tests to Playwright",
+   "Records actions; refactor its output and add asserts",
+   "It compiles tests into binaries"
+  ],
+  "answer": 2,
   "model": "`playwright codegen https://app.example.com` opens a browser and records your actions as code, choosing locators as it goes; it can also emulate devices and save auth state. It's great for discovering good locators and bootstrapping a flow. Its output isn't production test code, though: refactor it into page objects, replace any weak locators, remove redundant steps, and add meaningful assertions, because codegen records actions, not what should be verified.",
   "tags": [
    "tooling"
@@ -104,6 +160,13 @@
   "kind": "concept",
   "question": "What is pytest-playwright, and what does it give you out of the box?",
   "what_tested": "pytest integration",
+  "options": [
+   "A tool for recording videos only",
+   "Official plugin with browser fixtures",
+   "A reporting plugin only",
+   "A separate test runner that replaces pytest"
+  ],
+  "answer": 1,
   "model": "It's the official pytest plugin for Playwright. It provides fixtures (`playwright`, `browser_type`, `browser` and `browser_name` at session scope, `context` and `page` per test), CLI options (`--browser`, `--headed`, `--slowmo`, `--base-url`, `--device`, `--tracing`, `--video`, `--screenshot`, `--output`) and markers such as `skip_browser` and `only_browser`. Each test gets a fresh context and page, so tests are isolated without you writing setup code.",
   "tags": [
    "pytest-playwright"
@@ -116,6 +179,13 @@
   "kind": "concept",
   "question": "How do you set a base URL and other default context options in pytest-playwright?",
   "what_tested": "Configuration",
+  "options": [
+   "--base-url, and override browser_context_args",
+   "Base URLs aren't supported in Python",
+   "Set them inside every test function",
+   "Edit Playwright's source code"
+  ],
+  "answer": 0,
   "model": "Pass `--base-url https://staging.example.com` (or put it in `addopts`), then `page.goto(\"/login\")` resolves against it. For other context options, override the session-scoped `browser_context_args` fixture in conftest.py and return `{**browser_context_args, \"viewport\": {...}, \"locale\": \"en-IN\", \"timezone_id\": \"Asia/Kolkata\", \"ignore_https_errors\": True}`. Use `browser_type_launch_args` for launch options such as `slow_mo` or `args`.",
   "tags": [
    "pytest-playwright",
@@ -129,6 +199,13 @@
   "kind": "concept",
   "question": "How do you run the same tests across Chromium, Firefox and WebKit?",
   "what_tested": "Cross-browser",
+  "options": [
+   "Use --all-browsers, which runs every installed browser",
+   "Change an environment variable between runs manually",
+   "Pass --browser once per browser",
+   "Write three copies of every test"
+  ],
+  "answer": 2,
   "model": "With pytest-playwright, pass `--browser` several times: `pytest --browser chromium --browser firefox --browser webkit`. Each test runs once per browser and the test ids include the browser name. Mark exceptions with `@pytest.mark.skip_browser(\"webkit\")` or `@pytest.mark.only_browser(\"chromium\")`, ideally with a ticket explaining why. In CI, run browsers as separate jobs or shards so a slow WebKit run doesn't block the PR signal.",
   "tags": [
    "pytest-playwright",
@@ -142,6 +219,13 @@
   "kind": "concept",
   "question": "What's the difference between Browser, BrowserContext and Page?",
   "what_tested": "Object model",
+  "options": [
+   "Process, isolated session, tab",
+   "Page is the browser process; Context is a tab",
+   "They are three names for the same object",
+   "BrowserContext is the OS window manager"
+  ],
+  "answer": 0,
   "model": "A Browser is a launched browser instance, which is expensive to start. A BrowserContext is an isolated, incognito-like session inside it with its own cookies, storage, cache and permissions; it's cheap to create. A Page is a single tab within a context. pytest-playwright shares one browser per session and gives each test a fresh context and page, so you get isolation without paying the launch cost each time.",
   "tags": [
    "contexts"
@@ -154,6 +238,13 @@
   "kind": "concept",
   "question": "new_page() vs new_context(): when do you use which?",
   "what_tested": "Isolation choices",
+  "options": [
+   "They're identical",
+   "new_context() opens a tab in the same session",
+   "New tab in session vs new isolated session",
+   "new_page() launches a new browser"
+  ],
+  "answer": 2,
   "model": "Use `context.new_page()` for another tab in the same session, sharing cookies and login, for example when a link opens in a new tab or you check that a change in one tab shows in another. Use `browser.new_context()` when you need a separate session: a second user in the same test (maker and checker), a different locale or device, or a guaranteed clean slate. `browser.new_page()` is a shortcut that creates a hidden context of its own.",
   "tags": [
    "contexts"
@@ -166,6 +257,13 @@
   "kind": "concept",
   "question": "What can you configure on a BrowserContext? Give examples you'd use in real tests.",
   "what_tested": "Context options",
+  "options": [
+   "The test timeout and retries",
+   "Only the window title",
+   "CPU and RAM limits",
+   "Locale, permissions, storage state"
+  ],
+  "answer": 3,
   "model": "Common options: `viewport`, `device_scale_factor`, `user_agent`, `locale` and `timezone_id` (to test formatting in en-IN versus en-US), `geolocation` with `permissions=[\"geolocation\"]`, `color_scheme=\"dark\"`, `storage_state` (start logged in), `http_credentials` (basic auth), `extra_http_headers` (such as a test-traffic header), `ignore_https_errors` for self-signed staging certificates, `record_video_dir` and `offline=True`.",
   "tags": [
    "contexts",
@@ -179,6 +277,13 @@
   "kind": "concept",
   "question": "How do you emulate a mobile device, and what are the limits of emulation?",
   "what_tested": "Device emulation",
+  "options": [
+   "Device descriptors; not a real mobile OS",
+   "Emulation is identical to a real iPhone",
+   "Only Firefox supports device emulation",
+   "Mobile emulation needs Appium"
+  ],
+  "answer": 0,
   "model": "Use the built-in device descriptors: `context = browser.new_context(**playwright.devices[\"iPhone 13\"])`, or `--device \"Pixel 7\"` with pytest-playwright. That sets viewport, user agent, device scale factor, `is_mobile` and `has_touch`, so you can test responsive layouts and touch interactions. It's still a desktop engine pretending: there's no real mobile OS, keyboard, performance profile or Safari-specific quirks. For high-risk mobile flows, add some runs on real devices or a device cloud.",
   "tags": [
    "contexts",
@@ -192,6 +297,13 @@
   "kind": "concept",
   "question": "How do you reuse login state across tests with storage_state?",
   "what_tested": "Auth reuse",
+  "options": [
+   "Use the same page object across all tests",
+   "Copy cookies by hand into every test",
+   "Disable authentication in production",
+   "Save storage_state once, load it per context"
+  ],
+  "answer": 3,
   "model": "Log in once, ideally through the API because it's faster and more stable than the UI, then save the session with `context.storage_state(path=\"auth/admin.json\")`. That file holds cookies and localStorage. Tests then start already logged in via `browser.new_context(storage_state=\"auth/admin.json\")`, or through `browser_context_args`. Generate it in a session-scoped fixture, regenerate it when it expires, and keep it out of git because it contains live session tokens.",
   "tags": [
    "auth",
@@ -205,6 +317,13 @@
   "kind": "concept",
   "question": "How would you set up tests for several user roles (admin, maker, checker) efficiently?",
   "what_tested": "Multi-role auth",
+  "options": [
+   "Log in through the UI in every test for each role",
+   "Share one admin account for every role",
+   "One storage state per role plus role fixtures",
+   "Use one browser context for all roles at once"
+  ],
+  "answer": 2,
   "model": "Create one storage-state file per role in a session-scoped fixture (logging in via the API), then expose role fixtures such as `admin_page` and `checker_page` that create a context from the matching file. Tests ask for the role they need. For a test involving two roles, create two contexts in that test. With xdist, generate per worker or behind a file lock, and use separate accounts per worker if the app limits concurrent sessions per user.",
   "tags": [
    "auth",
@@ -218,6 +337,13 @@
   "kind": "concept",
   "question": "How do you handle a link that opens a new tab or a popup window?",
   "what_tested": "Multiple pages",
+  "options": [
+   "New tabs can't be automated",
+   "driver.switch_to.window(handles[1])",
+   "with page.expect_popup() around the click",
+   "Click and immediately read context.pages[1]"
+  ],
+  "answer": 2,
   "model": "Wait for the event while triggering it: `with page.expect_popup() as popup_info: page.get_by_role(\"link\", name=\"Terms\").click()`, then `new_page = popup_info.value`, then `new_page.wait_for_load_state()` and assert on it. For any new page in the context (not just popups from this page), use `context.expect_page()`. The pattern matters: start waiting before the click, otherwise you can miss the event.",
   "tags": [
    "pages",
@@ -231,6 +357,13 @@
   "kind": "concept",
   "question": "What is a persistent context, and when would you use launch_persistent_context?",
   "what_tested": "Persistent profiles",
+  "options": [
+   "A faster context for parallel runs",
+   "A real profile kept between runs",
+   "A context shared by all xdist workers",
+   "A context that survives browser crashes"
+  ],
+  "answer": 1,
   "model": "`browser_type.launch_persistent_context(user_data_dir, ...)` launches a browser with a real profile directory that survives between runs: cookies, extensions and settings stay. It's needed for testing browser extensions (Chromium) or reusing a complex manual login during exploration. For normal test suites prefer fresh contexts plus `storage_state`, because persistent profiles leak state between tests and can't be shared safely across parallel workers.",
   "tags": [
    "contexts"
@@ -243,6 +376,13 @@
   "kind": "concept",
   "question": "How do you add, read or clear cookies and localStorage in a test?",
   "what_tested": "Session state control",
+  "options": [
+   "Context cookie methods; evaluate for storage",
+   "Cookies can only be read from DevTools",
+   "page.set_cookie() for both cookies and localStorage",
+   "localStorage is cleared by Playwright on every action"
+  ],
+  "answer": 0,
   "model": "Cookies: `context.add_cookies([{...}])`, `context.cookies()` to read and `context.clear_cookies()` to reset. localStorage lives in the page, so use `page.evaluate(\"localStorage.setItem('flag', 'on')\")` or `page.evaluate(\"() => localStorage.getItem('token')\")`. To set storage before the app loads, use `context.add_init_script(...)` so it runs before any page script, or start from a prepared `storage_state`. This is handy for feature flags and for dismissing cookie banners.",
   "tags": [
    "contexts"
@@ -255,6 +395,13 @@
   "kind": "concept",
   "question": "What is a Locator in Playwright, and why is it central to writing stable tests?",
   "what_tested": "Locator model",
+  "options": [
+   "A lazy, re-resolved, auto-waiting query",
+   "A reference to a specific DOM node captured once",
+   "A screenshot region",
+   "A CSS selector string"
+  ],
+  "answer": 0,
   "model": "A Locator describes how to find an element; it isn't the element itself. It's lazy and re-resolved every time you act or assert on it, so it survives re-renders, and every action through it auto-waits for actionability. Locators are also strict: if a query matches several elements when one is expected, the action fails instead of clicking the wrong one. Writing tests through locators and `expect` is the core of Playwright's reliability.",
   "tags": [
    "locators"
@@ -267,6 +414,13 @@
   "kind": "concept",
   "question": "Locator vs ElementHandle: which do you use and why?",
   "what_tested": "Locator vs handle",
+  "options": [
+   "ElementHandles, because they're faster",
+   "Either; they behave identically",
+   "ElementHandles, because Locators are deprecated",
+   "Locators; handles go stale"
+  ],
+  "answer": 3,
   "model": "Locators. An ElementHandle points at one specific DOM node at the moment it was found, so after a re-render it's stale or detached, and actions through it don't get the full retry behaviour. A Locator re-queries every time. Playwright discourages ElementHandles (`page.query_selector`) for tests. They're only occasionally useful for low-level work, such as passing a node into `evaluate`.",
   "tags": [
    "locators"
@@ -279,6 +433,13 @@
   "kind": "concept",
   "question": "What is your locator priority order, and why?",
   "what_tested": "Locator strategy",
+  "options": [
+   "Role, then label/text, then test id, then CSS",
+   "CSS classes first because they never change",
+   "XPath first because it's the most precise",
+   "nth() positions first"
+  ],
+  "answer": 0,
   "model": "`get_by_role` with an accessible name first, e.g. `get_by_role(\"button\", name=\"Pay now\")`. Then `get_by_label`, `get_by_placeholder` and `get_by_text` for content-driven elements. Then `get_by_test_id` when there's no good user-facing handle. CSS or XPath last. User-facing locators mirror how people and assistive technology see the page, so they survive markup refactors and double as an accessibility check. Test ids are a stable contract agreed with developers.",
   "tags": [
    "locators"
@@ -291,6 +452,13 @@
   "kind": "concept",
   "question": "How does get_by_role work, and what is the 'name' option matching?",
   "what_tested": "Role locators",
+  "options": [
+   "It only works for buttons",
+   "It finds elements by their HTML id",
+   "ARIA role plus accessible name matching",
+   "name matches the element's name attribute only"
+  ],
+  "answer": 2,
   "model": "`get_by_role` finds elements by ARIA role (explicit or implicit: a `<button>` has role button, `<a href>` has role link, an `<h2>` has role heading) and usually an accessible name: the text, aria-label, aria-labelledby or the associated label. By default the name matching is case-insensitive and matches substrings; pass `exact=True` for an exact match, or a regex. Other options include `checked`, `selected`, `expanded`, `level` for headings and `include_hidden`. If `get_by_role` can't find something that's clearly a button, that's often a real accessibility bug.",
   "tags": [
    "locators"
@@ -303,6 +471,13 @@
   "kind": "concept",
   "question": "What's the difference between get_by_text with and without exact=True?",
   "what_tested": "Text matching",
+  "options": [
+   "Without exact, it matches regex only",
+   "Substring, case-insensitive vs exact match",
+   "There's no difference",
+   "exact=True ignores case"
+  ],
+  "answer": 1,
   "model": "By default `get_by_text(\"Save\")` is case-insensitive, trims and normalises whitespace, and matches substrings, so it can also match 'Save draft' and trigger a strict-mode violation. `exact=True` requires the whole text to match, including case (whitespace is still normalised). You can also pass a regex: `get_by_text(re.compile(r\"^Order #\\d+$\"))`. Use `get_by_text` for non-interactive content; for buttons and links, prefer `get_by_role` with a name.",
   "tags": [
    "locators"
@@ -315,6 +490,13 @@
   "kind": "concept",
   "question": "How do get_by_test_id and set_test_id_attribute work?",
   "what_tested": "Test-id locators",
+  "options": [
+   "It matches the element's id attribute",
+   "It matches CSS class names",
+   "Matches data-testid; configurable attribute",
+   "It requires a Playwright browser extension"
+  ],
+  "answer": 2,
   "model": "`get_by_test_id(\"checkout-submit\")` matches the `data-testid` attribute by default. If your app uses another attribute, such as `data-qa` or `data-test`, call `playwright.selectors.set_test_id_attribute(\"data-qa\")` once before tests run, for example in a session fixture. Test ids are a contract with developers: they don't change with copy or styling, which makes them the best fallback when an element has no clear role or label.",
   "tags": [
    "locators"
@@ -327,6 +509,13 @@
   "kind": "concept",
   "question": "What is a strict mode violation, and how do you fix it?",
   "what_tested": "Strictness",
+  "options": [
+   "The page has JavaScript errors",
+   "Locator matched several elements",
+   "The browser is running in strict CSP mode",
+   "The test exceeded its timeout"
+  ],
+  "answer": 1,
   "model": "When an action or single-element assertion's locator matches more than one element, Playwright throws a strict mode violation rather than guessing. Fix it by making the locator specific: add a name to `get_by_role`, use `exact=True`, scope it inside a container (`page.get_by_role(\"dialog\").get_by_role(\"button\", name=\"Save\")`), or filter by text or a child element. Reach for `.first` or `.nth(i)` only when position really is the requirement, because they hide ambiguity.",
   "tags": [
    "locators"
@@ -339,6 +528,13 @@
   "kind": "concept",
   "question": "How do you find the Delete button in the table row that contains 'Invoice 42'?",
   "what_tested": "Filtering and chaining",
+  "options": [
+   "page.locator('tr:nth-child(42) button')",
+   "page.get_by_text('Delete').nth(42)",
+   "page.locator('//table//button')[42]",
+   "Filter rows by text, then the button by role"
+  ],
+  "answer": 3,
   "model": "Chain and filter: `page.get_by_role(\"row\").filter(has_text=\"Invoice 42\").get_by_role(\"button\", name=\"Delete\").click()`. `filter(has_text=...)` keeps rows containing that text; `filter(has=page.get_by_text(\"Overdue\"))` keeps rows containing a matching child element, and `has_not` / `has_not_text` exclude. This is much more robust than XPath with row indices, because it keeps working when rows are reordered or new rows are added.",
   "tags": [
    "locators"
@@ -351,6 +547,13 @@
   "kind": "concept",
   "question": "When are nth(), first and last acceptable, and why are they risky?",
   "what_tested": "Positional locators",
+  "options": [
+   "Never; they're removed from the API",
+   "Always; they're the most stable locators",
+   "When position matters; else they hide ambiguity",
+   "Only in Firefox"
+  ],
+  "answer": 2,
   "model": "They're fine when the position is the actual requirement: 'the newest item is at the top', 'the first search result', or iterating a known list. They're risky as a quick fix for strict-mode violations, because the test then depends on DOM order and may click the wrong element when the layout or data changes, often without failing. Prefer a filter by meaningful content, and if you use position, assert on what you got.",
   "tags": [
    "locators"
@@ -363,6 +566,13 @@
   "kind": "concept",
   "question": "How do you work with a list of elements, e.g. assert all product prices are below a value?",
   "what_tested": "Multiple elements",
+  "options": [
+   "Take a screenshot and compare prices visually",
+   "Use is_visible() on each element without waiting",
+   "to_have_count, then read texts and parse",
+   "It's impossible to work with lists"
+  ],
+  "answer": 2,
   "model": "For counts, use `expect(page.get_by_role(\"listitem\")).to_have_count(5)`, which retries. For text, `expect(locator).to_have_text([\"A\", \"B\", \"C\"])` checks the whole list in order. To process values, call `locator.all_inner_texts()` or iterate `for item in locator.all():`. These read the DOM once, so first wait for the list to be ready (e.g. with a count assertion), then loop and assert on the parsed values.",
   "tags": [
    "locators",
@@ -376,6 +586,13 @@
   "kind": "concept",
   "question": "How do you deal with dynamic elements whose IDs or classes change on every build?",
   "what_tested": "Resilient locators",
+  "options": [
+   "Use absolute XPath from the html root",
+   "Use the generated ids because they're unique",
+   "Roles, labels, text or agreed test ids",
+   "Hard-code the class names after each build"
+  ],
+  "answer": 2,
   "model": "Don't use generated ids or hashed CSS classes (`.css-1x2y3z`) at all. Use role and accessible name, label, visible text, or ask developers for a stable `data-testid`. For lists of dynamic data, filter by the content you created (a unique order reference) instead of position. If text changes with locale, set the test locale explicitly or use test ids. The aim is locators that describe what the user sees, not how the markup happens to be built.",
   "tags": [
    "locators"
@@ -388,6 +605,13 @@
   "kind": "concept",
   "question": "Does Playwright work with shadow DOM? Any limits?",
   "what_tested": "Shadow DOM",
+  "options": [
+   "Closed shadow roots are fully accessible",
+   "Only XPath can reach shadow DOM",
+   "Yes for open roots; not XPath or closed roots",
+   "No, shadow DOM is unsupported"
+  ],
+  "answer": 2,
   "model": "Yes. CSS selectors and the `get_by_*` locators pierce open shadow roots automatically, so you write locators as if the shadow DOM weren't there. Limits: XPath doesn't pierce shadow roots, and closed shadow roots aren't accessible to Playwright at all, because they aren't accessible to page scripts either. For web-component apps, `get_by_role` usually works best because components expose accessible roles.",
   "tags": [
    "locators"
@@ -400,6 +624,13 @@
   "kind": "concept",
   "question": "CSS vs XPath in Playwright: when, if ever, would you use XPath?",
   "what_tested": "Selector choice",
+  "options": [
+   "XPath is required for shadow DOM",
+   "CSS is unsupported in Playwright",
+   "XPath always, since it's the most readable",
+   "Rarely, e.g. navigating to an ancestor"
+  ],
+  "answer": 3,
   "model": "Prefer user-facing locators, then test ids, then short CSS. XPath works (`page.locator(\"xpath=//...\")`, or any string starting with `//`), but it's verbose, brittle when tied to DOM structure, and doesn't pierce shadow DOM. I'd use it only for things CSS can't express easily, such as navigating to an ancestor (`..`), and even then Playwright's `filter(has=...)` usually solves the same problem more readably.",
   "tags": [
    "locators"
@@ -412,6 +643,13 @@
   "kind": "concept",
   "question": "What do locator.or_() and locator.and_() do?",
   "what_tested": "Combining locators",
+  "options": [
+   "Match either; match both",
+   "or_ retries a failed locator; and_ chains actions",
+   "They combine assertions, not locators",
+   "They're aliases of filter()"
+  ],
+  "answer": 0,
   "model": "`a.or_(b)` matches elements matching either locator, which is handy when the UI can legitimately show one of two things, e.g. `expect(new_dialog.or_(existing_banner)).to_be_visible()` and then branch. `a.and_(b)` matches elements satisfying both, e.g. `get_by_role(\"button\").and_(get_by_title(\"Subscribe\"))`. Be careful with `or_`: if both elements appear, you'll hit a strict-mode violation, so use `.first` there deliberately.",
   "tags": [
    "locators"
@@ -424,6 +662,13 @@
   "kind": "concept",
   "question": "What does Playwright check before it performs a click, and why does that make time.sleep unnecessary?",
   "what_tested": "Auto-wait and actionability",
+  "options": [
+   "That the network has been idle for 5 seconds",
+   "Visible, stable, enabled, unobstructed checks",
+   "Nothing; you must add sleeps",
+   "Only that the page has finished loading"
+  ],
+  "answer": 1,
   "model": "Before a click, Playwright resolves the locator fresh and runs actionability checks: the element is attached, visible, stable (not animating), receives events (not covered by an overlay) and enabled. It retries until they pass or the action timeout runs out. The locator itself is lazy; the action does the waiting. A fixed sleep is either too short on slow CI (flaky) or too long locally (wasted). For non-element signals use `expect_response` or `wait_for_url`, and prefer an `expect` assertion as the wait.",
   "tags": [
    "waits",
@@ -437,6 +682,13 @@
   "kind": "concept",
   "question": "What's the difference between fill(), type() and press_sequentially()?",
   "what_tested": "Text input",
+  "options": [
+   "fill() types slowly; type() pastes instantly",
+   "They're identical",
+   "press_sequentially() clears the field first",
+   "Set value vs type key by key"
+  ],
+  "answer": 3,
   "model": "`fill()` clears the field and sets the value in one step, firing an input event; it's fast and the right default. `press_sequentially()` (the newer name; `type()` is deprecated) sends key events one character at a time, optionally with a delay, which you need when the app reacts to each keystroke: autocomplete, input masks, character counters. `press(\"Enter\")` or `press(\"Control+A\")` sends single keys or shortcuts.",
   "tags": [
    "actions"
@@ -449,6 +701,13 @@
   "kind": "concept",
   "question": "What does click(force=True) do, and why is it usually a bad idea?",
   "what_tested": "Bypassing actionability",
+  "options": [
+   "It retries the click forever",
+   "It clicks twice to be sure",
+   "Skips actionability checks",
+   "It's the recommended default for all clicks"
+  ],
+  "answer": 2,
   "model": "`force=True` skips the actionability checks (visible, stable, not covered, enabled) and clicks anyway. That can make a test pass while a real user couldn't click the element, for example when an overlay or cookie banner covers it or the button is disabled. Use it only for deliberate edge cases, such as an element that's intentionally transparent. Usually the right fix is to handle the overlay, wait for the correct state, or fix the locator.",
   "tags": [
    "actions"
@@ -461,6 +720,13 @@
   "kind": "concept",
   "question": "How do you handle checkboxes, radio buttons and native select dropdowns?",
   "what_tested": "Form controls",
+  "options": [
+   "fill('true') on checkboxes",
+   "select_option() works on any div-based dropdown",
+   "click() twice to toggle checkboxes",
+   "check(), uncheck(), select_option()"
+  ],
+  "answer": 3,
   "model": "Checkboxes and radios: `locator.check()` and `uncheck()`, which verify the state actually changed; assert with `expect(locator).to_be_checked()`. Native `<select>`: `locator.select_option(\"IN\")` by value, `select_option(label=\"India\")`, or a list for multi-selects; assert with `to_have_value`. Custom dropdowns built from divs aren't native selects, so click to open them and then click the option by role (`option` or `menuitem`) and name.",
   "tags": [
    "actions"
@@ -473,6 +739,13 @@
   "kind": "concept",
   "question": "How do you perform hover, drag-and-drop and keyboard shortcuts?",
   "what_tested": "Advanced interactions",
+  "options": [
+   "hover(), drag_to(), keyboard.press()",
+   "mouse.drag() and keyboard.type('CTRL+S')",
+   "Only through page.evaluate JavaScript",
+   "These interactions aren't supported"
+  ],
+  "answer": 0,
   "model": "Hover: `locator.hover()`, e.g. to open a menu, then act on the revealed item. Drag and drop: `source.drag_to(target)`, or for custom widgets the low-level `page.mouse.move` / `down` / `move` / `up` sequence with intermediate steps. Keyboard: `page.keyboard.press(\"Control+S\")`, or `locator.press(\"Escape\")` on a focused element; Playwright maps `ControlOrMeta` to Cmd on macOS. Double click and right click: `dblclick()` and `click(button=\"right\")`.",
   "tags": [
    "actions"
@@ -485,6 +758,13 @@
   "kind": "concept",
   "question": "How do you upload files in Playwright, including through a custom upload button?",
   "what_tested": "File upload",
+  "options": [
+   "set_input_files() or expect_file_chooser()",
+   "Drag a file from the desktop with mouse APIs",
+   "Type the file path into the button",
+   "Uploads need Selenium"
+  ],
+  "answer": 0,
   "model": "If there's an `<input type=\"file\">`, even a hidden one, call `locator.set_input_files(\"data/invoice.pdf\")`, or pass a list for multiple files, or `[]` to clear. You can also pass in-memory files: `{\"name\": \"a.csv\", \"mimeType\": \"text/csv\", \"buffer\": b\"...\"}`. For a custom button that opens the OS dialog, catch the chooser: `with page.expect_file_chooser() as fc: page.get_by_role(\"button\", name=\"Upload\").click()`, then `fc.value.set_files(path)`.",
   "tags": [
    "actions",
@@ -498,6 +778,13 @@
   "kind": "concept",
   "question": "How do you test a file download and verify its contents?",
   "what_tested": "Downloads",
+  "options": [
+   "Downloads can't be tested in headless mode",
+   "Assert that a download link exists",
+   "expect_download, save, assert on contents",
+   "Check the Downloads folder after a sleep"
+  ],
+  "answer": 2,
   "model": "`with page.expect_download() as dl_info: page.get_by_role(\"button\", name=\"Export CSV\").click()`, then `download = dl_info.value` and `download.save_as(tmp_path / download.suggested_filename)`. Then open the file and assert on its contents, not just that it exists: check the header row, row count, totals. Check `download.failure()` if needed. In CI the saved file can be attached as an artifact for debugging.",
   "tags": [
    "files"
@@ -510,6 +797,13 @@
   "kind": "concept",
   "question": "When would you use page.evaluate(), and what should you avoid doing with it?",
   "what_tested": "Running JavaScript",
+  "options": [
+   "It's only for CSS changes",
+   "Reading state; not performing user actions",
+   "Replacing all assertions",
+   "Clicking buttons via JS for speed"
+  ],
+  "answer": 1,
   "model": "`page.evaluate(\"() => window.appConfig.version\")` runs JavaScript in the page and returns serialisable results. It's useful for reading app state, setting localStorage, scrolling a virtual list or getting performance timings. Avoid using it to perform user actions (setting `.value` or calling `.click()` in JS), because it bypasses actionability checks and real events, so the test no longer reflects what a user can do. Pass data as an argument rather than formatting it into the script string.",
   "tags": [
    "advanced"
@@ -522,6 +816,13 @@
   "kind": "concept",
   "question": "How do you scroll in Playwright, e.g. for infinite-scroll lists?",
   "what_tested": "Scrolling",
+  "options": [
+   "Scroll, then wait for the count to grow",
+   "Set the viewport to 100,000 pixels tall",
+   "Scrolling isn't possible",
+   "Use window.scrollTo in a loop with sleeps"
+  ],
+  "answer": 0,
   "model": "Actions scroll elements into view automatically, so you rarely need to scroll explicitly. For infinite scroll, loop: scroll the last item into view (`items.last.scroll_into_view_if_needed()`) or use `page.mouse.wheel(0, 2000)`, then wait for the count to grow (`expect(items).to_have_count(n)`, or wait for the next-page API response) until the target appears or no new items load. Cap the iterations so a broken loader can't hang the test.",
   "tags": [
    "actions"
@@ -534,6 +835,13 @@
   "kind": "concept",
   "question": "Why should you avoid wait_for_timeout(), and when is it acceptable?",
   "what_tested": "Hard waits",
+  "options": [
+   "It makes tests faster in CI",
+   "It's the recommended way to sync with the app",
+   "Fixed waits ignore app state",
+   "It waits until the network is idle"
+  ],
+  "answer": 2,
   "model": "`page.wait_for_timeout(3000)` waits a fixed time regardless of app state: too short on a slow CI run (flaky) and wasted time on fast runs. Across a suite, hard waits add minutes and still don't guarantee correctness. Wait for the condition that matters instead: an `expect` assertion, `expect_response`, or `wait_for_url`. It's acceptable only temporarily while debugging, or when testing something genuinely time-based like a debounce, and even then a clock override is better.",
   "tags": [
    "waits"
@@ -546,6 +854,13 @@
   "kind": "concept",
   "question": "What's the difference between wait_for_load_state, wait_for_url and expect_response?",
   "what_tested": "Navigation waits",
+  "options": [
+   "They're aliases",
+   "Load event, URL match, specific response",
+   "All three wait for a fixed timeout",
+   "wait_for_url waits for an API response"
+  ],
+  "answer": 1,
   "model": "`wait_for_load_state(\"load\" | \"domcontentloaded\" | \"networkidle\")` waits for a page lifecycle event. `wait_for_url(\"**/dashboard\")` waits until the URL matches, which is great after a login redirect. `page.expect_response(predicate)` used as a context manager waits for a specific network response and gives you the response object to assert on. In SPAs, load events often fire before data appears, so waiting for the specific response or a UI assertion is usually more meaningful.",
   "tags": [
    "waits",
@@ -559,6 +874,13 @@
   "kind": "concept",
   "question": "What's wrong with using networkidle as your default wait?",
   "what_tested": "Load states",
+  "options": [
+   "It's the fastest and most reliable wait",
+   "It's required before every click",
+   "Apps with polling may never go idle",
+   "It waits for CSS animations only"
+  ],
+  "answer": 2,
   "model": "`networkidle` waits until there's been no network activity for 500ms. Apps with polling, websockets, analytics beacons or long-lived connections may never go idle, or only intermittently, so tests become slow and flaky. Playwright's docs discourage it for testing. Wait for what actually matters: an element or text with `expect`, or the specific API response the screen depends on.",
   "tags": [
    "waits"
@@ -571,6 +893,13 @@
   "kind": "concept",
   "question": "How do you wait for a network-dependent UI update, such as a table loading after a filter change?",
   "what_tested": "Network-aware waiting",
+  "options": [
+   "expect_response around the action, then expect",
+   "Reload the page until rows appear",
+   "Sleep for 5 seconds after changing the filter",
+   "Use networkidle after every click"
+  ],
+  "answer": 0,
   "model": "Wrap the action in `with page.expect_response(lambda r: \"/api/orders\" in r.url and r.request.method == \"GET\") as resp:`, click the filter, then assert `resp.value.ok`, then assert on the UI with `expect(rows).to_have_count(...)`. This ties the test to the real cause of the update, gives a clear error if the API fails, and avoids racing against a stale table. Often an `expect` on the new content is enough by itself, because it retries.",
   "tags": [
    "waits",
@@ -584,6 +913,13 @@
   "kind": "concept",
   "question": "What's the difference between locator.wait_for() and an expect assertion?",
   "what_tested": "Explicit waits",
+  "options": [
+   "wait_for() asserts text content",
+   "They're identical",
+   "expect() doesn't retry",
+   "Waits only vs waits and asserts"
+  ],
+  "answer": 3,
   "model": "`locator.wait_for(state=\"visible\" | \"hidden\" | \"attached\" | \"detached\")` waits for a state and then continues; it doesn't assert anything meaningful about content. `expect(locator).to_be_visible()` waits the same way but reads as a test assertion and produces a clearer failure message. Prefer `expect` in tests; `wait_for` is handy in page-object helpers that need to synchronise without asserting, like waiting for a spinner to detach.",
   "tags": [
    "waits"
@@ -596,6 +932,13 @@
   "kind": "concept",
   "question": "What timeouts exist in Playwright Python, and how do you configure them?",
   "what_tested": "Timeouts",
+  "options": [
+   "Action, navigation, expect and per-call",
+   "A single global timeout of 60 seconds",
+   "Timeouts can't be configured",
+   "Only pytest controls timeouts"
+  ],
+  "answer": 0,
   "model": "Action timeout (default 30s; `page.set_default_timeout()`), navigation timeout (`page.set_default_navigation_timeout()`), expect timeout (default 5s; `expect.set_options(timeout=...)` or a per-assertion `timeout=`), and a per-call `timeout=` on any action or wait. pytest itself has no timeout unless you add pytest-timeout. Raise timeouts narrowly where something is known to be slow, with a comment, rather than globally, so genuine hangs still fail fast.",
   "tags": [
    "waits",
@@ -609,6 +952,13 @@
   "kind": "concept",
   "question": "How would you wait for a custom condition that isn't an element state or a network event?",
   "what_tested": "wait_for_function",
+  "options": [
+   "page.wait_for_function()",
+   "expect(page).to_have_condition()",
+   "page.wait_for_selector('custom')",
+   "time.sleep() in a loop"
+  ],
+  "answer": 0,
   "model": "`page.wait_for_function(\"() => window.appReady === true\")` polls a JavaScript predicate until it's truthy; you can pass an argument and a polling interval. Examples: a chart library finished rendering, a feature-flag client initialised, or a value in localStorage set. Use it sparingly, because it couples tests to implementation details. If the condition has a visible effect, assert on that instead.",
   "tags": [
    "waits"
@@ -621,6 +971,13 @@
   "kind": "concept",
   "question": "What's the difference between `expect(locator).to_have_text('Done')` and `assert locator.inner_text() == 'Done'`?",
   "what_tested": "Web-first assertions",
+  "options": [
+   "expect only works in JavaScript",
+   "They're equivalent",
+   "expect retries; inner_text reads once",
+   "The assert is more reliable because it's plain Python"
+  ],
+  "answer": 2,
   "model": "`expect` is a web-first assertion: it retries until the condition holds or the timeout (5s by default) runs out. `inner_text()` reads the text once, so the plain assert races the UI and fails if the text updates a moment later. Use `expect` for anything on the page; use plain asserts for values you already have, such as a parsed API response.",
   "tags": [
    "assertions"
@@ -633,6 +990,13 @@
   "kind": "concept",
   "question": "to_have_text vs to_contain_text: what's the difference?",
   "what_tested": "Text assertions",
+  "options": [
+   "They're aliases",
+   "Full text vs substring",
+   "to_contain_text requires an exact match",
+   "to_have_text ignores the text content"
+  ],
+  "answer": 1,
   "model": "`to_have_text(\"Order placed\")` matches the element's full text (whitespace normalised), or a regex. `to_contain_text(\"placed\")` passes if the text contains the substring. Both accept a list for multiple elements: `to_have_text` checks every item in order, while `to_contain_text` checks each element contains the corresponding expected substring. Use exact text when the full message matters and contains-text when surrounding text is dynamic, like a timestamp.",
   "tags": [
    "assertions"
@@ -645,6 +1009,13 @@
   "kind": "concept",
   "question": "Name the most useful Playwright assertions you use day to day.",
   "what_tested": "Assertion toolbox",
+  "options": [
+   "assertEqual, assertTrue and assertIn",
+   "verify_text and verify_element",
+   "to_be_visible, to_have_text, to_have_count",
+   "should.exist and should.contain"
+  ],
+  "answer": 2,
   "model": "Locator: `to_be_visible`, `to_be_hidden`, `to_be_enabled` / `to_be_disabled`, `to_be_checked`, `to_have_text` / `to_contain_text`, `to_have_value`, `to_have_count`, `to_have_attribute`, `to_have_class`, `to_have_css`, `to_be_focused`, `to_be_editable`, `to_have_accessible_name`. Page: `to_have_url`, `to_have_title`. API: `expect(response).to_be_ok()`. Negate any of them with `not_to_...` (e.g. `not_to_be_visible`), which also retries until the condition becomes false.",
   "tags": [
    "assertions"
@@ -657,6 +1028,13 @@
   "kind": "concept",
   "question": "Why is `expect(x).not_to_be_visible()` better than `assert not x.is_visible()`?",
   "what_tested": "Negative assertions",
+  "options": [
+   "There's no difference",
+   "It retries until hidden",
+   "is_visible() waits longer",
+   "not_to_be_visible() fails faster"
+  ],
+  "answer": 1,
   "model": "`is_visible()` checks once, immediately. If a spinner or toast is about to disappear, the plain assert fails; if an element is about to appear, it passes too early. `not_to_be_visible()` retries until the element is hidden or the timeout is reached, so it waits for the transition. The same applies to `not_to_have_text` and the others: negative web-first assertions are as important as positive ones for stability.",
   "tags": [
    "assertions"
@@ -669,6 +1047,13 @@
   "kind": "concept",
   "question": "How do you use regular expressions in Playwright assertions and locators?",
   "what_tested": "Regex matching",
+  "options": [
+   "Use the regex= keyword on every method",
+   "Only XPath supports regex",
+   "Regex isn't supported in Python",
+   "Pass re.compile(...) as the expected text"
+  ],
+  "answer": 3,
   "model": "Pass a compiled pattern wherever text is accepted: `expect(page).to_have_url(re.compile(r\".*/orders/\\d+$\"))`, `expect(toast).to_have_text(re.compile(r\"Saved at \\d{2}:\\d{2}\"))`, `page.get_by_role(\"button\", name=re.compile(\"submit\", re.IGNORECASE))`, and `filter(has_text=re.compile(...))`. Regex is the right tool for dynamic parts like ids, timestamps and amounts; keep the patterns narrow so they still catch wrong values.",
   "tags": [
    "assertions",
@@ -682,6 +1067,13 @@
   "kind": "concept",
   "question": "Does Playwright for Python have soft assertions? How would you get similar behaviour?",
   "what_tested": "Soft assertions",
+  "options": [
+   "Yes, expect.soft() is built into the Python library",
+   "Soft assertions are enabled by default",
+   "Not built in; use pytest-check or collect",
+   "Use try/except pass around every assertion"
+  ],
+  "answer": 2,
   "model": "Playwright Test for JavaScript has `expect.soft`; the Python library doesn't. To collect several failures in one test, use a plugin such as pytest-check, or gather messages in a list and assert at the end. Use soft checks sparingly, for verifying many independent fields on one screen. If an early failure makes later steps meaningless, a hard assertion that stops the test is the right choice.",
   "tags": [
    "assertions"
@@ -694,6 +1086,13 @@
   "kind": "concept",
   "question": "How do you change the expect timeout for one slow assertion versus the whole suite?",
   "what_tested": "Assertion timeouts",
+  "options": [
+   "Edit the Playwright source code",
+   "timeout= per assertion; set_options for all",
+   "Timeouts apply only to actions, not assertions",
+   "Add time.sleep before the assertion"
+  ],
+  "answer": 1,
   "model": "For one assertion: `expect(report_link).to_be_visible(timeout=30_000)`, with a comment explaining why it's slow. For the whole suite: `expect.set_options(timeout=10_000)` in a session fixture or conftest. Prefer the narrow change: a global bump hides performance regressions and makes genuine failures slower to surface. If many assertions need long timeouts, investigate the environment or the waiting strategy.",
   "tags": [
    "assertions",
@@ -707,6 +1106,13 @@
   "kind": "concept",
   "question": "How do you mock an API response in a Playwright test, and when shouldn't you?",
   "what_tested": "page.route",
+  "options": [
+   "page.route + fulfill; keep real API tests too",
+   "Edit the backend code for each test",
+   "Mock everything, so no real end-to-end tests are needed",
+   "Use requests_mock inside the browser"
+  ],
+  "answer": 0,
   "model": "Register a route before the page makes the call: `page.route(\"**/api/orders*\", lambda route: route.fulfill(json=[]))`, then `page.goto(\"/orders\")` and assert the empty state. `route.abort()` simulates network failures and `route.fetch()` lets you patch a real response. Mocking makes UI tests fast and deterministic and lets you test error states. Don't rely on it alone: mocks drift from the real API, so pair them with API or contract tests and keep some end-to-end tests that hit the real backend.",
   "tags": [
    "network",
@@ -720,6 +1126,13 @@
   "kind": "concept",
   "question": "How do you modify a real API response instead of replacing it entirely?",
   "what_tested": "route.fetch",
+  "options": [
+   "page.evaluate to patch fetch()",
+   "It's impossible to modify real responses",
+   "route.fetch(), modify, then fulfill",
+   "route.continue_() with a new body"
+  ],
+  "answer": 2,
   "model": "Inside the route handler, call `response = route.fetch()` to get the real response, change it, and fulfil with the modified version: `data = response.json(); data[\"items\"][0][\"status\"] = \"OVERDUE\"; route.fulfill(response=response, json=data)`. This keeps the realistic shape of real data while forcing a specific case, such as an edge-case status, a long name or a large amount, without needing special test data in the backend.",
   "tags": [
    "network",
@@ -733,6 +1146,13 @@
   "kind": "concept",
   "question": "How do you modify outgoing requests, e.g. add a header or change the payload?",
   "what_tested": "route.continue_",
+  "options": [
+   "page.set_header() inside each test",
+   "route.continue_(headers=...)",
+   "Edit the request in DevTools",
+   "Outgoing requests can't be modified"
+  ],
+  "answer": 1,
   "model": "`page.route(\"**/api/**\", lambda route: route.continue_(headers={**route.request.headers, \"x-test-run\": run_id}))` adds a header and lets the request through. `continue_` can also override `method`, `post_data` and `url`. For headers on every request, `context.set_extra_http_headers({...})` is simpler. Common uses: tagging test traffic so the backend can filter it, injecting a feature-flag header, or forcing an API version.",
   "tags": [
    "network"
@@ -745,6 +1165,13 @@
   "kind": "concept",
   "question": "How do you simulate network failures and slow responses?",
   "what_tested": "Resilience testing",
+  "options": [
+   "abort(), 5xx fulfil, or offline mode",
+   "Use time.sleep in the test",
+   "Network failures can't be simulated",
+   "Unplug the network cable on the CI server"
+  ],
+  "answer": 0,
   "model": "Failure: `page.route(\"**/api/payments\", lambda r: r.abort(\"failed\"))`, or fulfil with `status=500` or `503` and an error body, then assert the UI shows a friendly error and offers a retry. Slowness: in the handler, delay before continuing (using an async route handler or a short sleep in a sync handler, only for this targeted test), or use `context.set_offline(True)` for offline mode. On Chromium, CDP network throttling can emulate slow networks for broader checks.",
   "tags": [
    "network"
@@ -757,6 +1184,13 @@
   "kind": "concept",
   "question": "How do you capture and assert on network requests a page makes, e.g. an analytics event?",
   "what_tested": "Request monitoring",
+  "options": [
+   "Requests can't be inspected",
+   "Use a proxy only",
+   "Read the browser's history",
+   "expect_request or page.on('request')"
+  ],
+  "answer": 3,
   "model": "For one known request: `with page.expect_request(lambda r: \"/collect\" in r.url) as req: button.click()`, then assert on `req.value.post_data_json`. For everything: `page.on(\"request\", handler)` and `page.on(\"response\", handler)` collect traffic into a list you inspect at the end. `request.failure` tells you why a request failed. This is useful for verifying analytics payloads or that a page made no unexpected calls to production services.",
   "tags": [
    "network"
@@ -769,6 +1203,13 @@
   "kind": "concept",
   "question": "What is HAR recording and replay, and when would you use it?",
   "what_tested": "route_from_har",
+  "options": [
+   "A video recording format",
+   "A Playwright report type",
+   "Record traffic once, replay it later",
+   "A screenshot format"
+  ],
+  "answer": 2,
   "model": "A HAR file records HTTP traffic. With `context.route_from_har(\"orders.har\", update=True)` you record real responses once, then later runs with `update=False` replay them, so the UI test no longer depends on a slow or unstable backend. You can restrict it with `url=` patterns. It suits demos, third-party APIs and visually stable UI checks. The risk is stale data, so re-record regularly and keep real end-to-end coverage for critical flows.",
   "tags": [
    "network",
@@ -782,6 +1223,13 @@
   "kind": "concept",
   "question": "page.route vs context.route: what's the difference?",
   "what_tested": "Route scope",
+  "options": [
+   "They're identical",
+   "One page vs every page in the context",
+   "page.route affects all browsers",
+   "context.route affects only the first page"
+  ],
+  "answer": 1,
   "model": "`page.route` applies to one page; `context.route` applies to every page in the context, including popups and new tabs opened later. If a link opens a new tab that calls the API you mocked with `page.route`, the new tab hits the real backend, which is a confusing failure. Use `context.route` for mocks that should hold for the whole session. `unroute` or `unroute_all` removes handlers when a test needs the real behaviour again.",
   "tags": [
    "network"
@@ -794,6 +1242,13 @@
   "kind": "concept",
   "question": "How can you speed up UI tests by blocking resources?",
   "what_tested": "Performance optimisation",
+  "options": [
+   "Increase the viewport size",
+   "Abort images, fonts and third parties",
+   "Run tests with slow_mo=0 only",
+   "Disable JavaScript in every test"
+  ],
+  "answer": 1,
   "model": "Route and abort what the test doesn't need: images, fonts, analytics and third-party widgets, e.g. `context.route(re.compile(r\"\\.(png|jpg|woff2?)$\"), lambda r: r.abort())` and the same for analytics domains. That cuts load time and removes dependence on external services that can be slow or down. Don't do it in visual tests, and keep a few full-fidelity tests, because blocked resources can hide layout or loading bugs.",
   "tags": [
    "network",
@@ -807,6 +1262,13 @@
   "kind": "concept",
   "question": "How would you test a page that uses WebSockets for live updates?",
   "what_tested": "WebSockets",
+  "options": [
+   "WebSockets can't be tested with Playwright",
+   "Sleep until the message arrives",
+   "Watch or mock WebSockets, assert the UI",
+   "Convert the app to polling for tests"
+  ],
+  "answer": 2,
   "model": "Listen for the connection with `page.on(\"websocket\", ...)` or `page.expect_websocket()`, then inspect frames via `ws.on(\"framereceived\", ...)` and `framesent`. Newer Playwright versions also support `page.route_web_socket()` to mock the server side and push messages, so you can test 'price changed' or 'order status updated' states deterministically. Still assert on the UI with `expect`, which retries until the pushed update renders.",
   "tags": [
    "network",
@@ -820,6 +1282,13 @@
   "kind": "concept",
   "question": "How do you avoid logging in through the UI in every test, across three user roles, when running with pytest -n 4?",
   "what_tested": "storage_state, fixtures, parallel safety",
+  "options": [
+   "Log in through the UI in every test",
+   "Per-role state, per worker, unique data",
+   "Run tests serially only",
+   "Share one browser page across workers"
+  ],
+  "answer": 1,
   "model": "Log in once per role (ideally via the API), save `context.storage_state(path=...)`, and load it with `browser.new_context(storage_state=...)` in a fixture. Generate the files in a session-scoped fixture. With xdist each worker is its own process, so generate per worker (put `worker_id` in the path) or guard generation with a file lock. If the app limits concurrent sessions per account, use one account per worker. Tests that change shared data need unique data per test.",
   "tags": [
    "auth",
@@ -833,6 +1302,13 @@
   "kind": "concept",
   "question": "How do you log in through the API and then use that session in the browser?",
   "what_tested": "API-based auth",
+  "options": [
+   "API sessions can't be used in the browser",
+   "Copy the password into localStorage",
+   "context.request login, then save state",
+   "Log in through the UI first, then call the API"
+  ],
+  "answer": 2,
   "model": "Use the context's request client, which shares cookies with the browser: `context.request.post(\"/api/login\", data={\"user\": u, \"password\": p})` sets the session cookie directly in the context, and pages opened afterwards are logged in. For token-based apps, get the token via the API and put it where the app expects it, e.g. localStorage through `add_init_script`, or an `Authorization` header via `extra_http_headers`. Then save `storage_state` for reuse.",
   "tags": [
    "auth",
@@ -846,6 +1322,13 @@
   "kind": "concept",
   "question": "The login page has a CAPTCHA or OTP. How do you automate past it?",
   "what_tested": "Auth obstacles",
+  "options": [
+   "Use an OCR library to solve the CAPTCHA",
+   "Disable the CAPTCHA in production",
+   "Retry until the CAPTCHA is easy",
+   "Test bypass, OTP source or API login"
+  ],
+  "answer": 3,
   "model": "Don't try to beat a CAPTCHA; it's designed to stop automation. Ask for a test-environment setting that disables it for test accounts, or an allow-listed test user, or log in via API and reuse the storage state. For OTP, use a test environment with a fixed or retrievable code (a test SMS or email inbox API, or a TOTP secret for the test user so you can generate codes with pyotp). Keep one test that checks the CAPTCHA or OTP screen appears.",
   "tags": [
    "auth"
@@ -858,6 +1341,13 @@
   "kind": "concept",
   "question": "How do you handle HTTP basic authentication on a staging site?",
   "what_tested": "http_credentials",
+  "options": [
+   "http_credentials on the context",
+   "Put user:pass@ in the URL",
+   "Basic auth isn't supported",
+   "Type the credentials into the browser dialog"
+  ],
+  "answer": 0,
   "model": "Pass credentials to the context: `browser.new_context(http_credentials={\"username\": u, \"password\": p})`, or through `browser_context_args` in pytest-playwright. Playwright answers the auth challenge automatically. Don't put credentials in the URL (`https://user:pass@host`), because it's unreliable across browsers and leaks secrets into logs and traces. Read them from environment variables or CI secrets.",
   "tags": [
    "auth"
@@ -870,6 +1360,13 @@
   "kind": "concept",
   "question": "How do you interact with elements inside an iframe, including nested iframes?",
   "what_tested": "frame_locator",
+  "options": [
+   "switch_to.frame() before each action",
+   "Iframes can't be automated",
+   "Iframes require page.evaluate",
+   "frame_locator, chained for nesting"
+  ],
+  "answer": 3,
   "model": "Use `page.frame_locator(\"iframe#payment\").get_by_label(\"Card number\").fill(\"4242...\")`, with no switching in and out like Selenium's `switch_to.frame`. For nested frames, chain: `page.frame_locator(\"#outer\").frame_locator(\"#inner\").get_by_role(...)`. Newer versions also offer `locator.content_frame` to go from an iframe element locator to its content. Auto-waiting still applies inside frames. For cross-origin payment iframes, use the vendor's sandbox test cards.",
   "tags": [
    "frames"
@@ -882,6 +1379,13 @@
   "kind": "concept",
   "question": "How does Playwright handle JavaScript alerts, confirms and prompts?",
   "what_tested": "Dialogs",
+  "options": [
+   "You must click OK with get_by_role",
+   "They block the test forever",
+   "Auto-dismissed unless you add a handler",
+   "They're always accepted automatically"
+  ],
+  "answer": 2,
   "model": "By default dialogs are dismissed automatically, so the page doesn't hang. To act on one, register a handler before triggering it: `page.once(\"dialog\", lambda d: d.accept())`, or `d.accept(\"text\")` for prompts, or `d.dismiss()`. You can assert on `d.message` and `d.type`. A common bug is registering the handler after the click, by which point the dialog was already auto-dismissed. `beforeunload` dialogs need `run_before_unload=True` when closing the page.",
   "tags": [
    "dialogs"
@@ -894,6 +1398,13 @@
   "kind": "concept",
   "question": "How would you automate a custom date picker?",
   "what_tested": "Complex widgets",
+  "options": [
+   "Date pickers can't be automated",
+   "Always use page.evaluate to set the date",
+   "Click random dates until one works",
+   "fill() if allowed, else navigate and pick"
+  ],
+  "answer": 3,
   "model": "First check whether the input accepts typing: `fill(\"2026-10-11\")` on the underlying input is often allowed and is the most stable option. If not, drive it like a user: open it, navigate months with the next/previous buttons until the heading matches, then click the day by role and accessible name (`get_by_role(\"gridcell\", name=\"11\")`, scoped to the visible month). Wrap that in a component object, and avoid hard-coded dates relative to today that break at month ends.",
   "tags": [
    "widgets"
@@ -906,6 +1417,13 @@
   "kind": "concept",
   "question": "How do you verify data in an HTML table, e.g. the amount for a specific invoice?",
   "what_tested": "Tables",
+  "options": [
+   "Read the whole page's text and search it",
+   "Screenshot the table",
+   "Row by unique text, then cell, then expect",
+   "Use the 7th row's 4th cell by index"
+  ],
+  "answer": 2,
   "model": "Locate the row by content, then the cell: `row = page.get_by_role(\"row\").filter(has_text=\"INV-1042\")`, then `expect(row.get_by_role(\"cell\").nth(3)).to_have_text(\"₹12,500.00\")`. Better, find the column index from the header text so column reordering doesn't break the test. For whole-table checks, read `all_inner_texts()` once the row count is stable and compare with expected data. Remember tables may be paginated or virtualised.",
   "tags": [
    "widgets"
@@ -918,6 +1436,13 @@
   "kind": "concept",
   "question": "How do you test something drawn on a canvas, such as a chart?",
   "what_tested": "Canvas",
+  "options": [
+   "Canvas content is in the DOM",
+   "Check its data, fallbacks or snapshots",
+   "Use get_by_text on the drawn labels",
+   "It can't be tested at all"
+  ],
+  "answer": 1,
   "model": "Canvas content has no DOM, so locators can't see inside it. Options: assert on the data feeding it, by intercepting the API response or reading app state via `evaluate`; check accessible fallbacks (aria-label or a data table the chart library renders); use visual comparison screenshots of the canvas element with a tolerance; or click at coordinates (`locator.click(position={\"x\": 120, \"y\": 40})`) and assert the tooltip that appears. Push for testable data hooks where you can.",
   "tags": [
    "widgets"
@@ -930,6 +1455,13 @@
   "kind": "concept",
   "question": "How do you test geolocation, permissions or dark mode?",
   "what_tested": "Environment emulation",
+  "options": [
+   "Use a VPN for geolocation",
+   "Change the operating system settings",
+   "Context options and emulate_media",
+   "These can only be tested manually"
+  ],
+  "answer": 2,
   "model": "Set them on the context: `browser.new_context(geolocation={\"latitude\": 12.97, \"longitude\": 77.59}, permissions=[\"geolocation\"])`, then change location mid-test with `context.set_geolocation(...)`. Grant or clear permissions with `context.grant_permissions([...])` and `clear_permissions()`. Dark mode: `color_scheme=\"dark\"`, or `page.emulate_media(color_scheme=\"dark\")`. Locale and time zone (`locale=\"hi-IN\"`, `timezone_id=\"Asia/Kolkata\"`) test formatting of dates, numbers and currency.",
   "tags": [
    "contexts"
@@ -942,6 +1474,13 @@
   "kind": "concept",
   "question": "How can you control time in a Playwright test, e.g. for a session-timeout warning?",
   "what_tested": "Clock control",
+  "options": [
+   "Time can't be controlled",
+   "The Clock API",
+   "Change the CI server's system clock",
+   "time.sleep(900) to wait 15 minutes"
+  ],
+  "answer": 1,
   "model": "Recent Playwright versions have a Clock API: `page.clock.install(time=...)` fakes `Date` and timers, `page.clock.fast_forward(\"15:00\")` jumps ahead, and `page.clock.set_fixed_time(...)` freezes 'now'. That lets you test a session-timeout warning, countdowns or date-dependent UI without waiting real minutes. On older versions you'd inject a fake clock with `add_init_script`. Server-side time still needs backend support, such as a test endpoint or a configurable clock.",
   "tags": [
    "advanced"
@@ -954,6 +1493,13 @@
   "kind": "concept",
   "question": "What is add_init_script, and what do you use it for?",
   "what_tested": "Init scripts",
+  "options": [
+   "A pytest fixture",
+   "JS run before page scripts",
+   "A script that runs after the test finishes",
+   "A shell script run before CI"
+  ],
+  "answer": 1,
   "model": "`context.add_init_script(script)` (or the page version) runs JavaScript in every page before the app's own scripts. Uses: setting localStorage flags or tokens before the app reads them, stubbing `Math.random` or third-party SDKs, disabling animations, or exposing hooks for tests. Because it runs on every navigation, keep it idempotent and small, and document it, since it changes the environment the app runs in.",
   "tags": [
    "advanced"
@@ -966,6 +1512,13 @@
   "kind": "concept",
   "question": "How do you capture browser console errors and fail a test on unexpected JavaScript errors?",
   "what_tested": "Console monitoring",
+  "options": [
+   "Open DevTools manually",
+   "Listen to console and pageerror events",
+   "Console errors can't be captured",
+   "Use print() inside the page"
+  ],
+  "answer": 1,
   "model": "Subscribe to events: `page.on(\"console\", lambda msg: logs.append(msg))` and filter `msg.type == \"error\"`, plus `page.on(\"pageerror\", lambda err: errors.append(err))` for uncaught exceptions. Put it in a fixture that asserts, after the test, that there were no unexpected errors (with an allow-list for known noise). This catches front-end crashes that don't visibly break the tested path, which is a cheap, high-value check.",
   "tags": [
    "debugging"
@@ -978,6 +1531,13 @@
   "kind": "concept",
   "question": "What is the Trace Viewer, and what does a trace contain?",
   "what_tested": "Tracing",
+  "options": [
+   "A CPU profiler",
+   "A log of pytest output",
+   "A video file only",
+   "Actions with DOM snapshots"
+  ],
+  "answer": 3,
   "model": "A trace is a zip recorded during a run that you open with `playwright show-trace trace.zip` (or at trace.playwright.dev). It contains a timeline of every action with before and after DOM snapshots you can inspect, screenshots (filmstrip), network requests and responses, console logs, the source line for each step, and errors. It's the fastest way to understand a CI-only failure, because you see exactly what the page looked like at the failing step.",
   "tags": [
    "debugging",
@@ -991,6 +1551,13 @@
   "kind": "concept",
   "question": "How do you enable traces, screenshots and videos only for failing tests in CI?",
   "what_tested": "Artifacts on failure",
+  "options": [
+   "retain-on-failure / only-on-failure flags",
+   "Always record everything for every test",
+   "Use --debug in CI",
+   "Traces can't be limited to failures"
+  ],
+  "answer": 0,
   "model": "With pytest-playwright: `--tracing retain-on-failure --screenshot only-on-failure --video retain-on-failure --output test-results`. Then upload `test-results/` as a CI artifact. Recording everything for passing tests wastes time and storage. Manually: `context.tracing.start(screenshots=True, snapshots=True, sources=True)` and `context.tracing.stop(path=...)` in a fixture, keeping the file only when the test fails (check the outcome through a pytest hook).",
   "tags": [
    "debugging",
@@ -1004,6 +1571,13 @@
   "kind": "concept",
   "question": "A test passes locally but fails 1 in 10 runs in CI. Walk me through how you debug it.",
   "what_tested": "Trace viewer, root-cause analysis",
+  "options": [
+   "Add retries until it passes",
+   "Increase every timeout to 60 seconds",
+   "Read the trace, classify, fix root cause",
+   "Delete the test"
+  ],
+  "answer": 2,
   "model": "Run CI with `--tracing retain-on-failure`, download the trace and open it with `playwright show-trace`. The DOM snapshots, network log and console show what differed at the failing step. Then classify the cause: timing (sleeps, non-web-first assertions), data collisions under parallelism, environment (viewport, time zone, slower CPU), order dependence, or a real race in the product. Reproduce headless locally, stress-run the test, and fix the root cause. If it can't be fixed quickly, quarantine it with an owner and a ticket; retries hide bugs.",
   "tags": [
    "debugging",
@@ -1017,6 +1591,13 @@
   "kind": "concept",
   "question": "What debugging tools does Playwright give you while writing tests?",
   "what_tested": "Interactive debugging",
+  "options": [
+   "Inspector, page.pause(), slowmo, pw:api logs",
+   "Only print statements",
+   "A separate paid debugger",
+   "Chrome DevTools is the only option"
+  ],
+  "answer": 0,
   "model": "`PWDEBUG=1 pytest -k test_name` opens the Playwright Inspector, runs headed, pauses before each action and lets you step through and try locators. `page.pause()` stops at a specific point and opens the Inspector. `--headed --slowmo 500` lets you watch. `DEBUG=pw:api` prints every API call with timing. The VS Code extension adds locator picking and running tests from the editor. Traces cover the post-mortem side.",
   "tags": [
    "debugging"
@@ -1029,6 +1610,13 @@
   "kind": "concept",
   "question": "How do you take screenshots in Playwright, and what options matter?",
   "what_tested": "Screenshots",
+  "options": [
+   "screenshot() always captures the whole desktop",
+   "Screenshots are only possible on failure",
+   "screenshot() with mask and full_page",
+   "Use the OS screenshot tool"
+  ],
+  "answer": 2,
   "model": "`page.screenshot(path=\"x.png\", full_page=True)` captures the whole page, and `locator.screenshot()` captures one element. Useful options: `mask=[locator]` to hide dynamic or sensitive areas (timestamps, card numbers), `animations=\"disabled\"` to freeze CSS animations, `clip` for a region, and `omit_background` for transparent PNGs. In CI, attach screenshots to the test report on failure so reviewers can see the state without rerunning.",
   "tags": [
    "debugging"
@@ -1041,6 +1629,13 @@
   "kind": "concept",
   "question": "How do you create a custom fixture that gives tests a logged-in page?",
   "what_tested": "Custom fixtures",
+  "options": [
+   "A session-scoped page shared by all tests",
+   "Log in inside every test",
+   "Context from saved state, yield page, close",
+   "A global variable holding a page"
+  ],
+  "answer": 2,
   "model": "In conftest.py: a session fixture creates `admin_state` (log in via API, save `storage_state`); a function fixture `admin_page(browser, admin_state)` does `context = browser.new_context(storage_state=admin_state, base_url=...)`, yields `context.new_page()`, then closes the context after the yield. Tests just declare `def test_x(admin_page):`. Wrap it in a page object fixture if most tests start on the same screen.",
   "tags": [
    "fixtures",
@@ -1054,6 +1649,13 @@
   "kind": "concept",
   "question": "How do you implement the Page Object Model with Playwright Python?",
   "what_tested": "POM",
+  "options": [
+   "Store locators in a CSV file",
+   "One giant class with every locator in the app",
+   "Class per page with locators and actions",
+   "Page objects must contain all assertions"
+  ],
+  "answer": 2,
   "model": "One class per page or component, taking `page` in `__init__` and defining locators there as attributes (locators are lazy, so that's safe), plus intent-level methods such as `login(user)` or `add_to_cart(product)`. Keep assertions in tests, or in clearly named `expect_*` helpers. Expose page objects through fixtures so tests read like scenarios. Use component objects for shared widgets (header, data table, modal) instead of a giant BasePage.",
   "tags": [
    "framework",
@@ -1067,6 +1669,13 @@
   "kind": "concept",
   "question": "How do you run Playwright tests in parallel with pytest, and what breaks when you do?",
   "what_tested": "Parallel execution",
+  "options": [
+   "pytest -n auto; isolate shared state",
+   "Parallel runs never cause issues",
+   "Playwright runs in parallel automatically with no plugin",
+   "Use threads inside a single test"
+  ],
+  "answer": 0,
   "model": "`pip install pytest-xdist`, then `pytest -n auto` or `-n 4`. Each worker is a separate process with its own browser, and contexts keep tests isolated. What breaks: shared test data (two tests editing the same record), order-dependent tests, shared accounts with session limits, file writes to the same path, and global state in fixtures. Fix with unique data per test, API-based setup and teardown, per-worker accounts via `worker_id`, and `tmp_path` for files.",
   "tags": [
    "parallel"
@@ -1079,6 +1688,13 @@
   "kind": "concept",
   "question": "What is sharding, and how is it different from xdist workers?",
   "what_tested": "Scaling CI",
+  "options": [
+   "Sharding splits a single test into parts",
+   "They're the same thing",
+   "Across machines vs within one machine",
+   "xdist splits tests across machines"
+  ],
+  "answer": 2,
   "model": "xdist parallelises within one machine. Sharding splits the suite across several CI machines, each running a subset, e.g. with pytest-split (based on recorded durations) or by splitting test files per job in a CI matrix, and often xdist within each shard too. Sharding is what you reach for when one machine maxes out. Merge the per-shard reports (JUnit or Allure) afterwards, and balance shards by duration, not test count.",
   "tags": [
    "parallel",
@@ -1092,6 +1708,13 @@
   "kind": "concept",
   "question": "How do you run Playwright tests in CI, and why use the official Docker image?",
   "what_tested": "CI setup",
+  "options": [
+   "Use the latest image tag regardless of the Playwright version",
+   "CI can't run Playwright",
+   "Install Chrome manually and point Playwright at it",
+   "Official image with matching browsers"
+  ],
+  "answer": 3,
   "model": "Either `pip install -r requirements.txt` then `playwright install --with-deps`, or run inside `mcr.microsoft.com/playwright/python:<version>`, which already has the browsers and OS libraries matching that Playwright version. The image avoids 'works locally, missing library in CI' problems and speeds up jobs. Run headless, set the base URL and secrets via environment variables, upload traces and reports as artifacts, and keep the image tag in step with the pinned Playwright version.",
   "tags": [
    "ci"
@@ -1104,6 +1727,13 @@
   "kind": "concept",
   "question": "How do pytest markers help organise a Playwright suite?",
   "what_tested": "Markers",
+  "options": [
+   "Markers change locator strategy",
+   "Markers are only for skipping",
+   "Markers make tests run faster",
+   "Registered markers selected with -m"
+  ],
+  "answer": 3,
   "model": "Register markers in `pytest.ini` (`smoke`, `regression`, `payments`, `slow`) and select runs with `-m \"smoke and not slow\"`, so PRs run smoke tests and nightly runs everything. pytest-playwright adds `skip_browser` and `only_browser`. Use `--strict-markers` so typos fail instead of silently running nothing. Markers also let you route a subset to a special environment, such as tests needing payment sandbox credentials.",
   "tags": [
    "framework"
@@ -1116,6 +1746,13 @@
   "kind": "concept",
   "question": "How do you test against multiple environments (dev, staging, pre-prod) with one suite?",
   "what_tested": "Environment config",
+  "options": [
+   "--env option mapped to one config",
+   "Use different branches per environment",
+   "Edit URLs in every test",
+   "Copy the suite once per environment"
+  ],
+  "answer": 0,
   "model": "Add a CLI option (`pytest_addoption` with `--env staging`) or an `ENV` variable, map it to a config object (base URL, API URL, credentials from that environment's secrets), and expose it through a session fixture that `browser_context_args` and API clients use. Keep environment-specific data out of tests. Mark tests that are only valid in certain environments (e.g. destructive tests never in pre-prod) and skip them automatically based on the config.",
   "tags": [
    "framework",
@@ -1129,6 +1766,13 @@
   "kind": "concept",
   "question": "How do you combine API and UI testing in one Playwright framework?",
   "what_tested": "API + UI",
+  "options": [
+   "Call APIs through the browser address bar",
+   "Never mix API and UI in one framework",
+   "Use Selenium for the API part",
+   "APIRequestContext for setup and checks"
+  ],
+  "answer": 3,
   "model": "Use `playwright.request.new_context(base_url=...)`, or `context.request`, which shares cookies with the browser, as the API client. Typical pattern: create test data via API in a fixture, verify through the UI, clean up via API in teardown. Also validate the reverse: perform a UI action, then check via API that the backend state is right. That keeps UI tests short and focused while still checking end-to-end correctness.",
   "tags": [
    "api",
@@ -1142,6 +1786,13 @@
   "kind": "concept",
   "question": "How do you approach visual regression testing with Playwright Python, and how do you handle false positives?",
   "what_tested": "Visual testing",
+  "options": [
+   "Visual testing is built into Playwright Python as to_have_screenshot",
+   "Fixed environment, masks and thresholds",
+   "Compare screenshots taken on different OSes with zero tolerance",
+   "Use screenshots from developers' laptops"
+  ],
+  "answer": 1,
   "model": "Playwright Test for JavaScript has a built-in `to_have_screenshot`; in Python you use a plugin (such as pytest-playwright-visual or a snapshot plugin) or a service like Percy or Applitools. To limit false positives: run in a fixed Docker image so fonts and rendering match, set a fixed viewport, disable animations, mask dynamic regions (dates, ads, avatars), wait for fonts and images, and use a small pixel threshold. Keep visual tests to stable, high-value screens.",
   "tags": [
    "visual"
@@ -1154,6 +1805,13 @@
   "kind": "concept",
   "question": "How would you add accessibility checks to a Playwright suite?",
   "what_tested": "Accessibility",
+  "options": [
+   "Use high-contrast mode only",
+   "axe-core checks and role locators",
+   "Accessibility can only be tested manually",
+   "Use get_by_test_id everywhere"
+  ],
+  "answer": 1,
   "model": "Inject axe-core (e.g. via the axe-playwright-python package, or by adding the axe script and calling `axe.run()` through `evaluate`) and assert there are no serious or critical violations on key pages, with known issues tracked rather than ignored. Using `get_by_role` and `get_by_label` everywhere is itself a lightweight check: if a button can't be found by role and name, screen-reader users have the same problem. Add keyboard-only navigation tests for critical flows.",
   "tags": [
    "a11y"
@@ -1166,6 +1824,13 @@
   "kind": "concept",
   "question": "Can Playwright measure front-end performance? What would you check?",
   "what_tested": "Performance signals",
+  "options": [
+   "It can't read any timing data",
+   "Per-page timings only; not load testing",
+   "It's a full load-testing tool",
+   "Use wait_for_timeout to measure speed"
+  ],
+  "answer": 1,
   "model": "Not as a load-testing tool, but it can collect per-page metrics: `page.evaluate` on the Navigation Timing and `PerformanceObserver` APIs (LCP, CLS, TTFB), and Chromium CDP sessions (`context.new_cdp_session(page)`) for detailed metrics and throttling. Use it to catch big regressions on key pages with generous thresholds, run on a stable machine. For load testing use k6, Locust or JMeter; for audits, Lighthouse.",
   "tags": [
    "performance"
@@ -1178,6 +1843,13 @@
   "kind": "concept",
   "question": "What is expose_function / expose_binding used for?",
   "what_tested": "Page-to-test bridge",
+  "options": [
+   "Exposing the test results publicly",
+   "Publishing a page to the internet",
+   "Opening a port for remote browsers",
+   "Calling Python from page JavaScript"
+  ],
+  "answer": 3,
   "model": "`page.expose_function(\"reportMetric\", handler)` makes a Python function callable from page JavaScript as `window.reportMetric(...)`, which works across navigations. `expose_binding` also passes the calling frame or page. Uses include collecting events the app emits (analytics, custom metrics), letting init scripts send data back to the test, or bridging test helpers into page code. Keep handlers simple and fast; they run during page execution.",
   "tags": [
    "advanced"
@@ -1190,6 +1862,13 @@
   "kind": "concept",
   "question": "When would you NOT use Playwright?",
   "what_tested": "Tool fit",
+  "options": [
+   "Native mobile, load tests, pure APIs",
+   "Single-page applications",
+   "Any web application with JavaScript",
+   "Tests that need multiple browsers"
+  ],
+  "answer": 0,
   "model": "Native mobile apps (use Appium or Espresso/XCUITest), desktop apps outside Electron, load and performance testing at scale (k6, Locust, JMeter), pure API suites where a UI tool adds nothing (requests or httpx with pytest), unit tests of UI components (Jest, Vitest or Testing Library, though Playwright JS has component testing), and very old browsers it doesn't support. Also consider the team: a mature, stable Selenium suite may not be worth rewriting.",
   "tags": [
    "fundamentals"
@@ -1202,6 +1881,13 @@
   "kind": "concept",
   "question": "How would you plan a migration from a large Selenium suite to Playwright?",
   "what_tested": "Migration strategy",
+  "options": [
+   "Convert tests automatically with a script and delete Selenium",
+   "Measure, pilot, migrate incrementally",
+   "Never migrate; mix tools forever",
+   "Rewrite everything in one big bang over a weekend"
+  ],
+  "answer": 1,
   "model": "Measure first: flake rate, run time, maintenance hours. Pilot on the flakiest or most valuable suite with success criteria. New tests go in Playwright; old ones migrate when touched or when they flake, not in a big bang. Build shared fixtures and page objects first so migration is mostly mechanical. Run both suites in CI during the transition with unified reporting (Allure supports both), train the team, and set a decommission milestone. Report the gains in numbers.",
   "tags": [
    "selenium",
@@ -1215,6 +1901,13 @@
   "kind": "concept",
   "question": "What are the main conceptual changes for a Selenium engineer moving to Playwright?",
   "what_tested": "Mindset shift",
+  "options": [
+   "No explicit waits; locators; contexts",
+   "Nothing changes except the import",
+   "Playwright uses WebDriver under the hood",
+   "You must add more explicit waits"
+  ],
+  "answer": 0,
   "model": "No explicit WebDriverWait (auto-waiting plus `expect`); locators instead of WebElements, so no stale element exceptions; strict mode instead of `find_elements[0]`; contexts instead of new drivers for isolation; `frame_locator` instead of `switch_to.frame`; `expect_popup` instead of window handles; built-in network interception instead of proxies; traces instead of piecing together screenshots and logs. The biggest habit to break is adding sleeps and explicit waits by reflex.",
   "tags": [
    "selenium"
@@ -1227,6 +1920,13 @@
   "kind": "concept",
   "question": "What is Playwright MCP, and how could AI agents fit into a Playwright workflow?",
   "what_tested": "AI tooling",
+  "options": [
+   "AI agents driving the browser, reviewed",
+   "A tool that writes perfect tests unattended",
+   "A Playwright version for mobile",
+   "A paid Playwright cloud grid"
+  ],
+  "answer": 0,
   "model": "Playwright MCP is a Model Context Protocol server that lets AI assistants drive a browser through Playwright, using the accessibility tree rather than screenshots, so an agent can explore an app, reproduce a bug or draft a test. Used well, AI speeds up exploratory checks and test scaffolding. The guard rails: human review of generated tests, locators and assertions that meet your standards, no production credentials or customer data in prompts, and measuring defects found versus time spent.",
   "tags": [
    "ai"
@@ -1239,6 +1939,13 @@
   "kind": "concept",
   "question": "What causes 'element is not visible' or 'element intercepts pointer events' errors, and how do you fix them?",
   "what_tested": "Common failures",
+  "options": [
+   "Increase the timeout to 2 minutes",
+   "Use force=True everywhere",
+   "Restart the browser before each click",
+   "Hidden duplicates or covering overlays"
+  ],
+  "answer": 3,
   "model": "'Not visible' usually means the locator matched a hidden duplicate (e.g. a mobile menu copy), the element is collapsed or off-screen in a closed panel, or the wrong viewport is set. Scope the locator to the visible container or open the panel first. 'Intercepts pointer events' means something covers it: a cookie banner, loading overlay, toast or sticky header. Wait for the overlay to disappear (`expect(spinner).to_be_hidden()`) or dismiss it. Don't paper over either with `force=True`.",
   "tags": [
    "debugging"
@@ -1251,6 +1958,13 @@
   "kind": "concept",
   "question": "A test is slow: each one takes 20 seconds. How do you speed it up?",
   "what_tested": "Test performance",
+  "options": [
+   "Buy faster laptops",
+   "Run headed to watch it",
+   "API setup and no sleeps",
+   "Add more sleeps"
+  ],
+  "answer": 2,
   "model": "Profile with a trace or `--durations` to see where the time goes. Typical fixes: replace UI login with storage state; create test data via API instead of clicking through forms; remove hard waits and `networkidle`; block unneeded third-party resources; go directly to the target URL instead of navigating through menus; split huge end-to-end flows into focused tests; then parallelise with xdist and sharding. Check environment slowness too, because staging may be the bottleneck.",
   "tags": [
    "performance"
@@ -1263,6 +1977,13 @@
   "kind": "concept",
   "question": "On your project, clicking 'Generate Report' calls an API that takes 5–40 seconds before a Download button appears. A teammate added timeout=60000 to the next click. What do you think of that fix?",
   "what_tested": "Waiting on the right signal",
+  "options": [
+   "Reload the page until the button appears",
+   "Use time.sleep(40)",
+   "Add timeout=60000 to every action in the suite",
+   "Wait on the report API response"
+  ],
+  "answer": 3,
   "model": "Raising the timeout only for that step is fine once you've confirmed the delay is genuine, but the better fix waits on the real signal. Wrap the Generate click in `page.expect_response(...)` for the report API with a 60-second timeout and a comment, then assert `response.ok`. Then `expect(download_button).to_be_visible()` and use `expect_download` to verify the file. If the API fails fast with a 500, this test fails in seconds with a clear message, instead of hanging for a minute and reporting 'button not found'.",
   "tags": [
    "scenario",
@@ -1276,6 +1997,13 @@
   "kind": "concept",
   "question": "A test randomly fails with 'strict mode violation: resolved to 2 elements' after a UI release. What happened, and what do you do?",
   "what_tested": "Strict mode in practice",
+  "options": [
+   "Add force=True",
+   "Playwright has a bug; downgrade",
+   "A second match appeared; refine intent",
+   "Increase the timeout"
+  ],
+  "answer": 2,
   "model": "The release added a second matching element, e.g. a duplicate button in a new sticky footer, a hidden mobile-menu copy, or text that now appears twice. Open the trace or run headed to see both matches. Make the locator express intent: scope it to the right container (form, dialog, row), add an exact accessible name, or use a test id. Don't just append `.first`; that hides the ambiguity and may click the wrong control later.",
   "tags": [
    "scenario",
@@ -1289,6 +2017,13 @@
   "kind": "concept",
   "question": "Tests pass when run alone but fail when the whole suite runs. How do you investigate?",
   "what_tested": "Test interdependence",
+  "options": [
+   "Run tests one at a time forever",
+   "pytest is broken",
+   "Shared state or order dependence",
+   "The machine is too slow"
+  ],
+  "answer": 2,
   "model": "That points to shared state or order dependence. Check for data created or changed by one test and expected by another, shared accounts whose settings a test changes, fixtures with too wide a scope holding mutable state, leftover cookies or storage when contexts are reused, and parallel workers colliding. Install pytest-randomly to shuffle the order on every run and expose order dependence, then give each test its own data and setup through fixtures.",
   "tags": [
    "scenario",
@@ -1302,6 +2037,13 @@
   "kind": "concept",
   "question": "A dropdown's options load from an API after you click it, and the test intermittently picks nothing. How do you make it reliable?",
   "what_tested": "Async UI loading",
+  "options": [
+   "Select by index immediately after opening",
+   "Read all options with all_inner_texts() right away",
+   "Click the option by role and name",
+   "Sleep 3 seconds after clicking"
+  ],
+  "answer": 2,
   "model": "Act through locators with auto-waiting: click to open, then `page.get_by_role(\"option\", name=\"India\").click()`, which waits until that option exists and is actionable. If options appear progressively, assert the expected option is visible first, or wait for the options API response around the click. Avoid reading the options list immediately with `all_inner_texts()`, which doesn't wait, and avoid selecting by index.",
   "tags": [
    "scenario",
@@ -1315,6 +2057,13 @@
   "kind": "concept",
   "question": "A test passes in Chromium but fails in WebKit. How do you approach it?",
   "what_tested": "Cross-browser failures",
+  "options": [
+   "Compare traces; product bug or test?",
+   "Skip WebKit permanently",
+   "Rewrite the test in Selenium",
+   "WebKit is unreliable; ignore it"
+  ],
+  "answer": 0,
   "model": "Reproduce with `--browser webkit --headed` and compare traces from both browsers. Typical causes: a real Safari-engine bug in the app (date input handling, CSS layout, unsupported APIs), timing differences exposing a race, different default fonts shifting the layout, or a locator matching differently. Decide whether it's a product bug (file it; WebKit users would hit it) or a test issue. Use `skip_browser` only as a temporary, ticketed exception.",
   "tags": [
    "scenario",
@@ -1328,6 +2077,13 @@
   "kind": "concept",
   "question": "A cookie consent banner appears randomly and blocks clicks. How do you handle it across the suite?",
   "what_tested": "Global interruptions",
+  "options": [
+   "Ignore the failures",
+   "Use force=True on every click",
+   "Check for the banner before every click",
+   "Pre-set consent or a locator handler"
+  ],
+  "answer": 3,
   "model": "Best: prevent it by setting the consent cookie or localStorage key in `storage_state` or an init script, so the banner never shows in tests, and keep one dedicated test for the banner itself. Alternatively, newer Playwright versions have `page.add_locator_handler(banner, lambda: accept_button.click())`, which dismisses an overlay automatically whenever it blocks an action. Avoid sprinkling 'if banner visible, click it' checks through tests.",
   "tags": [
    "scenario"
@@ -1340,6 +2096,13 @@
   "kind": "concept",
   "question": "After a successful payment, the app redirects through three URLs before landing on the confirmation page. How do you wait correctly?",
   "what_tested": "Redirect chains",
+  "options": [
+   "Wait for the final URL, then assert",
+   "Use networkidle",
+   "Assert each intermediate URL in order",
+   "Sleep for the redirects to finish"
+  ],
+  "answer": 0,
   "model": "Wait for the final state, not each hop: `page.wait_for_url(\"**/orders/*/confirmation\")` or `expect(page).to_have_url(re.compile(...))`, then assert the confirmation heading and order number with `expect`. If the payment call matters, wrap the submit in `expect_response` for the payment API and assert its status. Don't wait for intermediate URLs that might change; they make the test brittle.",
   "tags": [
    "scenario",
@@ -1353,6 +2116,13 @@
   "kind": "concept",
   "question": "Your suite takes 90 minutes in CI and developers ignore it. What do you change?",
   "what_tested": "Suite speed strategy",
+  "options": [
+   "Run the full suite on every commit anyway",
+   "Smoke tier, API setup, fix flaky tests",
+   "Delete all UI tests",
+   "Run it weekly only"
+  ],
+  "answer": 1,
   "model": "Measure where time goes (`--durations`, per-file timings). Then: split into tiers (a 10-minute smoke suite on PRs, full regression nightly); move setup to API calls and storage state; delete or merge redundant end-to-end tests whose logic is covered by API or unit tests; remove hard waits; parallelise with xdist and shard across machines; and fix or quarantine flaky tests so failures are trusted again. Track duration and flake rate as team metrics.",
   "tags": [
    "scenario",
@@ -1366,6 +2136,13 @@
   "kind": "concept",
   "question": "You need to test that a user sees a notification when another user approves their request. How do you write it?",
   "what_tested": "Multi-user real-time flows",
+  "options": [
+   "Check the database only",
+   "Log in and out as each user on one page",
+   "Use two browsers on two machines",
+   "Two contexts, expect the notification"
+  ],
+  "answer": 3,
   "model": "Create two contexts from the same browser with different storage states (requester and approver), each with its own page. In the requester page, create the request (or create it via API for speed). In the approver page, approve it. Then back on the requester page, `expect(notification).to_be_visible()`; the retrying assertion covers the push delay. Close both contexts in a fixture's teardown and use a unique request title so parallel runs don't collide.",
   "tags": [
    "scenario",
@@ -1379,6 +2156,13 @@
   "kind": "concept",
   "question": "A third-party chat widget loads slowly and sometimes breaks your tests. What do you do?",
   "what_tested": "Third-party dependencies",
+  "options": [
+   "Remove the widget from production",
+   "Wait for it with long sleeps",
+   "Block it; test it separately",
+   "Retry tests until it loads"
+  ],
+  "answer": 2,
   "model": "Block it in most tests with `context.route(\"**/widget-vendor.com/**\", lambda r: r.abort())`, which speeds things up and removes the dependency. Keep a small, separate test, maybe run less often, that checks the widget loads and opens. If the app must have the widget present, fulfil the script request with a lightweight stub. Third-party outages shouldn't fail your regression signal.",
   "tags": [
    "scenario",
@@ -1392,6 +2176,13 @@
   "kind": "concept",
   "question": "How would you test that an order list is sorted by date when the user clicks the Date column header?",
   "what_tested": "Verifying sorting",
+  "options": [
+   "Check that the first row changed",
+   "Compare dates as strings",
+   "Take a screenshot of the table",
+   "Parse dates and compare with sorted()"
+  ],
+  "answer": 3,
   "model": "Seed known data via API (dates that sort differently from creation order). Click the header, wait for the list to update (assert the sort indicator, or wait for the API response), read the dates with `all_inner_texts()`, parse them into real dates, and assert they equal `sorted(dates, reverse=...)`. Then click again and check the opposite order. Comparing parsed dates rather than strings avoids '10/02' versus '9/02' false results.",
   "tags": [
    "scenario"
@@ -1404,6 +2195,13 @@
   "kind": "concept",
   "question": "A test fails only in CI with 'Timeout 30000ms exceeded waiting for locator'. The trace shows a blank page. What could be wrong?",
   "what_tested": "Environment failures",
+  "options": [
+   "The app never loaded",
+   "The locator is too strict",
+   "The test needs force=True",
+   "The timeout is too short"
+  ],
+  "answer": 0,
   "model": "A blank page usually means the app never loaded: a wrong base URL or environment variable in CI, the app or its API not deployed yet, network or DNS restrictions from the CI runner, an SSL certificate issue (consider `ignore_https_errors` for staging), a JavaScript crash (check console errors in the trace), or blocked assets. Check the trace's network tab for failed or pending requests. Add a health-check step before the suite so environment problems fail fast and clearly.",
   "tags": [
    "scenario",
@@ -1417,6 +2215,13 @@
   "kind": "concept",
   "question": "How would you test a form's validation messages efficiently?",
   "what_tested": "Data-driven UI tests",
+  "options": [
+   "One separate long test per message",
+   "Parametrise cases; matrix at API level",
+   "Check only the first message",
+   "Only test validation manually"
+  ],
+  "answer": 1,
   "model": "Parametrize one test over cases (empty email, bad format, too-long name, past date) with pytest ids, fill the form, submit, and assert the specific message with `expect(field_error).to_have_text(...)`. Also assert the field's accessible error state (`aria-invalid`) and that no request was sent, using route monitoring. Cover the full validation matrix at the API level, and keep UI tests to the representative cases that prove messages render correctly.",
   "tags": [
    "scenario",
@@ -1430,6 +2235,13 @@
   "kind": "concept",
   "question": "Your team wants to add retries (--reruns 2) to hide flaky failures. How do you respond?",
   "what_tested": "Retry policy",
+  "options": [
+   "Only with tracking and quarantine",
+   "Set --reruns 10 globally",
+   "Agree; retries fix flakiness",
+   "Never discuss it"
+  ],
+  "answer": 0,
   "model": "Retries can unblock CI short term, but used silently they hide real product race conditions and let flakiness grow. I'd agree only with guard rails: report reruns as 'flaky' in the results instead of hiding them, track the flake rate per test, keep a quarantine list with owners and deadlines, and keep zero retries for tests on critical payment or auth paths. The goal is to fix root causes, not to make the dashboard green.",
   "tags": [
    "scenario",
@@ -1443,6 +2255,13 @@
   "kind": "concept",
   "question": "How do you test a long multi-step wizard (e.g. a 6-step loan application) without making one giant fragile test?",
   "what_tested": "Test design",
+  "options": [
+   "Test only the last step",
+   "Seed state per step; few full paths",
+   "Skip the wizard",
+   "One giant test covering all steps and edge cases"
+  ],
+  "answer": 1,
   "model": "Test each step's logic focused and short, starting at that step by seeding state via API or deep-linking with prepared data. Keep one or two end-to-end happy paths through the whole wizard as integration checks. Model each step as a page or component object. Verify validation and edge cases per step, and back-navigation preserving data. Giant tests fail late, take long to debug and repeat coverage.",
   "tags": [
    "scenario",
@@ -1456,6 +2275,13 @@
   "kind": "concept",
   "question": "How do you make sure the test data you create doesn't collide when 8 workers run the same test?",
   "what_tested": "Parallel-safe data",
+  "options": [
+   "Run tests serially",
+   "Unique values per test and worker",
+   "Use the first row in each list",
+   "Use the same test data for all workers"
+  ],
+  "answer": 1,
   "model": "Generate unique values per test: a uuid or a worker-and-timestamp suffix in names, emails and references (e.g. `f\"qa-{worker_id}-{uuid4().hex[:6]}@test.com\"`). Create data in function-scoped fixtures and clean up in teardown, ideally through the API. Never depend on 'the first row' or global counts; filter by your unique value. For limited resources like accounts, keep a pool and assign one per worker.",
   "tags": [
    "scenario",
@@ -1469,6 +2295,13 @@
   "kind": "concept",
   "question": "The UI shows amounts like '₹1,25,000.50'. How do you assert on them robustly?",
   "what_tested": "Locale-aware assertions",
+  "options": [
+   "Compare as floats",
+   "Fixed locale, or parse to Decimal",
+   "Strip everything and compare integers",
+   "Use to_contain_text('1')"
+  ],
+  "answer": 1,
   "model": "Decide what the test really checks. If formatting is the requirement, set `locale` and `timezone_id` on the context and assert the exact string. If the value matters, parse it: strip the currency symbol and separators, convert to `Decimal` and compare with the expected amount. Never use floats. Keep one explicit test per locale format (Indian lakh grouping versus western grouping) instead of fuzzy matching everywhere.",
   "tags": [
    "scenario",
@@ -1482,6 +2315,13 @@
   "kind": "concept",
   "question": "A developer says 'just add sleep(2), it fixes the test'. How do you explain why that's wrong and what to do instead?",
   "what_tested": "Communicating test quality",
+  "options": [
+   "Use force=True instead",
+   "Agree; sleep(2) is fine",
+   "Wait on the real condition instead",
+   "Use sleep(5) to be safe"
+  ],
+  "answer": 2,
   "model": "A sleep only hides the race: it fails when CI is slower than two seconds and wastes two seconds every time it's faster, and across hundreds of steps that adds minutes. I'd show the trace of what the test was actually waiting for, then replace the sleep with an assertion or wait on the real condition, such as the toast, the response or the URL. Then stress-run the test (say 30 times) to prove it's stable.",
   "tags": [
    "scenario",

@@ -6,6 +6,13 @@
   "kind": "concept",
   "question": "What is an API, and why test at the API layer rather than only through the UI?",
   "what_tested": "API testing rationale",
+  "options": [
+   "A database; API tests check SQL queries",
+   "A system contract; faster, deeper tests",
+   "API testing is only needed for public APIs",
+   "A user interface for developers; API tests replace all UI tests"
+  ],
+  "answer": 1,
   "model": "An API is the contract one piece of software exposes to another: endpoints, inputs, outputs and errors. Testing there is faster (milliseconds versus seconds), more stable (no rendering or timing issues), and covers business rules and edge cases that are awkward to reach through the UI. It also catches problems for every consumer: web, mobile and partners. In the test pyramid, API tests carry most of the functional coverage; UI tests confirm critical journeys end to end.",
   "tags": [
    "fundamentals"
@@ -18,6 +25,13 @@
   "kind": "concept",
   "question": "What does REST actually mean, and how is it different from 'an HTTP API returning JSON'?",
   "what_tested": "REST principles",
+  "options": [
+   "Any API that returns JSON",
+   "Resources, method semantics, statelessness",
+   "A Python library for web services",
+   "A protocol that replaces HTTP"
+  ],
+  "answer": 1,
   "model": "REST is an architectural style: resources identified by URLs, standard HTTP methods with their semantics (GET is safe, PUT is idempotent), stateless requests, cacheable responses and a uniform interface. Many 'REST APIs' are really RPC over HTTP (`POST /getUserDetails`). As a tester that matters, because REST semantics give you things to verify: correct methods and status codes, idempotency, caching headers, and resource-oriented URLs.",
   "tags": [
    "fundamentals"
@@ -30,6 +44,13 @@
   "kind": "concept",
   "question": "PUT vs PATCH vs POST: what's the difference, and which are idempotent?",
   "what_tested": "HTTP methods",
+  "options": [
+   "PATCH replaces the whole resource; PUT updates one field",
+   "All three are idempotent",
+   "POST no, PUT yes, PATCH not guaranteed",
+   "POST is idempotent; PUT isn't"
+  ],
+  "answer": 2,
   "model": "POST creates a resource (or triggers an action) and isn't idempotent. PUT replaces the whole resource at a known URI and is idempotent. PATCH partially updates and isn't guaranteed to be idempotent (an `increment` patch isn't). GET, PUT and DELETE are idempotent. In tests I check idempotency by sending the same PUT twice and confirming the state and response don't change.",
   "tags": [
    "fundamentals",
@@ -43,6 +64,13 @@
   "kind": "concept",
   "question": "What is idempotency, and why does a tester care?",
   "what_tested": "Idempotency",
+  "options": [
+   "The API needs no authentication",
+   "Repeats have the same effect as one call",
+   "The response is always identical, including timestamps",
+   "The request is encrypted"
+  ],
+  "answer": 1,
   "model": "An operation is idempotent if doing it several times has the same effect on the server as doing it once. GET, PUT and DELETE should be idempotent; POST usually isn't. Testers care because clients and gateways retry on timeouts: if a retried 'create payment' isn't protected, customers get charged twice. Test it by repeating requests, including concurrently, and verifying the end state (one record, one charge), not just the status codes.",
   "tags": [
    "fundamentals",
@@ -56,6 +84,13 @@
   "kind": "concept",
   "question": "What's the difference between safe and idempotent methods?",
   "what_tested": "Method semantics",
+  "options": [
+   "They're the same concept",
+   "Safe never changes state; idempotent may",
+   "DELETE is safe but not idempotent",
+   "Safe means authenticated; idempotent means cached"
+  ],
+  "answer": 1,
   "model": "Safe methods (GET, HEAD, OPTIONS) shouldn't change server state at all; they're read-only. Idempotent methods (the safe ones plus PUT and DELETE) may change state, but repeating them gives the same end state. So DELETE is idempotent but not safe. A bug worth testing for: a GET endpoint that changes data, such as `GET /orders/1/cancel`, which crawlers, prefetching or retries could trigger by accident.",
   "tags": [
    "methods"
@@ -68,6 +103,13 @@
   "kind": "concept",
   "question": "Which status codes would you expect for: created, validation error, unauthenticated, forbidden, not found, conflict, rate limited, server error?",
   "what_tested": "Status codes",
+  "options": [
+   "201, 400/422, 401, 403, 404, 409, 429, 500",
+   "202, 401, 400, 404, 403, 410, 503, 501",
+   "201, 404, 403, 401, 400, 500, 418, 200",
+   "200, 500, 403, 401, 400, 404, 503, 502"
+  ],
+  "answer": 0,
   "model": "201 Created (ideally with a `Location` header), 400 or 422 for validation errors, 401 when you're not authenticated, 403 when authenticated but not allowed, 404 for not found, 409 for a conflict (a duplicate or a version clash), 429 for rate limiting (with `Retry-After`), and 500 for an unexpected server error (502, 503 or 504 for gateway, availability or timeout issues). Mixing up 401 and 403 is a common real bug worth negative tests.",
   "tags": [
    "status-codes"
@@ -80,6 +122,13 @@
   "kind": "concept",
   "question": "When should an API return 400 versus 422?",
   "what_tested": "Validation status codes",
+  "options": [
+   "422 means not found",
+   "They're interchangeable with 500",
+   "Malformed vs semantically invalid",
+   "400 for server errors; 422 for timeouts"
+  ],
+  "answer": 2,
   "model": "400 Bad Request means the request itself is malformed: invalid JSON, wrong content type, missing required structure. 422 Unprocessable Content means the request is well-formed but semantically invalid, like an end date before the start date or a negative amount. Many APIs use 400 for both. As a tester, the key is consistency with the API's documented contract, and that the error body explains what's wrong per field.",
   "tags": [
    "status-codes"
@@ -92,6 +141,13 @@
   "kind": "concept",
   "question": "What's the difference between 401 and 403? Give a test for each.",
   "what_tested": "Authentication vs authorisation",
+  "options": [
+   "Both mean the server crashed",
+   "Unauthenticated vs not permitted",
+   "401 means forbidden; 403 means not logged in",
+   "403 is used for rate limiting"
+  ],
+  "answer": 1,
   "model": "401 Unauthorized really means unauthenticated: there are no credentials or they're invalid, so the client should authenticate (often with a `WWW-Authenticate` header). 403 Forbidden means the server knows who you are but you're not allowed. Tests: call `GET /admin/users` with no token or an expired token and expect 401; call it with a valid token for a non-admin user and expect 403. Some APIs return 404 instead of 403 to hide that a resource exists, which is fine if documented.",
   "tags": [
    "status-codes",
@@ -105,6 +161,13 @@
   "kind": "concept",
   "question": "What's the difference between 200, 201, 202 and 204?",
   "what_tested": "Success codes",
+  "options": [
+   "202 means created; 201 means accepted",
+   "They're all identical successes",
+   "204 means not found",
+   "OK, Created, Accepted, No Content"
+  ],
+  "answer": 3,
   "model": "200 OK: success with a body (GET, or an update returning the resource). 201 Created: a new resource was created; expect a `Location` header and usually the created resource in the body. 202 Accepted: the request was queued for asynchronous processing, so poll a status URL or wait for a webhook. 204 No Content: success with no body, common for DELETE or updates. Testing 202 flows means verifying the eventual outcome, not just the acceptance.",
   "tags": [
    "status-codes"
@@ -117,6 +180,13 @@
   "kind": "concept",
   "question": "What's the difference between path parameters, query parameters and headers? What belongs where?",
   "what_tested": "Request anatomy",
+  "options": [
+   "Secrets belong in query parameters",
+   "Resource, filters, metadata",
+   "Headers identify the resource; path holds the auth token",
+   "Query parameters must contain the request body"
+  ],
+  "answer": 1,
   "model": "Path parameters identify a resource: `/orders/{id}`. Query parameters filter, sort, paginate or shape the response: `?status=open&page=2`. Headers carry metadata about the request: auth tokens, content type, accept language, idempotency keys, correlation IDs. Body data is the resource representation. Secrets don't belong in query strings, because URLs end up in logs, browser history and proxies. Test each kind: invalid IDs, unknown query params, missing headers.",
   "tags": [
    "fundamentals"
@@ -129,6 +199,13 @@
   "kind": "concept",
   "question": "Which HTTP headers do you commonly check or set in API tests?",
   "what_tested": "Headers",
+  "options": [
+   "Cookie only",
+   "Authorization and Content-Type",
+   "Only User-Agent",
+   "Headers don't matter in API tests"
+  ],
+  "answer": 1,
   "model": "Request: `Authorization`, `Content-Type`, `Accept`, `Idempotency-Key`, `X-Correlation-ID` (or a similar request id), `Accept-Language`. Response: `Content-Type` (it really is application/json, with charset), `Location` after 201, `Cache-Control` and `ETag`, rate-limit headers (`Retry-After`, `X-RateLimit-Remaining`), CORS headers for browser clients, and security headers such as `Strict-Transport-Security`. Also check that the server doesn't leak internals, e.g. version banners in `Server` or `X-Powered-By`.",
   "tags": [
    "headers"
@@ -141,6 +218,13 @@
   "kind": "concept",
   "question": "What is content negotiation, and what should you test around it?",
   "what_tested": "Accept / Content-Type",
+  "options": [
+   "Compressing responses only",
+   "Agreeing the price of an API with the vendor",
+   "Accept/Content-Type with 406 and 415",
+   "Choosing the HTTP method automatically"
+  ],
+  "answer": 2,
   "model": "The client states what it can accept (`Accept: application/json`) and what it's sending (`Content-Type`), and the server responds accordingly or refuses. Tests: an unsupported `Accept` should give 406 (or a documented default), an unsupported `Content-Type` should give 415, the response `Content-Type` should match the body, and `Accept-Language` should give localised messages if supported. Sending JSON with the wrong content type is a common client bug the API should reject clearly.",
   "tags": [
    "headers"
@@ -153,6 +237,13 @@
   "kind": "concept",
   "question": "What should a well-designed API error response contain, and how do you test it?",
   "what_tested": "Error contracts",
+  "options": [
+   "Code, message, field details, request id",
+   "A full stack trace for debugging",
+   "An HTML error page",
+   "Only an HTTP status code with an empty body"
+  ],
+  "answer": 0,
   "model": "A consistent structure (e.g. RFC 9457 problem details): a machine-readable code, a human-readable message, field-level details for validation errors, and a correlation or request id for support. It must not contain stack traces, SQL or internal hostnames. Test that every error path (400, 401, 403, 404, 409, 422, 500) returns the same schema, that field errors name the right fields, and that the status code matches the error type.",
   "tags": [
    "errors"
@@ -165,6 +256,13 @@
   "kind": "concept",
   "question": "How do you test pagination thoroughly?",
   "what_tested": "Pagination",
+  "options": [
+   "Only test the default page size",
+   "Pagination doesn't need testing",
+   "No overlaps or gaps; edge pages",
+   "Check that page 1 returns something"
+  ],
+  "answer": 2,
   "model": "Seed a known number of records, then check: page size is respected; pages don't overlap or skip items (collect all ids across pages and compare with the seeded set); ordering is stable; the last page and an empty page behave correctly; metadata (total, next/previous links or cursor) is accurate; and invalid inputs (page=0, negative or huge sizes) give clear errors or are clamped as documented. With cursor pagination, also check that records inserted mid-walk don't cause duplicates.",
   "tags": [
    "pagination"
@@ -177,6 +275,13 @@
   "kind": "concept",
   "question": "How do you test filtering and sorting parameters?",
   "what_tested": "Query behaviour",
+  "options": [
+   "Every item matches; none missing",
+   "Check the count only",
+   "Assert the first item only",
+   "Trust the API's sorting"
+  ],
+  "answer": 0,
   "model": "Seed data that distinguishes the cases (various statuses, dates, amounts). For each filter, assert every returned item matches and no matching item is missing (compare against an expected set, not just a count). Combine filters to test AND/OR logic. For sorting, compare the returned order with your own sorted copy, in both directions, including ties and nulls. Also test invalid values (unknown field, wrong type) and case sensitivity.",
   "tags": [
    "query"
@@ -189,6 +294,13 @@
   "kind": "concept",
   "question": "How should APIs be versioned, and what does versioning mean for your test suite?",
   "what_tested": "Versioning",
+  "options": [
+   "Version numbers belong in the request body",
+   "Delete old version tests as soon as v2 exists",
+   "Versioning is unnecessary for internal APIs",
+   "Test every supported version"
+  ],
+  "answer": 3,
   "model": "Common approaches: a version in the URL (`/v2/orders`), a header (`Accept: application/vnd.app.v2+json`), or a query parameter. For the suite: keep tests for every supported version until it's retired, run contract tests to catch accidental breaking changes within a version, check that deprecated versions announce sunset dates (e.g. `Deprecation` and `Sunset` headers), and parametrise shared tests over versions where behaviour should be the same.",
   "tags": [
    "versioning"
@@ -201,6 +313,13 @@
   "kind": "concept",
   "question": "What is a breaking change in an API, and how would you catch one automatically?",
   "what_tested": "Backward compatibility",
+  "options": [
+   "Adding a new optional field",
+   "Removed or retyped fields; diff specs",
+   "Improving response time",
+   "Changing documentation wording"
+  ],
+  "answer": 1,
   "model": "Breaking changes include removing or renaming a field, changing a type, making an optional field required, tightening validation, changing status codes or error formats, and removing an endpoint. Adding optional fields is usually safe. Catch them automatically by diffing OpenAPI specs in CI (with tools like openapi-diff or oasdiff), running consumer-driven contract tests (Pact), and validating responses against the published schema in your suite.",
   "tags": [
    "contracts"
@@ -213,6 +332,13 @@
   "kind": "concept",
   "question": "Where does an OpenAPI (Swagger) specification fit into API testing?",
   "what_tested": "OpenAPI",
+  "options": [
+   "A replacement for tests",
+   "A UI for clicking through APIs only",
+   "The machine-readable contract",
+   "A load-testing tool"
+  ],
+  "answer": 2,
   "model": "It's the machine-readable contract: endpoints, parameters, schemas, status codes and auth. Uses in testing: generate a client or request models, validate every response against the schema, generate negative and edge cases (Schemathesis does property-based testing from the spec), detect breaking changes by diffing versions, and check that the implementation actually matches the documentation. Spec drift, where docs say one thing and the API does another, is a bug in itself.",
   "tags": [
    "contracts",
@@ -226,6 +352,13 @@
   "kind": "concept",
   "question": "Compare Basic Auth, API keys, OAuth 2.0 and JWT. What problem does each solve?",
   "what_tested": "Auth mechanisms",
+  "options": [
+   "JWT is an authentication protocol that replaces OAuth",
+   "Credentials, app keys, delegation, token format",
+   "They're all the same thing",
+   "API keys are short-lived user tokens"
+  ],
+  "answer": 1,
   "model": "Basic Auth sends a base64 username and password with every request; it's simple, only safe over HTTPS and rarely used for public APIs. API keys identify a calling application; they're easy but long-lived and usually not tied to a user. OAuth 2.0 is a framework for delegated, scoped, expiring access tokens issued by an authorisation server. A JWT is a token format (signed JSON claims), often used as an OAuth access token. Tests differ: key rotation, token expiry, scopes, signature checks.",
   "tags": [
    "auth"
@@ -238,6 +371,13 @@
   "kind": "concept",
   "question": "What is inside a JWT, and what should you test about it?",
   "what_tested": "JWT",
+  "options": [
+   "XML configuration",
+   "A session id stored in a database",
+   "Encrypted user passwords",
+   "Claims and signature; expiry, tampering"
+  ],
+  "answer": 3,
   "model": "A JWT is three base64url parts: a header (algorithm, key id), a payload of claims (sub, exp, iat, iss, aud, roles) and a signature. Test that expired tokens are rejected, tampered payloads fail signature checks, `alg: none` and algorithm-confusion tricks are rejected, the issuer and audience are validated, role claims can't be escalated by editing them, and that no sensitive data sits in the payload, which is only encoded, not encrypted.",
   "tags": [
    "auth",
@@ -251,6 +391,13 @@
   "kind": "concept",
   "question": "How do you test token expiry and refresh behaviour?",
   "what_tested": "Session lifecycle",
+  "options": [
+   "Refresh tokens can be reused forever",
+   "Expired gives 401; refresh rules hold",
+   "Only check that login works",
+   "Tokens never expire in test environments"
+  ],
+  "answer": 1,
   "model": "Get a short-lived token in a test environment (or a configurable expiry), wait or fake time past expiry, and check the API returns 401 with a clear error. Then check the refresh flow: a valid refresh token returns a new access token, an expired or revoked refresh token is rejected, refresh tokens rotate if designed to, and a used refresh token can't be replayed. Also check logout revokes tokens server-side.",
   "tags": [
    "auth"
@@ -263,6 +410,13 @@
   "kind": "concept",
   "question": "What is the OAuth 2.0 client-credentials flow, and when is it the right one for tests?",
   "what_tested": "OAuth flows",
+  "options": [
+   "A flow requiring no secrets",
+   "A flow where users type passwords into your app",
+   "Machine-to-machine token flow",
+   "A flow for browser cookies only"
+  ],
+  "answer": 2,
   "model": "Client credentials is machine-to-machine: the client sends its client id and secret to the token endpoint and receives an access token, with no user involved. It's right for service-to-service APIs and for test suites calling backend APIs as a system. For user-specific behaviour (permissions per user), you need user tokens instead, via a test-friendly flow such as the password grant in test environments only, or an authorisation-code flow automated once and its tokens reused.",
   "tags": [
    "auth"
@@ -275,6 +429,13 @@
   "kind": "concept",
   "question": "How do you handle authentication in an API test suite where tokens expire every 15 minutes?",
   "what_tested": "Auth handling in fixtures",
+  "options": [
+   "Disable token expiry in production",
+   "Session fixture with auto-refresh",
+   "Log in before every single request",
+   "Hard-code a long-lived token in the repo"
+  ],
+  "answer": 1,
   "model": "Get the token in a session-scoped fixture, store its expiry, and have the API client refresh it automatically when it's near expiry or after a 401. Keep secrets in environment variables or a secrets manager, never in the repo, and mask them in logs and reports. Also write explicit negative tests: no token, expired token, wrong-scope token.",
   "tags": [
    "auth",
@@ -288,6 +449,13 @@
   "kind": "concept",
   "question": "How do you test authorisation (who can do what) systematically?",
   "what_tested": "Access control testing",
+  "options": [
+   "Test only the admin user",
+   "Authorisation can't be automated",
+   "Check that the login page works",
+   "A role × endpoint permission matrix"
+  ],
+  "answer": 3,
   "model": "Build a permission matrix: roles × endpoints × actions, with the expected result for each cell. Parametrise tests over that matrix with a token per role. Include horizontal checks (user A can't read or modify user B's order by changing the id, the IDOR problem) and vertical checks (a normal user can't call admin endpoints). Test with no token, an expired token and a token for another tenant. Authorisation bugs are among the most serious API defects, so automate this matrix.",
   "tags": [
    "auth",
@@ -301,6 +469,13 @@
   "kind": "concept",
   "question": "How should credentials and tokens be handled inside an API test suite?",
   "what_tested": "Secret hygiene",
+  "options": [
+   "Stored in test names",
+   "Committed in a config file for convenience",
+   "Vault or env vars, masked in logs",
+   "Printed at the start of each test run"
+  ],
+  "answer": 2,
   "model": "Never commit them. Read them from environment variables populated by CI secret stores or a vault, with a local `.env` excluded from git. Use dedicated, least-privilege test accounts per environment and rotate them. Mask the Authorization header and sensitive fields in logs and reports (Allure attachments included). Don't run destructive tests with production credentials, and make the suite fail fast with a clear message if a secret is missing, rather than calling the API unauthenticated.",
   "tags": [
    "auth",
@@ -314,6 +489,13 @@
   "kind": "concept",
   "question": "Where do cookies fit in API authentication, and what changes for testing?",
   "what_tested": "Cookie sessions",
+  "options": [
+   "Cookies replace HTTPS",
+   "Sessions, CSRF and cookie flags",
+   "Cookies are irrelevant to APIs",
+   "Cookies must be added manually to every request"
+  ],
+  "answer": 1,
   "model": "Browser-facing APIs often use session cookies instead of bearer tokens. The client logs in, the server sets an HttpOnly cookie and later requests carry it automatically. In tests, use a session object that stores cookies (`requests.Session`, or Playwright's request context). Also test cookie flags (`HttpOnly`, `Secure`, `SameSite`), CSRF protection for state-changing requests, logout invalidating the session server-side, and session fixation (the session id changes after login).",
   "tags": [
    "auth"
@@ -326,6 +508,13 @@
   "kind": "concept",
   "question": "How do you write a basic API test in Python with requests and pytest?",
   "what_tested": "requests + pytest",
+  "options": [
+   "Use urllib and parse HTML",
+   "Assert only that no exception occurred",
+   "Call the API without timeouts for speed",
+   "Session, timeout, status and body asserts"
+  ],
+  "answer": 3,
   "model": "Use a session fixture: `s = requests.Session(); s.headers.update({\"Authorization\": f\"Bearer {token}\"})`. The test calls `r = s.post(f\"{BASE}/users\", json=payload, timeout=10)`, asserts `r.status_code == 201`, then asserts on `r.json()` fields and headers. Always set a timeout so a hung API can't block CI. Include `r.text` in assertion messages so failures are readable. Wrap endpoints in a small client class so tests read as business actions.",
   "tags": [
    "python",
@@ -339,6 +528,13 @@
   "kind": "concept",
   "question": "Why use requests.Session instead of calling requests.get() each time?",
   "what_tested": "Connection reuse",
+  "options": [
+   "It's required for GET requests",
+   "It caches every response permanently",
+   "Connection reuse and shared settings",
+   "It encrypts requests"
+  ],
+  "answer": 2,
   "model": "A Session reuses TCP and TLS connections (connection pooling), so many calls are noticeably faster. It also persists headers, cookies and auth across requests, and lets you mount adapters with retry policies (`HTTPAdapter(max_retries=Retry(...))`). In a suite, create the session in a fixture, configure base headers and timeouts in one place, and close it on teardown.",
   "tags": [
    "python",
@@ -352,6 +548,13 @@
   "kind": "concept",
   "question": "What are the main Python options for API testing besides requests?",
   "what_tested": "Tool landscape",
+  "options": [
+   "Selenium and Appium",
+   "Django and Flask",
+   "pandas and numpy",
+   "httpx, pydantic and Pact"
+  ],
+  "answer": 3,
   "model": "httpx (requests-like, with sync and async support and HTTP/2), Playwright's APIRequestContext (shares cookies with browser tests), aiohttp for async load-style checks, pydantic or jsonschema for response validation, Schemathesis for property-based tests generated from OpenAPI, Pact for consumer-driven contracts, `responses` or `respx` for mocking HTTP in unit tests, and Locust for load testing in Python. Pick based on whether you need async, browser integration or spec-driven generation.",
   "tags": [
    "python",
@@ -365,6 +568,13 @@
   "kind": "concept",
   "question": "How do you use Playwright's APIRequestContext alongside UI tests?",
   "what_tested": "API + UI design",
+  "options": [
+   "Use it to click UI elements",
+   "It replaces pytest",
+   "It can only call GraphQL",
+   "API setup around UI checks"
+  ],
+  "answer": 3,
   "model": "`playwright.request.new_context(base_url=...)` gives an API client, and `page.request` or `context.request` share cookies with the browser. The common pattern is to set up via API and verify via UI: create the order via API in a fixture, open the page, assert it's shown, delete it in teardown. That's faster and less flaky than clicking through setup screens and keeps each UI test focused on one behaviour. `expect(response).to_be_ok()` gives a readable assertion.",
   "tags": [
    "playwright",
@@ -378,6 +588,13 @@
   "kind": "concept",
   "question": "Postman vs code-based API tests: when would you use each?",
   "what_tested": "Tool choice",
+  "options": [
+   "Postman is always better for regression",
+   "They're identical in capability",
+   "Code-based tests can't run in CI",
+   "Exploration vs reviewed regression"
+  ],
+  "answer": 3,
   "model": "Postman (or Insomnia, Bruno) is great for exploring an API, sharing collections, quick manual checks and simple monitors; Newman can run collections in CI. Code-based suites (pytest with requests or httpx) win for complex logic, data generation, reuse, code review, version control, mixing with DB and UI checks, and scaling. Many teams explore in Postman and automate regression in code. Avoid maintaining large, logic-heavy Postman collections as the main regression suite.",
   "tags": [
    "tooling"
@@ -390,6 +607,13 @@
   "kind": "concept",
   "question": "What is request chaining, and what makes chained tests fragile?",
   "what_tested": "Test dependencies",
+  "options": [
+   "Feeding one response into the next",
+   "Sending requests in parallel",
+   "Chaining assertions with and",
+   "Linking APIs by hyperlinks only"
+  ],
+  "answer": 0,
   "model": "Chaining means using one response's output as the next request's input, e.g. create a user, then use its id to create an order. Within one test that's fine and often necessary. It becomes fragile when tests depend on each other (test 2 uses an id saved by test 1): order dependence, cascading failures and no parallel runs. Keep chains inside a single test or a fixture, and make each test create what it needs.",
   "tags": [
    "test-design"
@@ -402,6 +626,13 @@
   "kind": "concept",
   "question": "What is a correlation id, and why should tests use one?",
   "what_tested": "Traceability",
+  "options": [
+   "An id for tracing a request",
+   "A test case id in Jira",
+   "A database primary key",
+   "An API version number"
+  ],
+  "answer": 0,
   "model": "A correlation id (often `X-Request-ID` or `X-Correlation-ID`) is a unique value sent with a request and propagated through every service and log line it touches. If tests send their own id (e.g. including the test name and run id) and print it on failure, developers can find the exact server logs and traces for a failing call in seconds instead of searching by timestamp. It also lets teams filter test traffic out of production-like metrics.",
   "tags": [
    "observability"
@@ -414,6 +645,13 @@
   "kind": "concept",
   "question": "How do you validate an API response beyond checking the status code?",
   "what_tested": "Response validation",
+  "options": [
+   "Only the status code",
+   "Only the response time",
+   "Schema, values, headers, timing",
+   "Only that the body isn't empty"
+  ],
+  "answer": 2,
   "model": "Status code first, then the schema (jsonschema or a pydantic model) so a missing or retyped field fails loudly, then business data (values match what I created), headers (content-type, caching), and response time where it matters. For services owned by other teams, contract tests (e.g. Pact) catch breaking changes before integration.",
   "tags": [
    "validation"
@@ -426,6 +664,13 @@
   "kind": "concept",
   "question": "What is JSON Schema validation, and why is it stronger than field-by-field assertions?",
   "what_tested": "Schema validation",
+  "options": [
+   "It checks only the status code",
+   "It generates UI tests",
+   "Validates the whole structure",
+   "It's slower and less complete than manual asserts"
+  ],
+  "answer": 2,
   "model": "A JSON Schema describes the allowed structure: required fields, types, formats, enums, ranges and whether extra properties are allowed. Validating the whole response (`jsonschema.validate(r.json(), schema)`) checks every field on every call, including ones your test didn't think to assert, so a renamed or retyped field is caught immediately. Field assertions then focus on business values. Keep schemas in sync with the OpenAPI spec, ideally generated from it.",
   "tags": [
    "validation"
@@ -438,6 +683,13 @@
   "kind": "concept",
   "question": "How would you use pydantic models in API tests?",
   "what_tested": "Typed response models",
+  "options": [
+   "pydantic only works with databases",
+   "Use pydantic to mock servers",
+   "Typed models with field-level errors",
+   "Use pydantic to send requests"
+  ],
+  "answer": 2,
   "model": "Define models mirroring the response (`class Order(BaseModel): id: int; status: Literal[\"open\", \"paid\"]; amount: Decimal`), then `order = Order.model_validate(r.json())`. Validation fails with clear, field-level errors if the shape is wrong, and tests work with typed attributes (`order.amount`) instead of nested dict lookups. Strict mode catches type coercion you don't want, and `extra=\"forbid\"` catches unexpected fields when that matters.",
   "tags": [
    "validation",
@@ -451,6 +703,13 @@
   "kind": "concept",
   "question": "What is contract testing, and how is it different from integration testing?",
   "what_tested": "Contract testing",
+  "options": [
+   "Integration tests only check JSON schemas",
+   "Contract tests need all services deployed together",
+   "They're the same thing",
+   "Agreement in isolation vs real services"
+  ],
+  "answer": 3,
   "model": "Contract testing checks that a provider API and its consumers agree on the interface (request and response shapes, status codes) without running the whole system together. Integration testing deploys the real services together and tests them working end to end. Contract tests are fast, run in each service's own pipeline and pinpoint who broke the agreement. Integration tests catch environment and wiring problems. You want a few integration tests and broad contract coverage.",
   "tags": [
    "contracts"
@@ -463,6 +722,13 @@
   "kind": "concept",
   "question": "What is consumer-driven contract testing, and what does it require organisationally?",
   "what_tested": "Pact",
+  "options": [
+   "It replaces unit tests",
+   "Providers write all tests for consumers",
+   "Consumer expectations verified by provider",
+   "It requires no coordination"
+  ],
+  "answer": 2,
   "model": "Consumers write tests describing the requests they make and the responses they need; tools like Pact record these as contracts. The provider's pipeline replays every consumer's contract against the real provider, and a 'can I deploy?' check blocks releases that would break a consumer. It needs consumer and provider teams to agree on the workflow, a broker to share contracts, provider states for test data, and CI wiring on both sides. Without that buy-in, contracts rot.",
   "tags": [
    "contracts"
@@ -475,6 +741,13 @@
   "kind": "concept",
   "question": "How do you validate XML or SOAP APIs if you come across them?",
   "what_tested": "Legacy protocols",
+  "options": [
+   "Treat XML like JSON with json.loads",
+   "XSD validation, SOAP faults, namespaces",
+   "Only status codes matter for SOAP",
+   "SOAP APIs can't be automated"
+  ],
+  "answer": 1,
   "model": "Send the SOAP envelope with the right `Content-Type` and `SOAPAction` header (zeep is a Python SOAP client that builds requests from the WSDL). Validate responses against the XSD schema, parse with `lxml` or `ElementTree` and assert on XPath values, and check SOAP faults for error cases (SOAP often returns HTTP 500 with a fault body). Watch namespaces, which are the usual source of 'element not found' in assertions.",
   "tags": [
    "soap"
@@ -487,6 +760,13 @@
   "kind": "concept",
   "question": "What changes about testing a GraphQL API compared with REST?",
   "what_tested": "GraphQL",
+  "options": [
+   "Errors can come with HTTP 200",
+   "GraphQL doesn't need authentication",
+   "Nothing changes from REST",
+   "GraphQL always returns 4xx for errors"
+  ],
+  "answer": 0,
   "model": "There's usually one endpoint (`POST /graphql`), and errors often come back with HTTP 200 and an `errors` array, so status-code assertions aren't enough; check `errors` and partial `data`. Clients choose fields, so test different query shapes, nested queries and fragments. Watch for deep or expensive queries (depth and complexity limits), N+1 performance problems, authorisation at the field level, and introspection being disabled in production. Validate against the GraphQL schema.",
   "tags": [
    "graphql"
@@ -499,6 +779,13 @@
   "kind": "concept",
   "question": "How do you decide what to test for a newly delivered endpoint?",
   "what_tested": "Test analysis",
+  "options": [
+   "Only performance",
+   "Only the happy path",
+   "Whatever is fastest to automate",
+   "Contract and rules, prioritised by risk"
+  ],
+  "answer": 3,
   "model": "Start from the contract and the business rules: the happy path for each documented use, then input validation (required fields, types, boundaries, formats), auth and permissions, error responses, idempotency for writes, side effects (database rows, events, emails), and non-functional basics (response time, payload size). Prioritise by risk, since money movement and permissions come first. Ask the developer what changed and what they're unsure about; that often points to the riskiest area.",
   "tags": [
    "test-design"
@@ -511,6 +798,13 @@
   "kind": "concept",
   "question": "Give a strong set of negative tests for a POST endpoint that creates a user.",
   "what_tested": "Negative testing",
+  "options": [
+   "Only a valid request with different names",
+   "Only an empty request",
+   "Missing, wrong-typed, duplicate, unauthorised",
+   "Only checking the status is 201"
+  ],
+  "answer": 2,
   "model": "Missing required fields (one at a time), wrong types (number as string, null, array), empty strings and whitespace-only values, boundary lengths (max, max+1), invalid email formats, a duplicate email (expect 409), unknown extra fields (rejected or ignored per contract), malformed JSON, wrong Content-Type (415), no auth (401), insufficient role (403), oversized payload (413), injection strings ('; DROP TABLE, script tags) handled safely, and Unicode or emoji names. Each should give the right status and a clear error.",
   "tags": [
    "test-design",
@@ -524,6 +818,13 @@
   "kind": "concept",
   "question": "How do you apply boundary value analysis to an API rather than a form?",
   "what_tested": "Boundary testing",
+  "options": [
+   "Test random values only",
+   "Boundaries only apply to UI forms",
+   "Min-1, min, max, max+1 for every limit",
+   "Only test typical values"
+  ],
+  "answer": 2,
   "model": "Identify every constrained input: string lengths, numeric ranges, array sizes, dates, page sizes. Test at min-1, min, max and max+1 for each, plus zero, negative, very large numbers (integer overflow), decimal precision (amount with 3 decimals when 2 are allowed) and empty arrays. APIs often lack the UI's protections (maxlength, pickers), so boundaries the UI enforces may be unenforced in the API, which is a frequent finding.",
   "tags": [
    "test-design"
@@ -536,6 +837,13 @@
   "kind": "concept",
   "question": "What is data-driven API testing, and where does it stop being useful?",
   "what_tested": "Parametrisation",
+  "options": [
+   "Same logic, many inputs",
+   "Generating data randomly at runtime only",
+   "Testing data quality in databases",
+   "It's never useful"
+  ],
+  "answer": 0,
   "model": "Run the same test logic over many inputs with `pytest.mark.parametrize` or data files: validation cases, permission matrices, currency and locale variations. It gives broad coverage with little code and readable ids. It stops being useful when cases need different logic or setup, so the test fills up with conditionals, or when the data table grows so large nobody understands which cases matter. Then split it into focused tests, or use property-based testing.",
   "tags": [
    "test-design"
@@ -548,6 +856,13 @@
   "kind": "concept",
   "question": "What is property-based testing, and how could it apply to APIs?",
   "what_tested": "Hypothesis / Schemathesis",
+  "options": [
+   "Running each test property by hand",
+   "Generated inputs checked against properties",
+   "Testing real-estate APIs",
+   "Testing object properties with getattr"
+  ],
+  "answer": 1,
   "model": "Instead of hand-picked examples, you describe properties that should always hold and let a tool generate many inputs, shrinking failures to the smallest case. With Hypothesis: 'creating then fetching an order returns the same data for any valid payload'. Schemathesis generates requests from the OpenAPI spec and checks for 500s, schema violations and other contract breaks. It finds edge cases humans don't think of, such as odd Unicode, extreme numbers or empty structures.",
   "tags": [
    "test-design"
@@ -560,6 +875,13 @@
   "kind": "concept",
   "question": "How do you handle test data for API tests in a shared environment?",
   "what_tested": "Test data management",
+  "options": [
+   "Share one set of records across all tests",
+   "Use production data copies",
+   "Unique per-test data with cleanup",
+   "Never clean up"
+  ],
+  "answer": 2,
   "model": "Each test creates its own data through the API (or a seeding endpoint), with unique identifiers (uuid or run-id suffixes), and cleans up in teardown, ideally idempotently. Never depend on pre-existing records someone else might change. Keep reference data (currencies, products) read-only and versioned. Tag test data so a scheduled sweeper can delete leftovers. For complex states, ask for test-only setup endpoints or database fixtures in non-production environments.",
   "tags": [
    "test-data"
@@ -572,6 +894,13 @@
   "kind": "concept",
   "question": "How do you verify a side effect the response doesn't show, like an email, a queue message or an audit row?",
   "what_tested": "Side-effect verification",
+  "options": [
+   "Check the system of record",
+   "Trust the API response",
+   "Sleep for a minute and assume it happened",
+   "Side effects can't be tested"
+  ],
+  "answer": 0,
   "model": "Check the system of record: query the database (read-only test credentials), consume from the queue or topic in a test consumer, use an email-capture service in test environments (MailHog, Mailpit or a provider's sandbox), or call an internal or admin API. Make the check wait for eventual consistency with a bounded poll. Use the correlation id or a unique value to find exactly your event, not someone else's.",
   "tags": [
    "test-design",
@@ -585,6 +914,13 @@
   "kind": "concept",
   "question": "How do you prioritise API tests when you can't test everything?",
   "what_tested": "Risk-based testing",
+  "options": [
+   "By risk",
+   "Whatever is easiest",
+   "Alphabetically by endpoint",
+   "Newest endpoints only"
+  ],
+  "answer": 0,
   "model": "Rank by risk, meaning impact times likelihood: money movement, auth and permissions, data integrity and anything regulatory come first; then high-traffic endpoints and recently changed code; then edge cases and rarely used endpoints. Use production usage data and incident history to inform it. Keep a fast smoke set for every deployment and a broader regression set for nightly runs. Write the prioritisation down so trade-offs are visible to the team.",
   "tags": [
    "strategy"
@@ -597,6 +933,13 @@
   "kind": "concept",
   "question": "What's the difference between functional, integration, contract and end-to-end API tests?",
   "what_tested": "Test layers",
+  "options": [
+   "End-to-end tests should be the majority",
+   "Contract tests need a UI",
+   "They're all names for the same test",
+   "Service, agreement, real deps, whole flow"
+  ],
+  "answer": 3,
   "model": "Functional tests check one service's endpoints in isolation, with dependencies mocked or stubbed. Contract tests check the agreement between a consumer and a provider. Integration tests check a service working with its real dependencies (database, queue, another service). End-to-end tests check a whole business flow across services, often from the outside. Lower layers are faster and pinpoint failures; higher layers catch wiring problems. A healthy suite has many functional and contract tests and few end-to-end ones.",
   "tags": [
    "strategy"
@@ -609,6 +952,13 @@
   "kind": "concept",
   "question": "When should you mock a dependency in API tests, and when shouldn't you?",
   "what_tested": "Mocking strategy",
+  "options": [
+   "Always mock everything",
+   "Never mock anything",
+   "For unstable third parties",
+   "Mock only the database"
+  ],
+  "answer": 2,
   "model": "Mock when the dependency is slow, unreliable, expensive, not ready, or a third party you can't control (payment gateways, SMS providers), and when you need to force rare scenarios (timeouts, specific error codes). Don't mock in the tests whose purpose is to verify the integration itself, or when the mock is so complex it becomes its own source of bugs. Keep mocks honest with contract tests against the real provider.",
   "tags": [
    "mocking"
@@ -621,6 +971,13 @@
   "kind": "concept",
   "question": "What is service virtualisation, and how is it different from a simple mock?",
   "what_tested": "Virtual services",
+  "options": [
+   "A load balancer",
+   "A standalone, stateful fake service",
+   "A virtual machine running the real service",
+   "A mock object inside one test"
+  ],
+  "answer": 1,
   "model": "A simple mock returns canned responses inside one test process. Service virtualisation runs a standalone fake service (WireMock, Mountebank, Hoverfly, Prism from OpenAPI) that many tests and teams can call over the network, with stateful behaviour, latency simulation, record-and-replay, and request matching rules. It's useful when a dependency is unavailable or costly, or when you need realistic fault injection across a whole environment.",
   "tags": [
    "mocking"
@@ -633,6 +990,13 @@
   "kind": "concept",
   "question": "How do you test an endpoint that processes work asynchronously and returns 202?",
   "what_tested": "Async APIs",
+  "options": [
+   "Sleep 60 seconds and assume success",
+   "Assert 202 only",
+   "202 means the request failed",
+   "Assert 202, then poll the job"
+  ],
+  "answer": 3,
   "model": "Assert the 202 and the status URL or job id it returns, then poll the status endpoint with a bounded wait (e.g. every second for up to 60 seconds) until it's completed or failed, and assert the final result and side effects. Also test the failure path (a job ends in 'failed' with a reason), duplicate submissions and timeouts. Write the polling helper once with clear timeout messages, and never use a fixed sleep.",
   "tags": [
    "async"
@@ -645,6 +1009,13 @@
   "kind": "concept",
   "question": "How do you test webhooks, where your system is the one receiving them?",
   "what_tested": "Webhooks",
+  "options": [
+   "Signatures, replays and ordering",
+   "Only check that the endpoint exists",
+   "Wait for a real third party to call you",
+   "Webhooks can't be tested"
+  ],
+  "answer": 0,
   "model": "Send signed sample payloads to your endpoint and verify processing and side effects. Then test the protections: an invalid or missing signature is rejected, replayed events (same event id) are processed once, out-of-order delivery is handled, unknown event types are ignored safely, and the endpoint responds quickly (with heavy work queued) so the sender doesn't retry. For outgoing webhooks, use a capture endpoint (e.g. a local server or webhook.site in test environments) to verify what your system sends.",
   "tags": [
    "async",
@@ -658,6 +1029,13 @@
   "kind": "concept",
   "question": "How do you test event-driven systems, such as services communicating through Kafka?",
   "what_tested": "Messaging",
+  "options": [
+   "Produce, consume, match by correlation id",
+   "Read Kafka logs manually",
+   "Messaging can't be tested automatically",
+   "Only test the producer"
+  ],
+  "answer": 0,
   "model": "Produce a test event (or trigger the API that produces it), then consume from the output topic with a test consumer group, filtering by a correlation id, and assert the resulting events and state changes within a bounded wait. Check schema compatibility (a schema registry), idempotent handling of duplicate messages, ordering assumptions per partition key, retry and dead-letter behaviour for poison messages, and what happens when a consumer is down and catches up.",
   "tags": [
    "async",
@@ -671,6 +1049,13 @@
   "kind": "concept",
   "question": "How do API tests fit into a CI/CD pipeline?",
   "what_tested": "Pipeline placement",
+  "options": [
+   "Fast per commit, smoke after each deploy",
+   "Only manually before release",
+   "Run every API test only on production",
+   "API tests don't belong in CI"
+  ],
+  "answer": 0,
   "model": "Unit and contract tests run on every commit, in seconds. Functional API tests against an ephemeral or shared test environment run on every PR or merge. A smoke subset runs immediately after each deployment to every environment, including production, carefully and with read-only or test accounts. Broader regression, security scans and performance checks run nightly or before release. Fail fast, publish JUnit or Allure reports, and make results visible on the PR.",
   "tags": [
    "ci"
@@ -683,6 +1068,13 @@
   "kind": "concept",
   "question": "How do you keep an API test suite maintainable over several years?",
   "what_tested": "Suite design",
+  "options": [
+   "One huge test file",
+   "Avoid abstraction entirely",
+   "Clients, models, factories, schemas",
+   "Copy-paste JSON payloads into every test"
+  ],
+  "answer": 2,
   "model": "Wrap endpoints in a client layer so URL or auth changes happen in one place; use typed models for requests and responses; build data with factories instead of copy-pasted JSON; validate schemas generated from the OpenAPI spec; keep tests independent and named after behaviour; review test code like product code; delete obsolete tests; and track flakiness and runtime. Clear failure messages (request, response and correlation id) save more time than any framework feature.",
   "tags": [
    "framework"
@@ -695,6 +1087,13 @@
   "kind": "concept",
   "question": "How would you structure an API test framework in Python?",
   "what_tested": "Framework architecture",
+  "options": [
+   "Postman collections only",
+   "Everything in a single test.py",
+   "Clients, models, data, tests, conftest",
+   "One class per HTTP method"
+  ],
+  "answer": 2,
   "model": "`clients/` with one class per service (methods such as `create_order(payload)`) built on a shared base client handling the session, auth, retries, logging and timeouts; `models/` (pydantic) for requests and responses; `data/` factories; `schemas/` (or generated from OpenAPI); `tests/` organised by domain; and `conftest.py` with config, auth and client fixtures. Configuration comes from the environment. Reports go to Allure, with requests and responses attached and secrets masked.",
   "tags": [
    "framework"
@@ -707,6 +1106,13 @@
   "kind": "concept",
   "question": "How do you make API test failures easy to debug?",
   "what_tested": "Failure diagnostics",
+  "options": [
+   "Only report the status code",
+   "Attach request, response and request id",
+   "Retry until it passes",
+   "Print nothing to keep logs clean"
+  ],
+  "answer": 1,
   "model": "Log or attach, on failure, the method, URL, request headers (masked) and body, the response status, headers and body, the elapsed time and the correlation id. Write assertion messages that say what was expected (`f\"expected 201, got {r.status_code}: {r.text[:500]}\"`). Use schema validation errors that name the field. Group tests by domain so a failing area is obvious. A failed test should usually be diagnosable from the report without a rerun.",
   "tags": [
    "debugging"
@@ -719,6 +1125,13 @@
   "kind": "concept",
   "question": "An API test that passed yesterday fails today with a 500. Walk through your diagnosis.",
   "what_tested": "Triage",
+  "options": [
+   "Reproduce and read the logs",
+   "Rerun until it passes",
+   "Delete the test",
+   "Assume it's flaky"
+  ],
+  "answer": 0,
   "model": "Reproduce the single call manually (curl or Postman) with the same payload. Check what changed: deployments to the service or its dependencies, config or feature flags, test data (was the record deleted?), expired credentials or certificates. Use the correlation id to find the server logs and stack trace. Determine whether it's a product bug, an environment issue or a test-data problem, then file it with the request, response, correlation id and logs, or fix the test or data.",
   "tags": [
    "debugging",
@@ -732,6 +1145,13 @@
   "kind": "concept",
   "question": "Your API suite is 'flaky'. What are the most likely causes at the API layer?",
   "what_tested": "API flakiness",
+  "options": [
+   "Shared data and eventual consistency",
+   "requests is unreliable",
+   "JSON parsing is random",
+   "API tests are never flaky"
+  ],
+  "answer": 0,
   "model": "Shared or leftover test data, eventual consistency (reading immediately after an async write), order-dependent tests, unstable shared environments (deployments mid-run, resource limits), timeouts that are too tight, rate limits hit by parallel runs, time-dependent logic (midnight, time zones, token expiry), and unreliable third-party dependencies. Fix by isolating data, polling with bounded waits for async effects, mocking third parties, and making the environment's state visible in reports.",
   "tags": [
    "flakiness"
@@ -744,6 +1164,13 @@
   "kind": "concept",
   "question": "How would you introduce API testing to a team that currently only has UI tests?",
   "what_tested": "Change management",
+  "options": [
+   "Move UI setup to API calls first",
+   "Delete all UI tests on day one",
+   "Mandate 100% API coverage immediately",
+   "Wait for developers to ask"
+  ],
+  "answer": 0,
   "model": "Start where it pays off immediately: move UI test setup (logins, data creation) to API calls, which speeds up the existing suite and builds a shared client library. Then add API tests for business rules currently checked through slow UI paths, and gradually retire redundant UI tests. Pair with developers on the first tests, add them to CI with visible reports, and share the numbers: runtime, bugs found, flakiness. Small wins build buy-in.",
   "tags": [
    "strategy"
@@ -756,6 +1183,13 @@
   "kind": "concept",
   "question": "How would you test an endpoint that is rate limited to 100 requests per minute?",
   "what_tested": "Rate limiting",
+  "options": [
+   "Only check the first request",
+   "Send 10,000 requests to production",
+   "Under the limit, then 429 and reset",
+   "Rate limits can't be tested"
+  ],
+  "answer": 2,
   "model": "Confirm the contract first: the limit, the window, what it's scoped to (user, IP or key), and the response (429 with `Retry-After`). Then test that requests just under the limit pass, the next one returns 429 with the right headers, the window resets correctly, and limits are isolated per key. Run it against a dedicated environment or a lowered limit so it doesn't affect other suites, and keep it out of the PR pipeline.",
   "tags": [
    "non-functional"
@@ -768,6 +1202,13 @@
   "kind": "concept",
   "question": "What's the difference between a connection timeout, a read timeout and a server-side timeout?",
   "what_tested": "Timeouts",
+  "options": [
+   "They're all the same",
+   "Connecting, reading, server giving up",
+   "A read timeout happens before connecting",
+   "Server timeouts are set by the client"
+  ],
+  "answer": 1,
   "model": "A connection timeout is how long the client waits to establish the TCP or TLS connection. A read timeout is how long it waits for response data once connected. A server-side timeout is the server or gateway giving up on slow processing, often returning 504 from a gateway. In `requests`, `timeout=(3.05, 27)` sets connect and read separately. Tests should always set client timeouts, and you should test how the API behaves when a dependency is slow.",
   "tags": [
    "non-functional"
@@ -780,6 +1221,13 @@
   "kind": "concept",
   "question": "Should an API client retry failed requests? How do you test retry behaviour?",
   "what_tested": "Retries",
+  "options": [
+   "Never retry anything",
+   "Retry every error including 400s",
+   "Retry infinitely with no delay",
+   "Only transient errors, with backoff"
+  ],
+  "answer": 3,
   "model": "Retry only transient, safe cases: connection errors, 502, 503, 504 and 429 (honouring `Retry-After`), with exponential backoff and jitter, and only for idempotent operations or requests protected by an idempotency key. Don't retry 4xx validation errors. Test it by injecting faults with a mock server or service virtualisation: return 503 twice then 200 and assert three attempts and success; return 400 and assert no retry; check the backoff timing and the maximum attempts.",
   "tags": [
    "resilience"
@@ -792,6 +1240,13 @@
   "kind": "concept",
   "question": "What is a circuit breaker, and how would you verify one?",
   "what_tested": "Resilience patterns",
+  "options": [
+   "A load balancer rule",
+   "Stops calls to a failing dependency",
+   "An electrical safety feature on servers",
+   "A firewall"
+  ],
+  "answer": 1,
   "model": "A circuit breaker stops calling a failing dependency after a threshold of failures (the circuit opens), returns a fast fallback or error, then lets trial requests through after a cool-down (half-open) and closes again on success. Verify it by injecting failures into the dependency: after N failures, calls fail fast without reaching it (check the dependency's request count); the fallback response is correct; after the timeout a trial call goes through; recovery closes the circuit. Check metrics and alerts fire.",
   "tags": [
    "resilience"
@@ -804,6 +1259,13 @@
   "kind": "concept",
   "question": "How do you test HTTP caching behaviour?",
   "what_tested": "Caching",
+  "options": [
+   "Caching can't be tested",
+   "Clear the browser cache",
+   "ETag and 304, private data uncached",
+   "Check only that responses are fast"
+  ],
+  "answer": 2,
   "model": "Check response headers: `Cache-Control` (max-age, no-store for sensitive data), `ETag` and `Last-Modified`. Send a conditional request with `If-None-Match` set to the ETag and expect 304 Not Modified with no body; change the resource and expect a new ETag and 200. Make sure personalised or sensitive responses aren't cacheable by shared caches (`private` or `no-store`). If there's a CDN, verify invalidation after updates. Stale-cache bugs often show up as 'my change isn't visible'.",
   "tags": [
    "non-functional",
@@ -817,6 +1279,13 @@
   "kind": "concept",
   "question": "What performance aspects should functional API tests check, and where does load testing begin?",
   "what_tested": "Performance scope",
+  "options": [
+   "Load testing is the same as functional testing",
+   "Budgets vs behaviour under concurrency",
+   "Performance doesn't matter for APIs",
+   "Functional tests should measure throughput"
+  ],
+  "answer": 1,
   "model": "Functional suites can assert generous response-time budgets per endpoint (e.g. p95 under 800ms in a stable environment), payload sizes, and that pagination prevents huge responses. These catch gross regressions early. Load testing begins when you measure behaviour under concurrency: throughput, latency percentiles under load, error rates, saturation points and soak behaviour. That needs dedicated tools (k6, Locust, JMeter, Gatling), a production-like environment and agreed SLOs.",
   "tags": [
    "performance"
@@ -829,6 +1298,13 @@
   "kind": "concept",
   "question": "What's the difference between load, stress, spike and soak testing?",
   "what_tested": "Performance test types",
+  "options": [
+   "Soak means testing with water-damaged servers",
+   "Peak, beyond peak, sudden jump, hours",
+   "Spike testing means debugging spikes in code",
+   "They're synonyms"
+  ],
+  "answer": 1,
   "model": "Load: expected peak traffic, to confirm SLOs are met. Stress: beyond peak until it breaks, to find limits and check it fails gracefully. Spike: a sudden jump in traffic, to test autoscaling and queueing. Soak (endurance): sustained load for hours, to find memory leaks, connection-pool exhaustion and growing latency. Each answers a different question, so define the goal and pass criteria (p95 latency, error rate, resource use) before running any of them.",
   "tags": [
    "performance"
@@ -841,6 +1317,13 @@
   "kind": "concept",
   "question": "How would you write a simple load test for an API in Python?",
   "what_tested": "Locust",
+  "options": [
+   "Selenium Grid",
+   "pytest-xdist with -n 1000",
+   "A for loop calling requests.get 1,000 times sequentially",
+   "Locust users with weighted tasks"
+  ],
+  "answer": 3,
   "model": "With Locust: define a `HttpUser` with `wait_time = between(1, 3)` and `@task` methods calling endpoints with realistic weights (browse 10×, checkout 1×), log in in `on_start`, and tag requests with names so similar URLs group together (`name=\"/orders/[id]\"`). Run headless in CI with a set user count and spawn rate, and fail on thresholds (p95, failure ratio). Use realistic test data and a production-like environment, never production without approval.",
   "tags": [
    "performance",
@@ -854,6 +1337,13 @@
   "kind": "concept",
   "question": "How do you read latency percentiles, and why not just use the average?",
   "what_tested": "Metrics literacy",
+  "options": [
+   "p50 is the worst case",
+   "The average is always enough",
+   "Percentiles only apply to databases",
+   "Tail latency hidden by averages"
+  ],
+  "answer": 3,
   "model": "p50 is the median experience; p95 or p99 show what the slowest 5% or 1% of requests experience. Averages hide tail latency: a few 10-second requests barely move the mean but ruin the experience for those users, and on pages calling many APIs, most users hit at least one slow call. SLOs are usually written on percentiles, e.g. 'p95 under 500ms', together with an error-rate budget.",
   "tags": [
    "performance"
@@ -866,6 +1356,13 @@
   "kind": "concept",
   "question": "How do you test concurrency, e.g. two clients booking the last seat at the same time?",
   "what_tested": "Race conditions",
+  "options": [
+   "Concurrency can't be tested",
+   "Send requests one after another",
+   "Concurrent requests; exactly one wins",
+   "Check only that both return 200"
+  ],
+  "answer": 2,
   "model": "Set up exactly one available seat, then fire the two booking requests truly concurrently (a thread pool, asyncio with httpx, or a barrier so they start together), and repeat many times because races are probabilistic. Assert exactly one succeeds and the other gets a clear conflict (409); the database shows one booking; inventory never goes negative. Also test optimistic locking (ETag or version mismatch gives 409 or 412) and idempotent retries under concurrency.",
   "tags": [
    "concurrency"
@@ -878,6 +1375,13 @@
   "kind": "concept",
   "question": "A payments API supports an `Idempotency-Key` header. What would you test?",
   "what_tested": "Idempotency keys",
+  "options": [
+   "Idempotency keys are only for GET",
+   "One charge per key, verified in the ledger",
+   "Check the header exists",
+   "Send each payment twice and expect two charges"
+  ],
+  "answer": 1,
   "model": "Same key and same body sent twice: one payment is created and the second response matches the first. Same key with a different body: rejected (usually 409 or 422). Concurrent requests with the same key: still exactly one payment. Different keys: separate payments. Also check how long keys are kept, and verify in the database or ledger, not just the response, that no duplicate charge exists.",
   "tags": [
    "idempotency",
@@ -891,6 +1395,13 @@
   "kind": "concept",
   "question": "What is optimistic locking, and how do you test it through an API?",
   "what_tested": "Lost updates",
+  "options": [
+   "Locking the database table for every read",
+   "Assuming no one else edits data",
+   "Retrying updates until they pass",
+   "Stale versions get 409 or 412"
+  ],
+  "answer": 3,
   "model": "Optimistic locking prevents lost updates: each resource has a version (or ETag), and an update must include the version it was based on. If someone else updated it first, the server rejects the stale update (409 Conflict or 412 Precondition Failed). Test it: GET the resource and its version twice, update with the first copy (success, version increments), then update with the second, stale copy and expect rejection. Also check that missing versions are rejected if they're required.",
   "tags": [
    "concurrency"
@@ -903,6 +1414,13 @@
   "kind": "concept",
   "question": "How do you validate data integrity when a UI action spans several services?",
   "what_tested": "Cross-service consistency",
+  "options": [
+   "Trace one transaction across services",
+   "Trust each service separately",
+   "It can't be tested",
+   "Check only the UI message"
+  ],
+  "answer": 0,
   "model": "Trace one business transaction end to end: perform the action, then verify each service's view through its API or database: order created, inventory reserved, payment authorised, ledger entries balanced, event published. Use a correlation id to tie them together and bounded polling for eventual consistency. Test failure in the middle (e.g. payment declined after the inventory reservation) and verify compensation or rollback leaves no orphaned state.",
   "tags": [
    "integration",
@@ -916,6 +1434,13 @@
   "kind": "concept",
   "question": "How do you test money calculations in a finance API, such as invoice totals with tax?",
   "what_tested": "Financial correctness",
+  "options": [
+   "Compare floats with a tolerance",
+   "Only test whole amounts",
+   "Copy the API's own calculation into the test",
+   "Decimal and documented rounding"
+  ],
+  "answer": 3,
   "model": "Compute expected values independently in the test with `Decimal` and the documented rounding rules (per line or on the total? half-up or banker's rounding?), never floats. Cover boundaries: zero amounts, maximum amounts, many line items, discounts that round, multiple tax rates, currency minor units (JPY has no decimals, KWD has three). Assert amounts as exact strings or Decimals, and check totals reconcile with line items and ledger entries.",
   "tags": [
    "finance"
@@ -928,6 +1453,13 @@
   "kind": "concept",
   "question": "How do you test date and time handling in APIs?",
   "what_tested": "Temporal data",
+  "options": [
+   "Dates are always correct",
+   "Offsets, round trips, boundaries",
+   "Use local time everywhere",
+   "Only test today's date"
+  ],
+  "answer": 1,
   "model": "Check that the format follows the contract (ISO 8601 with offset or Z), that time zones round-trip correctly (send IST, read back the same instant), and that date-only fields aren't shifted by time-zone conversion (a classic off-by-one-day bug). Test boundaries: end of month, leap day, DST transitions where relevant, midnight UTC versus local, and far past or future dates. Make 'today'-dependent logic testable with a configurable clock.",
   "tags": [
    "dates"
@@ -940,6 +1472,13 @@
   "kind": "concept",
   "question": "How do you test internationalisation and encoding in an API?",
   "what_tested": "Unicode handling",
+  "options": [
+   "Convert everything to ASCII",
+   "English-only data is enough",
+   "Round-trip Unicode and emoji",
+   "Encoding only matters in browsers"
+  ],
+  "answer": 2,
   "model": "Send names and addresses with non-Latin scripts (Devanagari, Chinese, Arabic), emoji, accents and combining characters; verify they round-trip unchanged and that length limits count characters correctly. Check `Content-Type` charset is UTF-8, search and sorting with Unicode, localised error messages with `Accept-Language`, and number and currency formats where the API returns formatted values. Encoding bugs often surface only in exports or downstream systems, so check those too.",
   "tags": [
    "i18n"
@@ -952,6 +1491,13 @@
   "kind": "concept",
   "question": "How do you test file upload and download endpoints?",
   "what_tested": "Multipart APIs",
+  "options": [
+   "Only test images",
+   "Files can't be tested via API",
+   "Only check the upload returns 200",
+   "Types, sizes, names, access control"
+  ],
+  "answer": 3,
   "model": "Upload with multipart/form-data (`requests.post(url, files={\"file\": (\"a.pdf\", fh, \"application/pdf\")})`). Test allowed types and the size limit (expect 413 above it), empty files, wrong extensions or MIME types (content sniffing), duplicate names, malicious names (`../../etc/passwd`), and virus-scan hooks if any. For downloads, check `Content-Type`, `Content-Disposition`, the content itself (checksum or parsed content) and access control: can another user download it by guessing the id?",
   "tags": [
    "files"
@@ -964,6 +1510,13 @@
   "kind": "concept",
   "question": "How would you approach security testing of an API at a level appropriate for a QA engineer?",
   "what_tested": "API security basics",
+  "options": [
+   "Check that HTTPS is used and stop",
+   "Security is only for pen testers",
+   "Run one antivirus scan",
+   "The OWASP API Top 10"
+  ],
+  "answer": 3,
   "model": "Use the OWASP API Security Top 10 as a checklist and automate the cheap, high-value checks: broken object-level authorisation (change ids to other users' resources), missing auth on endpoints, role escalation, mass assignment (sending `\"role\": \"admin\"`), excessive data exposure (responses with fields the UI hides), injection inputs, rate limiting, and verbose errors leaking internals. Run a DAST scanner (e.g. OWASP ZAP) in CI, and bring in security specialists for deeper penetration testing.",
   "tags": [
    "security"
@@ -976,6 +1529,13 @@
   "kind": "concept",
   "question": "What is BOLA/IDOR, and how do you test for it?",
   "what_tested": "Object-level authorisation",
+  "options": [
+   "A type of SQL injection",
+   "Bulk object loading",
+   "A load-testing technique",
+   "Reading others' data by changing ids"
+  ],
+  "answer": 3,
   "model": "Broken Object Level Authorisation (also called Insecure Direct Object Reference) is when an API returns or modifies a resource just because you supplied its id, without checking the resource belongs to you. Test: user A creates an order; user B requests `GET /orders/{A's id}`, `PUT` and `DELETE` on it, and must get 403 or 404 for each. Try sequential ids, ids in query strings and bodies, and nested resources. It's the most common serious API vulnerability, so automate it per endpoint.",
   "tags": [
    "security"
@@ -988,6 +1548,13 @@
   "kind": "concept",
   "question": "What is mass assignment, and how do you test for it?",
   "what_tested": "Over-posting",
+  "options": [
+   "Sending too many requests at once",
+   "Uploading large files",
+   "Setting privileged fields like role",
+   "Assigning tests to many people"
+  ],
+  "answer": 2,
   "model": "Mass assignment happens when an API binds every field in the request body to the model, so a client can set fields it shouldn't, such as `\"is_admin\": true`, `\"balance\": 1000000` or `\"status\": \"approved\"`. Test by adding privileged or read-only fields to create and update requests and verifying they're ignored or rejected, and that the stored record (re-fetched) hasn't changed. Schemas with `additionalProperties: false` help prevent it.",
   "tags": [
    "security"
@@ -1000,6 +1567,13 @@
   "kind": "concept",
   "question": "What is excessive data exposure, and how would you catch it?",
   "what_tested": "Data leakage",
+  "options": [
+   "Returning too much data",
+   "Using HTTPS",
+   "Logging too little",
+   "Slow responses"
+  ],
+  "answer": 0,
   "model": "It's when an API returns more data than the client needs, relying on the front end to hide it: password hashes, internal ids, other users' emails, full card numbers, internal notes. Catch it with strict response schemas (fail on unexpected fields for sensitive endpoints), automated scans of responses for patterns like card numbers, Aadhaar, PAN or emails, and reviews of what each role can see. Check error responses and debug endpoints as well.",
   "tags": [
    "security"
@@ -1012,6 +1586,13 @@
   "kind": "concept",
   "question": "How do you test an API for injection vulnerabilities?",
   "what_tested": "Injection testing",
+  "options": [
+   "Payloads stored literally, never 500",
+   "Check only status codes",
+   "Injection only affects UIs",
+   "Use only valid inputs"
+  ],
+  "answer": 0,
   "model": "Send classic payloads in every input (path, query, headers, body): SQL (`' OR '1'='1`), NoSQL operators (`{\"$ne\": null}`), command injection (`; ls`), template injection (`{{7*7}}`), and script tags for anything later rendered. Expect validation errors or harmless literal storage, never 500s, odd results or delays (time-based injection). Re-fetch stored values to confirm they're stored literally and safely encoded on output. Automated scanners help; follow up any 500 manually.",
   "tags": [
    "security"
@@ -1024,6 +1605,13 @@
   "kind": "concept",
   "question": "What is CORS, and what would you test about it?",
   "what_tested": "Cross-origin requests",
+  "options": [
+   "A CDN feature",
+   "An authentication method",
+   "Browser cross-origin rules",
+   "A database replication setting"
+  ],
+  "answer": 2,
   "model": "CORS is the browser mechanism that lets a server permit specific other origins to call it from front-end JavaScript, using `Access-Control-Allow-*` headers and preflight OPTIONS requests. Test that only intended origins are allowed (not `*` with credentials, and not blindly reflecting any `Origin` header), that allowed methods and headers are minimal, and that preflight responses are correct. CORS isn't authentication: non-browser clients ignore it, so the server must still enforce auth.",
   "tags": [
    "security"
@@ -1036,6 +1624,13 @@
   "kind": "concept",
   "question": "What would you check about transport security for an API?",
   "what_tested": "TLS",
+  "options": [
+   "HTTP is fine for internal APIs",
+   "Only check the domain name",
+   "Disable certificate checks to save time",
+   "HTTPS, valid certs, modern TLS"
+  ],
+  "answer": 3,
   "model": "HTTPS only: HTTP should redirect or refuse, and APIs shouldn't serve data over plain HTTP. The certificate must be valid (not expired, correct host). Old protocols (TLS 1.0/1.1) and weak ciphers should be disabled; tools like `testssl.sh` or SSL Labs check this. `Strict-Transport-Security` should be present. In tests, never disable certificate verification globally (`verify=False`) just to make staging work; configure the right CA bundle instead.",
   "tags": [
    "security"
@@ -1048,6 +1643,13 @@
   "kind": "concept",
   "question": "What is SSRF, and when should a tester think about it?",
   "what_tested": "Server-side request forgery",
+  "options": [
+   "A CSS injection",
+   "Forged internal requests",
+   "A slow server response",
+   "Session fixation"
+  ],
+  "answer": 1,
   "model": "SSRF happens when an API fetches a URL supplied by the client (webhook URLs, 'import from URL', image fetchers, PDF generators) and an attacker points it at internal resources such as cloud metadata endpoints (169.254.169.254), localhost admin ports or internal services. Test URL inputs with internal IPs, localhost, alternative encodings and redirects to internal addresses, and expect them to be rejected. It's listed in the OWASP API Top 10 for a reason.",
   "tags": [
    "security"
@@ -1060,6 +1662,13 @@
   "kind": "concept",
   "question": "How would you test a 'transfer money between accounts' API?",
   "what_tested": "Scenario: transfers",
+  "options": [
+   "Ledger, ownership, idempotency, races",
+   "Only the sender's balance",
+   "Only that a 200 is returned",
+   "Only valid amounts"
+  ],
+  "answer": 0,
   "model": "Happy path: both balances change by exactly the amount, the ledger has matching debit and credit entries, and the transaction appears in both histories. Validation: zero, negative and excessive amounts, insufficient funds, same source and destination, a closed or frozen account, a currency mismatch, decimal precision. Security: you can't transfer from someone else's account. Reliability: idempotency-key retries, concurrent transfers draining the same account, failure midway leaving no partial transfer, and the audit trail.",
   "tags": [
    "scenario",
@@ -1073,6 +1682,13 @@
   "kind": "concept",
   "question": "How would you test a search API?",
   "what_tested": "Scenario: search",
+  "options": [
+   "Only response time",
+   "Only empty queries",
+   "Matches, empties, permissions",
+   "One query with one result"
+  ],
+  "answer": 2,
   "model": "Exact and partial matches, case and accent insensitivity, multi-word queries, no results (empty list, not an error), special characters and injection strings, very long queries, filters combined with search, sorting by relevance versus fields, pagination stability, permission filtering (results never include records the user can't access), response time with realistic data volume, and eventual consistency (how soon newly created items become searchable).",
   "tags": [
    "scenario"
@@ -1085,6 +1701,13 @@
   "kind": "concept",
   "question": "How do you test a DELETE endpoint thoroughly?",
   "what_tested": "Scenario: deletes",
+  "options": [
+   "Only check it returns 200",
+   "Only test deleting non-existent ids",
+   "Then 404, idempotent, permissions",
+   "DELETE can't be tested safely"
+  ],
+  "answer": 2,
   "model": "Delete returns 204 (or 200), then GET returns 404 (or the documented behaviour for soft delete). A second DELETE is handled idempotently (404 or 204, as documented). Check permissions (others can't delete your resources), deleting non-existent ids, and dependent data: cascade, restrict (409 if referenced) or orphan handling. Soft-deleted items shouldn't appear in lists or search, and an audit log entry should record who deleted what.",
   "tags": [
    "scenario"
@@ -1097,6 +1720,13 @@
   "kind": "concept",
   "question": "How would you use curl to debug an API call quickly?",
   "what_tested": "curl",
+  "options": [
+   "curl hides response headers always",
+   "curl can only send GET requests",
+   "curl requires Python",
+   "curl -i with -H, -d and -v"
+  ],
+  "answer": 3,
   "model": "`curl -i -X POST https://api.example.com/orders -H \"Authorization: Bearer $TOKEN\" -H \"Content-Type: application/json\" -d '{\"sku\":\"A1\"}'` shows status, headers and body. Use `-v` for the TLS handshake and request headers, `-w \"%{http_code} %{time_total}\\n\"` for timing, `--compressed` for gzip, and `-L` to follow redirects. Browser dev tools offer 'Copy as cURL', the fastest way to reproduce exactly what the front end sent. Never paste real tokens into shared tickets.",
   "tags": [
    "tooling"
@@ -1109,6 +1739,13 @@
   "kind": "concept",
   "question": "How do you test an API that depends on a third-party service you can't control, like a payment gateway?",
   "what_tested": "Third-party dependencies",
+  "options": [
+   "Sandbox plus virtualised failures",
+   "Skip testing third parties",
+   "Test against the real provider in production only",
+   "Mock with print statements"
+  ],
+  "answer": 0,
   "model": "Use the provider's sandbox for integration tests, with their documented test cards and scenarios (success, decline, 3-D Secure, timeout). For functional tests, stub the gateway with service virtualisation (WireMock) to force rare cases: timeouts, malformed responses, webhooks arriving late or twice. Contract-test your assumptions about their API. Verify your system's behaviour, not theirs: retries with idempotency, correct status mapping, reconciliation jobs, and no card data in logs.",
   "tags": [
    "scenario",
@@ -1122,6 +1759,13 @@
   "kind": "concept",
   "question": "What should you verify about API responses containing lists of money or quantities?",
   "what_tested": "Numeric representation",
+  "options": [
+   "Only check the total",
+   "Strings or minor units, exact precision",
+   "Amounts as floats are fine",
+   "Currency codes are optional"
+  ],
+  "answer": 1,
   "model": "Representation: are amounts strings or numbers? JSON numbers parsed as floats can lose precision, so many finance APIs send amounts as strings or integer minor units. Check precision (exactly 2 decimals for INR or USD), currency codes (ISO 4217) next to every amount, totals matching the sum of items, consistent rounding, negative values for refunds, and that large values don't overflow or switch to scientific notation (1e+21).",
   "tags": [
    "finance",
@@ -1135,6 +1779,13 @@
   "kind": "concept",
   "question": "How do you test backward compatibility when a new version of an API is deployed?",
   "what_tested": "Regression across versions",
+  "options": [
+   "Assume new versions are compatible",
+   "Only test the new endpoints",
+   "Delete old tests",
+   "Contract tests and spec diffs"
+  ],
+  "answer": 3,
   "model": "Run the existing suite and all consumer contract tests against the new version before release. Diff the OpenAPI specs to flag removed or changed fields. Replay recorded production-like requests (sanitised) and compare responses between old and new versions (shadow or diff testing). Check that old clients still get valid responses (new optional fields only), and that deprecations are announced with headers and sunset dates rather than surprises.",
   "tags": [
    "versioning",
@@ -1148,6 +1799,13 @@
   "kind": "concept",
   "question": "How do you test HATEOAS links or 'next' URLs returned by an API?",
   "what_tested": "Hypermedia",
+  "options": [
+   "Follow the links and check them",
+   "HATEOAS links are always correct",
+   "Only check the self link exists",
+   "Build URLs manually and ignore the links"
+  ],
+  "answer": 0,
   "model": "Follow the links rather than constructing URLs yourself: assert the `next`, `self` and action links exist when they should (no `next` on the last page), point to the right host and scheme (no internal hostnames or http in production), preserve filters and sorting, and that following them returns valid resources the caller is authorised for. Broken or environment-leaking links are a common, easily automated find.",
   "tags": [
    "fundamentals"
@@ -1160,6 +1818,13 @@
   "kind": "concept",
   "question": "How would you test an API's handling of very large payloads or responses?",
   "what_tested": "Payload limits",
+  "options": [
+   "Turn off limits in tests",
+   "Large payloads never happen",
+   "Only test tiny payloads",
+   "413 above limits, deep nesting"
+  ],
+  "answer": 3,
   "model": "Send bodies at and above the documented limit (expect 413 Payload Too Large), large arrays, deeply nested JSON (which can crash parsers) and very long strings. For responses, check pagination or streaming prevents unbounded sizes, that compression (gzip or br with `Accept-Encoding`) is supported, and response times at realistic data volumes. Unbounded list endpoints are a common performance and availability risk.",
   "tags": [
    "non-functional"
@@ -1172,6 +1837,13 @@
   "kind": "concept",
   "question": "How do you test health check and readiness endpoints?",
   "what_tested": "Operational endpoints",
+  "options": [
+   "They're the same endpoint",
+   "Readiness must always return 200",
+   "Liveness simple; readiness checks deps",
+   "Health checks should run full regressions"
+  ],
+  "answer": 2,
   "model": "`/health` (liveness) should be fast, need no heavy dependencies and return 200 when the process is up. `/ready` (readiness) should check critical dependencies (database, cache, queues) and return 503 when the service can't serve traffic, so the load balancer stops routing to it. Test both by stopping a dependency in a test environment. Make sure they don't leak versions, hostnames or secrets, and require auth for detailed diagnostics.",
   "tags": [
    "operations"
@@ -1184,6 +1856,13 @@
   "kind": "concept",
   "question": "What metrics would you report for an API test suite?",
   "what_tested": "Quality metrics",
+  "options": [
+   "Number of tests only",
+   "Critical coverage, flake rate, escapes",
+   "Number of bugs logged per tester",
+   "Lines of test code"
+  ],
+  "answer": 1,
   "model": "Coverage of endpoints and critical business rules (rather than raw test count), pass rate excluding known flakes, flake rate per test, suite duration, defects found by the API suite before release versus escaped to production, mean time to diagnose failures, and contract coverage per consumer. Trends matter more than single numbers. Avoid vanity metrics like 'number of tests', which rewards duplication.",
   "tags": [
    "strategy"
@@ -1196,6 +1875,13 @@
   "kind": "concept",
   "question": "How do you decide whether a scenario belongs in an API test or a UI test?",
   "what_tested": "Test layer choice",
+  "options": [
+   "Everything in UI tests",
+   "Pick whichever is quicker to write",
+   "Everything in API tests",
+   "Rules in API; journeys in UI"
+  ],
+  "answer": 3,
   "model": "If it's business logic, validation, permissions, calculations or data rules, test it at the API (or lower), where it's faster, more stable and gives better coverage of combinations. Keep UI tests for what only the UI can show: critical user journeys working end to end, rendering, client-side validation and navigation. A rule of thumb: one UI test proves the flow works; API tests prove all the variations are correct.",
   "tags": [
    "strategy"
@@ -1208,6 +1894,13 @@
   "kind": "concept",
   "question": "What's the difference between authentication, authorisation and accounting (auditing)? How do you test auditing?",
   "what_tested": "Audit trails",
+  "options": [
+   "Identity, permission, record of actions",
+   "Auditing means code reviews",
+   "They're three names for login",
+   "Accounting is about invoices only"
+  ],
+  "answer": 0,
   "model": "Authentication: who you are. Authorisation: what you're allowed to do. Accounting or auditing: recording what you did. For auditing, perform sensitive actions (role changes, payments, data exports, deletions) and verify audit records exist with actor, action, target, timestamp, source IP and correlation id; that they can't be modified or deleted by normal users; and that failed attempts are logged too. Auditing is often a compliance requirement in finance.",
   "tags": [
    "security",
@@ -1221,6 +1914,13 @@
   "kind": "concept",
   "question": "How do you test an API's behaviour when its database is slow or unavailable?",
   "what_tested": "Dependency failure",
+  "options": [
+   "The API should hang until the DB returns",
+   "Return 200 with empty data",
+   "It can't be tested",
+   "Clear 503/504 and clean recovery"
+  ],
+  "answer": 3,
   "model": "In a test environment, inject the fault: stop the database container, add network latency (toxiproxy), or exhaust the connection pool. Then verify the API returns a timely, clear 503 or 504 rather than hanging, doesn't leak stack traces, recovers automatically when the database returns, and that readiness probes report not-ready. Check that writes aren't half-applied and that retries don't create duplicates once it recovers.",
   "tags": [
    "resilience"
@@ -1233,6 +1933,13 @@
   "kind": "concept",
   "question": "What is the difference between stateless and stateful APIs, and why does it matter for testing?",
   "what_tested": "Statelessness",
+  "options": [
+   "Stateful APIs are always faster",
+   "Self-contained requests vs sequences",
+   "There's no testing difference",
+   "Stateless APIs store sessions on the server"
+  ],
+  "answer": 1,
   "model": "In a stateless API, each request carries everything needed (auth token, parameters), so any server instance can handle it and tests can call endpoints in any order. Stateful APIs keep session state on the server (sticky sessions, multi-step workflows), so tests must follow sequences and may behave differently across instances. Statelessness makes tests easier to parallelise and isolate; stateful flows need explicit tests for session expiry and instance failover.",
   "tags": [
    "fundamentals"
@@ -1245,6 +1952,13 @@
   "kind": "concept",
   "question": "How would you verify that an API correctly handles duplicate submissions from a double-click?",
   "what_tested": "Duplicate requests",
+  "options": [
+   "Check the button is disabled only",
+   "Send twice; expect one record",
+   "Duplicates are fine",
+   "Send one request"
+  ],
+  "answer": 1,
   "model": "Send the same create request twice in quick succession (and concurrently), both with and without an idempotency key, then check the end state: ideally one record, with the second request returning the original result or a 409. If the API has no protection, that's a finding to raise for any money or order operation. Also test the UI side disables the button, but the API must be the real safeguard.",
   "tags": [
    "idempotency",
@@ -1258,9 +1972,1174 @@
   "kind": "concept",
   "question": "How do you test an API with many optional fields without exploding the number of tests?",
   "what_tested": "Combinatorial testing",
+  "options": [
+   "Test every combination exhaustively",
+   "Test one field at a time only",
+   "Pairwise plus risk-based cases",
+   "Test only with all fields empty"
+  ],
+  "answer": 2,
   "model": "Use pairwise (all-pairs) testing: generate a small set of combinations covering every pair of parameter values (tools like `allpairspy`), plus targeted tests for known risky combinations and each field's boundaries. Add property-based tests for broad random coverage. Exhaustive combinations grow exponentially and rarely find more bugs than pairwise plus risk-based cases.",
   "tags": [
    "test-design"
+  ]
+ },
+ {
+  "id": "api-104",
+  "topic": "API testing",
+  "difficulty": "warm-up",
+  "kind": "api_code",
+  "question": "Write test_get_post() that fetches post 1 and asserts the status code is 200, `id` is 1, `userId` is 1, and `title` is a non-empty string.",
+  "what_tested": "GET request, status and body assertions",
+  "hint": "r = requests.get(url, timeout=10); body = r.json()",
+  "endpoint": "GET https://jsonplaceholder.typicode.com/posts/1",
+  "examples": [
+   {
+    "input": "GET https://jsonplaceholder.typicode.com/posts/1",
+    "output": "200 OK\n{\"userId\": 1, \"id\": 1, \"title\": \"sunt aut facere repellat provident occaecati...\", \"body\": \"quia et suscipit...\"}"
+   }
+  ],
+  "starter_code": "import requests\n\nBASE = \"https://jsonplaceholder.typicode.com\"\n\ndef test_get_post():\n    pass\n",
+  "tests": [
+   "test_get_post()"
+  ],
+  "entry": "test_get_post()",
+  "mutants": [
+   {
+    "label": "server returns 500",
+    "status": 500
+   },
+   {
+    "label": "title is an empty string",
+    "set": {
+     "title": ""
+    }
+   },
+   {
+    "label": "userId is wrong (2)",
+    "set": {
+     "userId": 2
+    }
+   },
+   {
+    "label": "id field missing",
+    "delete": [
+     "id"
+    ]
+   }
+  ],
+  "solution": "import requests\n\nBASE = \"https://jsonplaceholder.typicode.com\"\n\ndef test_get_post():\n    r = requests.get(f\"{BASE}/posts/1\", timeout=10)\n    assert r.status_code == 200, r.text\n    body = r.json()\n    assert body[\"id\"] == 1\n    assert body[\"userId\"] == 1\n    assert isinstance(body[\"title\"], str) and body[\"title\"].strip()\n",
+  "model": "```python\nimport requests\n\nBASE = \"https://jsonplaceholder.typicode.com\"\n\ndef test_get_post():\n    r = requests.get(f\"{BASE}/posts/1\", timeout=10)\n    assert r.status_code == 200, r.text\n    body = r.json()\n    assert body[\"id\"] == 1\n    assert body[\"userId\"] == 1\n    assert isinstance(body[\"title\"], str) and body[\"title\"].strip()\n```\n\nAlways pass a `timeout`, otherwise a hung server blocks the whole suite. Put `r.text` in the status assertion message so a failure shows what the server actually returned. Checking the type and non-emptiness of `title` catches a field that's present but useless.",
+  "tags": [
+   "get",
+   "assertions"
+  ]
+ },
+ {
+  "id": "api-105",
+  "topic": "API testing",
+  "difficulty": "warm-up",
+  "kind": "api_code",
+  "question": "Write test_list_posts() that fetches all posts and asserts: status 200, exactly 100 posts, and every post has the keys userId, id, title and body.",
+  "what_tested": "Collection responses, checking every item",
+  "hint": "Loop over the list, or use all(...) with a set of required keys.",
+  "endpoint": "GET https://jsonplaceholder.typicode.com/posts",
+  "examples": [
+   {
+    "input": "GET https://jsonplaceholder.typicode.com/posts",
+    "output": "200 OK\n[{\"userId\": 1, \"id\": 1, \"title\": \"sunt aut facere repellat provident occaecati...\", \"body\": \"quia et suscipit...\"}, ... 100 items]"
+   }
+  ],
+  "starter_code": "import requests\n\nBASE = \"https://jsonplaceholder.typicode.com\"\n\ndef test_list_posts():\n    pass\n",
+  "tests": [
+   "test_list_posts()"
+  ],
+  "entry": "test_list_posts()",
+  "mutants": [
+   {
+    "label": "only 99 posts returned",
+    "truncate": 99
+   },
+   {
+    "label": "post 6 is missing its title",
+    "delete": [
+     "5.title"
+    ]
+   },
+   {
+    "label": "server returns 503",
+    "status": 503
+   }
+  ],
+  "solution": "import requests\n\nBASE = \"https://jsonplaceholder.typicode.com\"\nREQUIRED = {\"userId\", \"id\", \"title\", \"body\"}\n\ndef test_list_posts():\n    r = requests.get(f\"{BASE}/posts\", timeout=10)\n    assert r.status_code == 200\n    posts = r.json()\n    assert len(posts) == 100\n    for post in posts:\n        missing = REQUIRED - post.keys()\n        assert not missing, f\"post {post.get('id')} missing {missing}\"\n",
+  "model": "```python\nimport requests\n\nBASE = \"https://jsonplaceholder.typicode.com\"\nREQUIRED = {\"userId\", \"id\", \"title\", \"body\"}\n\ndef test_list_posts():\n    r = requests.get(f\"{BASE}/posts\", timeout=10)\n    assert r.status_code == 200\n    posts = r.json()\n    assert len(posts) == 100\n    for post in posts:\n        missing = REQUIRED - post.keys()\n        assert not missing, f\"post {post.get('id')} missing {missing}\"\n```\n\nChecking every item, not just the first, is what catches a single malformed record deep in the list. A set difference gives a precise failure message naming the missing keys.",
+  "tags": [
+   "get",
+   "collections"
+  ]
+ },
+ {
+  "id": "api-106",
+  "topic": "API testing",
+  "difficulty": "warm-up",
+  "kind": "api_code",
+  "question": "Write test_post_not_found() that requests post 9999 (which doesn't exist) and asserts the API returns 404 with an empty JSON object.",
+  "what_tested": "Negative testing, 404 handling",
+  "hint": "Don't call raise_for_status() here; assert on the status code directly.",
+  "endpoint": "GET https://jsonplaceholder.typicode.com/posts/9999",
+  "examples": [
+   {
+    "input": "GET https://jsonplaceholder.typicode.com/posts/9999",
+    "output": "404 Not Found\n{}"
+   }
+  ],
+  "starter_code": "import requests\n\nBASE = \"https://jsonplaceholder.typicode.com\"\n\ndef test_post_not_found():\n    pass\n",
+  "tests": [
+   "test_post_not_found()"
+  ],
+  "entry": "test_post_not_found()",
+  "mutants": [
+   {
+    "label": "returns 200 with a fake record",
+    "status": 200,
+    "body": {
+     "id": 9999,
+     "title": "ghost"
+    }
+   },
+   {
+    "label": "returns 500 instead of 404",
+    "status": 500
+   }
+  ],
+  "solution": "import requests\n\nBASE = \"https://jsonplaceholder.typicode.com\"\n\ndef test_post_not_found():\n    r = requests.get(f\"{BASE}/posts/9999\", timeout=10)\n    assert r.status_code == 404\n    assert r.json() == {}\n",
+  "model": "```python\nimport requests\n\nBASE = \"https://jsonplaceholder.typicode.com\"\n\ndef test_post_not_found():\n    r = requests.get(f\"{BASE}/posts/9999\", timeout=10)\n    assert r.status_code == 404\n    assert r.json() == {}\n```\n\nNegative tests matter as much as happy paths: an API that returns 200 with a fake record, or a 500, for a missing resource is a real bug. Asserting the body as well catches APIs that leak data or stack traces in error responses.",
+  "tags": [
+   "negative",
+   "status-codes"
+  ]
+ },
+ {
+  "id": "api-107",
+  "topic": "API testing",
+  "difficulty": "core",
+  "kind": "api_code",
+  "question": "Write test_create_post() that POSTs a new post as JSON ({\"title\": \"QA automation\", \"body\": \"Testing with requests\", \"userId\": 1}) and asserts: status 201, the response echoes all three fields, and the new id is 101.",
+  "what_tested": "POST with a JSON body, 201 Created",
+  "hint": "Use json= so requests sets Content-Type: application/json for you.",
+  "endpoint": "POST https://jsonplaceholder.typicode.com/posts",
+  "examples": [
+   {
+    "input": "POST https://jsonplaceholder.typicode.com/posts\n{\"title\": \"QA automation\", \"body\": \"Testing with requests\", \"userId\": 1}",
+    "output": "201 Created\n{\"title\": \"QA automation\", \"body\": \"Testing with requests\", \"userId\": 1, \"id\": 101}"
+   }
+  ],
+  "starter_code": "import requests\n\nBASE = \"https://jsonplaceholder.typicode.com\"\n\ndef test_create_post():\n    pass\n",
+  "tests": [
+   "test_create_post()"
+  ],
+  "entry": "test_create_post()",
+  "mutants": [
+   {
+    "label": "returns 200 instead of 201",
+    "status": 200,
+    "body": {
+     "title": "QA automation",
+     "body": "Testing with requests",
+     "userId": 1,
+     "id": 101
+    }
+   },
+   {
+    "label": "title not saved as sent",
+    "set": {
+     "title": "something else"
+    }
+   },
+   {
+    "label": "id missing from the response",
+    "delete": [
+     "id"
+    ]
+   }
+  ],
+  "solution": "import requests\n\nBASE = \"https://jsonplaceholder.typicode.com\"\n\ndef test_create_post():\n    payload = {\"title\": \"QA automation\", \"body\": \"Testing with requests\", \"userId\": 1}\n    r = requests.post(f\"{BASE}/posts\", json=payload, timeout=10)\n    assert r.status_code == 201, r.text\n    created = r.json()\n    for key, value in payload.items():\n        assert created[key] == value, f\"{key}: {created.get(key)!r}\"\n    assert created[\"id\"] == 101\n",
+  "model": "```python\nimport requests\n\nBASE = \"https://jsonplaceholder.typicode.com\"\n\ndef test_create_post():\n    payload = {\"title\": \"QA automation\", \"body\": \"Testing with requests\", \"userId\": 1}\n    r = requests.post(f\"{BASE}/posts\", json=payload, timeout=10)\n    assert r.status_code == 201, r.text\n    created = r.json()\n    for key, value in payload.items():\n        assert created[key] == value, f\"{key}: {created.get(key)!r}\"\n    assert created[\"id\"] == 101\n```\n\n`json=payload` serialises the body and sets the Content-Type header; `data=payload` would send form fields instead, a classic mistake. JSONPlaceholder fakes the write (nothing is stored), which is why the id is always 101. On a real API you'd also GET the new resource to confirm it was persisted.",
+  "tags": [
+   "post",
+   "status-codes"
+  ]
+ },
+ {
+  "id": "api-108",
+  "topic": "API testing",
+  "difficulty": "core",
+  "kind": "api_code",
+  "question": "Write test_update_post() that replaces post 1 with PUT ({\"id\": 1, \"title\": \"Updated title\", \"body\": \"Updated body\", \"userId\": 1}) and asserts status 200 and that the response contains the new title and body with id 1.",
+  "what_tested": "PUT semantics",
+  "hint": "PUT sends the complete resource, not just the changed fields.",
+  "endpoint": "PUT https://jsonplaceholder.typicode.com/posts/1",
+  "examples": [
+   {
+    "input": "PUT https://jsonplaceholder.typicode.com/posts/1\n{\"id\": 1, \"title\": \"Updated title\", \"body\": \"Updated body\", \"userId\": 1}",
+    "output": "200 OK\n{\"id\": 1, \"title\": \"Updated title\", \"body\": \"Updated body\", \"userId\": 1}"
+   }
+  ],
+  "starter_code": "import requests\n\nBASE = \"https://jsonplaceholder.typicode.com\"\n\ndef test_update_post():\n    pass\n",
+  "tests": [
+   "test_update_post()"
+  ],
+  "entry": "test_update_post()",
+  "mutants": [
+   {
+    "label": "server returns 500",
+    "status": 500
+   },
+   {
+    "label": "title not updated",
+    "set": {
+     "title": "sunt aut facere"
+    }
+   },
+   {
+    "label": "body dropped from the response",
+    "delete": [
+     "body"
+    ]
+   }
+  ],
+  "solution": "import requests\n\nBASE = \"https://jsonplaceholder.typicode.com\"\n\ndef test_update_post():\n    payload = {\"id\": 1, \"title\": \"Updated title\", \"body\": \"Updated body\", \"userId\": 1}\n    r = requests.put(f\"{BASE}/posts/1\", json=payload, timeout=10)\n    assert r.status_code == 200\n    updated = r.json()\n    assert updated[\"id\"] == 1\n    assert updated[\"title\"] == \"Updated title\"\n    assert updated[\"body\"] == \"Updated body\"\n",
+  "model": "```python\nimport requests\n\nBASE = \"https://jsonplaceholder.typicode.com\"\n\ndef test_update_post():\n    payload = {\"id\": 1, \"title\": \"Updated title\", \"body\": \"Updated body\", \"userId\": 1}\n    r = requests.put(f\"{BASE}/posts/1\", json=payload, timeout=10)\n    assert r.status_code == 200\n    updated = r.json()\n    assert updated[\"id\"] == 1\n    assert updated[\"title\"] == \"Updated title\"\n    assert updated[\"body\"] == \"Updated body\"\n```\n\nPUT replaces the whole resource and should be idempotent: sending it twice leaves the same state. A good follow-up test sends the same PUT twice and compares responses.",
+  "tags": [
+   "put"
+  ]
+ },
+ {
+  "id": "api-109",
+  "topic": "API testing",
+  "difficulty": "core",
+  "kind": "api_code",
+  "question": "Write test_patch_post() that PATCHes only the title of post 1 to \"Patched\" and asserts: status 200, the title changed, and the original body is still there (it starts with \"quia et suscipit\").",
+  "what_tested": "PATCH semantics: partial update",
+  "hint": "Send only the field you're changing.",
+  "endpoint": "PATCH https://jsonplaceholder.typicode.com/posts/1",
+  "examples": [
+   {
+    "input": "PATCH https://jsonplaceholder.typicode.com/posts/1\n{\"title\": \"Patched\"}",
+    "output": "200 OK\n{\"userId\": 1, \"id\": 1, \"title\": \"Patched\", \"body\": \"quia et suscipit...\"}"
+   }
+  ],
+  "starter_code": "import requests\n\nBASE = \"https://jsonplaceholder.typicode.com\"\n\ndef test_patch_post():\n    pass\n",
+  "tests": [
+   "test_patch_post()"
+  ],
+  "entry": "test_patch_post()",
+  "mutants": [
+   {
+    "label": "title unchanged",
+    "set": {
+     "title": "sunt aut facere"
+    }
+   },
+   {
+    "label": "body wiped (PATCH behaving like PUT)",
+    "delete": [
+     "body"
+    ]
+   }
+  ],
+  "solution": "import requests\n\nBASE = \"https://jsonplaceholder.typicode.com\"\n\ndef test_patch_post():\n    r = requests.patch(f\"{BASE}/posts/1\", json={\"title\": \"Patched\"}, timeout=10)\n    assert r.status_code == 200\n    post = r.json()\n    assert post[\"title\"] == \"Patched\"\n    assert post[\"body\"].startswith(\"quia et suscipit\"), \"PATCH must not wipe other fields\"\n",
+  "model": "```python\nimport requests\n\nBASE = \"https://jsonplaceholder.typicode.com\"\n\ndef test_patch_post():\n    r = requests.patch(f\"{BASE}/posts/1\", json={\"title\": \"Patched\"}, timeout=10)\n    assert r.status_code == 200\n    post = r.json()\n    assert post[\"title\"] == \"Patched\"\n    assert post[\"body\"].startswith(\"quia et suscipit\"), \"PATCH must not wipe other fields\"\n```\n\nThe interesting assertion is the second one: a PATCH implemented like a PUT silently wipes fields that weren't sent. That's a real-world bug worth a dedicated test.",
+  "tags": [
+   "patch"
+  ]
+ },
+ {
+  "id": "api-110",
+  "topic": "API testing",
+  "difficulty": "warm-up",
+  "kind": "api_code",
+  "question": "Write test_delete_post() that deletes post 1 and asserts the response is 200 with an empty JSON object.",
+  "what_tested": "DELETE requests",
+  "hint": "requests.delete(url, timeout=...)",
+  "endpoint": "DELETE https://jsonplaceholder.typicode.com/posts/1",
+  "examples": [
+   {
+    "input": "DELETE https://jsonplaceholder.typicode.com/posts/1",
+    "output": "200 OK\n{}"
+   }
+  ],
+  "starter_code": "import requests\n\nBASE = \"https://jsonplaceholder.typicode.com\"\n\ndef test_delete_post():\n    pass\n",
+  "tests": [
+   "test_delete_post()"
+  ],
+  "entry": "test_delete_post()",
+  "mutants": [
+   {
+    "label": "returns 404",
+    "status": 404
+   },
+   {
+    "label": "returns 500",
+    "status": 500
+   },
+   {
+    "label": "returns the deleted object instead of {}",
+    "body": {
+     "id": 1
+    }
+   }
+  ],
+  "solution": "import requests\n\nBASE = \"https://jsonplaceholder.typicode.com\"\n\ndef test_delete_post():\n    r = requests.delete(f\"{BASE}/posts/1\", timeout=10)\n    assert r.status_code == 200\n    assert r.json() == {}\n",
+  "model": "```python\nimport requests\n\nBASE = \"https://jsonplaceholder.typicode.com\"\n\ndef test_delete_post():\n    r = requests.delete(f\"{BASE}/posts/1\", timeout=10)\n    assert r.status_code == 200\n    assert r.json() == {}\n```\n\nMany APIs return 204 No Content for deletes; this one returns 200 with `{}`, so always assert against the documented contract. On a real API, follow up with a GET expecting 404 to prove the delete happened.",
+  "tags": [
+   "delete"
+  ]
+ },
+ {
+  "id": "api-111",
+  "topic": "API testing",
+  "difficulty": "core",
+  "kind": "api_code",
+  "question": "Write test_comments_for_post() that fetches comments for post 1 using the query parameter postId=1 (use the params= argument) and asserts: status 200, exactly 5 comments, and every comment's postId is 1 and email contains '@'.",
+  "what_tested": "Query parameters, filtering",
+  "hint": "requests.get(url, params={'postId': 1}) builds ?postId=1 for you.",
+  "endpoint": "GET https://jsonplaceholder.typicode.com/comments?postId=1",
+  "examples": [
+   {
+    "input": "GET https://jsonplaceholder.typicode.com/comments?postId=1",
+    "output": "200 OK\n[{\"postId\": 1, \"id\": 1, \"name\": \"id labore ex et quam laborum\", \"email\": \"Eliseo@gardner.biz\", \"body\": \"...\"}, ... 5 items]"
+   }
+  ],
+  "starter_code": "import requests\n\nBASE = \"https://jsonplaceholder.typicode.com\"\n\ndef test_comments_for_post():\n    pass\n",
+  "tests": [
+   "test_comments_for_post()"
+  ],
+  "entry": "test_comments_for_post()",
+  "mutants": [
+   {
+    "label": "a comment from another post leaks in",
+    "set": {
+     "0.postId": 2
+    }
+   },
+   {
+    "label": "only 4 comments returned",
+    "truncate": 4
+   },
+   {
+    "label": "an email is malformed",
+    "set": {
+     "2.email": "not-an-email"
+    }
+   }
+  ],
+  "solution": "import requests\n\nBASE = \"https://jsonplaceholder.typicode.com\"\n\ndef test_comments_for_post():\n    r = requests.get(f\"{BASE}/comments\", params={\"postId\": 1}, timeout=10)\n    assert r.status_code == 200\n    comments = r.json()\n    assert len(comments) == 5\n    for c in comments:\n        assert c[\"postId\"] == 1, c\n        assert \"@\" in c[\"email\"], c[\"email\"]\n",
+  "model": "```python\nimport requests\n\nBASE = \"https://jsonplaceholder.typicode.com\"\n\ndef test_comments_for_post():\n    r = requests.get(f\"{BASE}/comments\", params={\"postId\": 1}, timeout=10)\n    assert r.status_code == 200\n    comments = r.json()\n    assert len(comments) == 5\n    for c in comments:\n        assert c[\"postId\"] == 1, c\n        assert \"@\" in c[\"email\"], c[\"email\"]\n```\n\n`params=` handles URL encoding correctly, which matters for values with spaces or special characters. Asserting every item matches the filter catches a broken filter that returns extra records.",
+  "tags": [
+   "query-params"
+  ]
+ },
+ {
+  "id": "api-112",
+  "topic": "API testing",
+  "difficulty": "core",
+  "kind": "api_code",
+  "question": "Write test_pagination() that requests page 2 of posts with 10 per page (params _page=2 and _limit=10) and asserts: 10 posts, ids are exactly 11 to 20 in order.",
+  "what_tested": "Pagination checks",
+  "hint": "Compare the list of ids with list(range(11, 21)).",
+  "endpoint": "GET https://jsonplaceholder.typicode.com/posts?_page=2&_limit=10",
+  "examples": [
+   {
+    "input": "GET https://jsonplaceholder.typicode.com/posts?_page=2&_limit=10",
+    "output": "200 OK\n[{\"userId\": 2, \"id\": 11, ...}, ..., {\"id\": 20, ...}]"
+   }
+  ],
+  "starter_code": "import requests\n\nBASE = \"https://jsonplaceholder.typicode.com\"\n\ndef test_pagination():\n    pass\n",
+  "tests": [
+   "test_pagination()"
+  ],
+  "entry": "test_pagination()",
+  "mutants": [
+   {
+    "label": "page has only 9 items",
+    "truncate": 9
+   },
+   {
+    "label": "page starts at the wrong offset",
+    "set": {
+     "0.id": 1
+    }
+   }
+  ],
+  "solution": "import requests\n\nBASE = \"https://jsonplaceholder.typicode.com\"\n\ndef test_pagination():\n    r = requests.get(f\"{BASE}/posts\", params={\"_page\": 2, \"_limit\": 10}, timeout=10)\n    assert r.status_code == 200\n    ids = [p[\"id\"] for p in r.json()]\n    assert ids == list(range(11, 21)), ids\n",
+  "model": "```python\nimport requests\n\nBASE = \"https://jsonplaceholder.typicode.com\"\n\ndef test_pagination():\n    r = requests.get(f\"{BASE}/posts\", params={\"_page\": 2, \"_limit\": 10}, timeout=10)\n    assert r.status_code == 200\n    ids = [p[\"id\"] for p in r.json()]\n    assert ids == list(range(11, 21)), ids\n```\n\nComparing the exact id list checks page size, offset and order in one assertion, and the failure message shows the actual ids. A fuller pagination test walks every page and confirms no overlaps or gaps.",
+  "tags": [
+   "pagination"
+  ]
+ },
+ {
+  "id": "api-113",
+  "topic": "API testing",
+  "difficulty": "core",
+  "kind": "api_code",
+  "question": "Write test_user_schema() that fetches user 1 and validates the nested structure: `id` is an int, `email` contains '@', `address.geo.lat` and `address.geo.lng` are strings, and `company.name` is a non-empty string.",
+  "what_tested": "Nested JSON validation",
+  "hint": "Walk the nested dicts step by step; check types with isinstance.",
+  "endpoint": "GET https://jsonplaceholder.typicode.com/users/1",
+  "examples": [
+   {
+    "input": "GET https://jsonplaceholder.typicode.com/users/1",
+    "output": "200 OK\n{\"id\": 1, \"name\": \"Leanne Graham\", \"username\": \"Bret\", \"email\": \"Sincere@april.biz\",\n \"address\": {\"street\": \"Kulas Light\", ..., \"geo\": {\"lat\": \"-37.3159\", \"lng\": \"81.1496\"}},\n \"company\": {\"name\": \"Romaguera-Crona\", ...}}"
+   }
+  ],
+  "starter_code": "import requests\n\nBASE = \"https://jsonplaceholder.typicode.com\"\n\ndef test_user_schema():\n    pass\n",
+  "tests": [
+   "test_user_schema()"
+  ],
+  "entry": "test_user_schema()",
+  "mutants": [
+   {
+    "label": "id returned as a string",
+    "set": {
+     "id": "1"
+    }
+   },
+   {
+    "label": "geo block missing",
+    "delete": [
+     "address.geo"
+    ]
+   },
+   {
+    "label": "email malformed",
+    "set": {
+     "email": "Sincere.april.biz"
+    }
+   },
+   {
+    "label": "company name empty",
+    "set": {
+     "company.name": ""
+    }
+   }
+  ],
+  "solution": "import requests\n\nBASE = \"https://jsonplaceholder.typicode.com\"\n\ndef test_user_schema():\n    r = requests.get(f\"{BASE}/users/1\", timeout=10)\n    assert r.status_code == 200\n    user = r.json()\n    assert isinstance(user[\"id\"], int) and not isinstance(user[\"id\"], bool)\n    assert \"@\" in user[\"email\"]\n    geo = user[\"address\"][\"geo\"]\n    assert isinstance(geo[\"lat\"], str) and isinstance(geo[\"lng\"], str)\n    assert isinstance(user[\"company\"][\"name\"], str) and user[\"company\"][\"name\"]\n",
+  "model": "```python\nimport requests\n\nBASE = \"https://jsonplaceholder.typicode.com\"\n\ndef test_user_schema():\n    r = requests.get(f\"{BASE}/users/1\", timeout=10)\n    assert r.status_code == 200\n    user = r.json()\n    assert isinstance(user[\"id\"], int) and not isinstance(user[\"id\"], bool)\n    assert \"@\" in user[\"email\"]\n    geo = user[\"address\"][\"geo\"]\n    assert isinstance(geo[\"lat\"], str) and isinstance(geo[\"lng\"], str)\n    assert isinstance(user[\"company\"][\"name\"], str) and user[\"company\"][\"name\"]\n```\n\nType checks catch contract drift, such as an id that becomes a string after a backend change. For bigger responses, express the same rules as a JSON Schema or a pydantic model and validate the whole document in one call.",
+  "tags": [
+   "schema",
+   "nested-json"
+  ]
+ },
+ {
+  "id": "api-114",
+  "topic": "API testing",
+  "difficulty": "core",
+  "kind": "api_code",
+  "question": "Write test_unique_emails() that fetches all users and asserts there are 10 users and no two users share an email (compare case-insensitively).",
+  "what_tested": "Data integrity checks",
+  "hint": "Compare len(emails) with len(set(emails)).",
+  "endpoint": "GET https://jsonplaceholder.typicode.com/users",
+  "examples": [
+   {
+    "input": "GET https://jsonplaceholder.typicode.com/users",
+    "output": "200 OK\n[{\"id\": 1, \"email\": \"Sincere@april.biz\", ...}, ... 10 users]"
+   }
+  ],
+  "starter_code": "import requests\n\nBASE = \"https://jsonplaceholder.typicode.com\"\n\ndef test_unique_emails():\n    pass\n",
+  "tests": [
+   "test_unique_emails()"
+  ],
+  "entry": "test_unique_emails()",
+  "mutants": [
+   {
+    "label": "two users share an email",
+    "set": {
+     "1.email": "Sincere@april.biz"
+    }
+   },
+   {
+    "label": "same email with different case",
+    "set": {
+     "3.email": "SINCERE@APRIL.BIZ"
+    }
+   },
+   {
+    "label": "a user is missing",
+    "truncate": 9
+   }
+  ],
+  "solution": "import requests\nfrom collections import Counter\n\nBASE = \"https://jsonplaceholder.typicode.com\"\n\ndef test_unique_emails():\n    r = requests.get(f\"{BASE}/users\", timeout=10)\n    assert r.status_code == 200\n    users = r.json()\n    assert len(users) == 10\n    emails = [u[\"email\"].lower() for u in users]\n    dupes = [e for e, n in Counter(emails).items() if n > 1]\n    assert not dupes, f\"duplicate emails: {dupes}\"\n",
+  "model": "```python\nimport requests\nfrom collections import Counter\n\nBASE = \"https://jsonplaceholder.typicode.com\"\n\ndef test_unique_emails():\n    r = requests.get(f\"{BASE}/users\", timeout=10)\n    assert r.status_code == 200\n    users = r.json()\n    assert len(users) == 10\n    emails = [u[\"email\"].lower() for u in users]\n    dupes = [e for e, n in Counter(emails).items() if n > 1]\n    assert not dupes, f\"duplicate emails: {dupes}\"\n```\n\nReporting which emails are duplicated (not just that duplicates exist) makes the failure actionable. Lower-casing matters because email addresses are case-insensitive in practice.",
+  "tags": [
+   "data-integrity"
+  ]
+ },
+ {
+  "id": "api-115",
+  "topic": "API testing",
+  "difficulty": "core",
+  "kind": "api_code",
+  "question": "Write test_json_content_type() that fetches post 1 and asserts the response's Content-Type header is JSON (contains 'application/json'), in addition to status 200.",
+  "what_tested": "Header assertions",
+  "hint": "Headers are a case-insensitive dict: r.headers['content-type'] works too.",
+  "endpoint": "GET https://jsonplaceholder.typicode.com/posts/1",
+  "examples": [
+   {
+    "input": "GET https://jsonplaceholder.typicode.com/posts/1",
+    "output": "200 OK\nContent-Type: application/json; charset=utf-8"
+   }
+  ],
+  "starter_code": "import requests\n\nBASE = \"https://jsonplaceholder.typicode.com\"\n\ndef test_json_content_type():\n    pass\n",
+  "tests": [
+   "test_json_content_type()"
+  ],
+  "entry": "test_json_content_type()",
+  "mutants": [
+   {
+    "label": "Content-Type is text/html",
+    "headers": {
+     "Content-Type": "text/html"
+    }
+   },
+   {
+    "label": "server returns 500",
+    "status": 500
+   }
+  ],
+  "solution": "import requests\n\nBASE = \"https://jsonplaceholder.typicode.com\"\n\ndef test_json_content_type():\n    r = requests.get(f\"{BASE}/posts/1\", timeout=10)\n    assert r.status_code == 200\n    assert \"application/json\" in r.headers.get(\"Content-Type\", \"\"), r.headers.get(\"Content-Type\")\n",
+  "model": "```python\nimport requests\n\nBASE = \"https://jsonplaceholder.typicode.com\"\n\ndef test_json_content_type():\n    r = requests.get(f\"{BASE}/posts/1\", timeout=10)\n    assert r.status_code == 200\n    assert \"application/json\" in r.headers.get(\"Content-Type\", \"\"), r.headers.get(\"Content-Type\")\n```\n\nUse `in` rather than equality, because the header often carries a charset suffix. A wrong Content-Type breaks clients that rely on it (browsers, typed SDKs) even when the body looks fine.",
+  "tags": [
+   "headers"
+  ]
+ },
+ {
+  "id": "api-116",
+  "topic": "API testing",
+  "difficulty": "core",
+  "kind": "api_code",
+  "question": "Write test_create_todo() that creates a todo for user 1 ({\"title\": \"Write API tests\", \"completed\": false, \"userId\": 1}) and asserts status 201, the returned `completed` is exactly False (a boolean, not a string), and the id is 201.",
+  "what_tested": "POST, boolean type checks",
+  "hint": "`is False` checks the type and value; == False would also accept 0.",
+  "endpoint": "POST https://jsonplaceholder.typicode.com/todos",
+  "examples": [
+   {
+    "input": "POST https://jsonplaceholder.typicode.com/todos\n{\"title\": \"Write API tests\", \"completed\": false, \"userId\": 1}",
+    "output": "201 Created\n{\"title\": \"Write API tests\", \"completed\": false, \"userId\": 1, \"id\": 201}"
+   }
+  ],
+  "starter_code": "import requests\n\nBASE = \"https://jsonplaceholder.typicode.com\"\n\ndef test_create_todo():\n    pass\n",
+  "tests": [
+   "test_create_todo()"
+  ],
+  "entry": "test_create_todo()",
+  "mutants": [
+   {
+    "label": "completed returned as the string 'false'",
+    "set": {
+     "completed": "false"
+    }
+   },
+   {
+    "label": "completed returned as 0",
+    "set": {
+     "completed": 0
+    }
+   },
+   {
+    "label": "returns 400",
+    "status": 400
+   }
+  ],
+  "solution": "import requests\n\nBASE = \"https://jsonplaceholder.typicode.com\"\n\ndef test_create_todo():\n    payload = {\"title\": \"Write API tests\", \"completed\": False, \"userId\": 1}\n    r = requests.post(f\"{BASE}/todos\", json=payload, timeout=10)\n    assert r.status_code == 201\n    todo = r.json()\n    assert todo[\"completed\"] is False, repr(todo[\"completed\"])\n    assert todo[\"title\"] == payload[\"title\"]\n    assert todo[\"id\"] == 201\n",
+  "model": "```python\nimport requests\n\nBASE = \"https://jsonplaceholder.typicode.com\"\n\ndef test_create_todo():\n    payload = {\"title\": \"Write API tests\", \"completed\": False, \"userId\": 1}\n    r = requests.post(f\"{BASE}/todos\", json=payload, timeout=10)\n    assert r.status_code == 201\n    todo = r.json()\n    assert todo[\"completed\"] is False, repr(todo[\"completed\"])\n    assert todo[\"title\"] == payload[\"title\"]\n    assert todo[\"id\"] == 201\n```\n\nType-sensitive assertions catch serialisation bugs, such as booleans turning into the strings 'false' or 0, which slip past loose equality checks.",
+  "tags": [
+   "post",
+   "types"
+  ]
+ },
+ {
+  "id": "api-117",
+  "topic": "API testing",
+  "difficulty": "core",
+  "kind": "api_code",
+  "question": "Write get_post_titles(user_id) that returns the list of titles of all posts written by that user, in API order. Use the userId query parameter.",
+  "what_tested": "Fetching and transforming API data",
+  "hint": "params={'userId': user_id}, then a list comprehension over r.json().",
+  "endpoint": "GET https://jsonplaceholder.typicode.com/posts?userId={user_id}",
+  "examples": [
+   {
+    "input": "get_post_titles(1)",
+    "output": "['sunt aut facere repellat provident occaecati excepturi optio reprehenderit', 'qui est esse', ... 10 titles]"
+   }
+  ],
+  "starter_code": "import requests\n\nBASE = \"https://jsonplaceholder.typicode.com\"\n\ndef get_post_titles(user_id):\n    pass\n",
+  "tests": [
+   "assert len(get_post_titles(1)) == 10",
+   "assert get_post_titles(1)[:2] == ['sunt aut facere repellat provident occaecati excepturi optio reprehenderit', 'qui est esse']",
+   "assert get_post_titles(3)[0] == 'asperiores ea ipsam voluptatibus modi minima quia sint'",
+   "assert get_post_titles(999) == []"
+  ],
+  "solution": "import requests\n\nBASE = \"https://jsonplaceholder.typicode.com\"\n\ndef get_post_titles(user_id):\n    r = requests.get(f\"{BASE}/posts\", params={\"userId\": user_id}, timeout=10)\n    r.raise_for_status()\n    return [post[\"title\"] for post in r.json()]\n",
+  "model": "```python\nimport requests\n\nBASE = \"https://jsonplaceholder.typicode.com\"\n\ndef get_post_titles(user_id):\n    r = requests.get(f\"{BASE}/posts\", params={\"userId\": user_id}, timeout=10)\n    r.raise_for_status()\n    return [post[\"title\"] for post in r.json()]\n```\n\n`raise_for_status()` turns 4xx and 5xx responses into exceptions, so callers never silently process an error page as data. Filtering server-side with `params` is faster than downloading everything and filtering in Python.",
+  "tags": [
+   "get",
+   "transform"
+  ]
+ },
+ {
+  "id": "api-118",
+  "topic": "API testing",
+  "difficulty": "core",
+  "kind": "api_code",
+  "question": "Write count_completed_todos(user_id) that returns how many of the user's todos are completed.",
+  "what_tested": "Aggregating API data",
+  "hint": "Fetch /todos with params, then sum the booleans.",
+  "endpoint": "GET https://jsonplaceholder.typicode.com/todos?userId={user_id}",
+  "examples": [
+   {
+    "input": "count_completed_todos(1)",
+    "output": "11"
+   },
+   {
+    "input": "count_completed_todos(2)",
+    "output": "8"
+   }
+  ],
+  "starter_code": "import requests\n\nBASE = \"https://jsonplaceholder.typicode.com\"\n\ndef count_completed_todos(user_id):\n    pass\n",
+  "tests": [
+   "assert count_completed_todos(1) == 11",
+   "assert count_completed_todos(2) == 8",
+   "assert count_completed_todos(5) == 12",
+   "assert count_completed_todos(999) == 0"
+  ],
+  "solution": "import requests\n\nBASE = \"https://jsonplaceholder.typicode.com\"\n\ndef count_completed_todos(user_id):\n    r = requests.get(f\"{BASE}/todos\", params={\"userId\": user_id}, timeout=10)\n    r.raise_for_status()\n    return sum(1 for todo in r.json() if todo[\"completed\"] is True)\n",
+  "model": "```python\nimport requests\n\nBASE = \"https://jsonplaceholder.typicode.com\"\n\ndef count_completed_todos(user_id):\n    r = requests.get(f\"{BASE}/todos\", params={\"userId\": user_id}, timeout=10)\n    r.raise_for_status()\n    return sum(1 for todo in r.json() if todo[\"completed\"] is True)\n```\n\nCounting with `is True` avoids miscounting if the API ever sends 'true' as a string. In an interview, mention you'd verify the count against a known fixture or the database rather than trusting the same API twice.",
+  "tags": [
+   "get",
+   "aggregation"
+  ]
+ },
+ {
+  "id": "api-119",
+  "topic": "API testing",
+  "difficulty": "core",
+  "kind": "api_code",
+  "question": "Write get_user_email(username) that looks up a user by username and returns their email, or None if no user has that username.",
+  "what_tested": "Lookup by query, handling empty results",
+  "hint": "GET /users?username=..., the result is a list (possibly empty).",
+  "endpoint": "GET https://jsonplaceholder.typicode.com/users?username={username}",
+  "examples": [
+   {
+    "input": "get_user_email('Bret')",
+    "output": "'Sincere@april.biz'"
+   },
+   {
+    "input": "get_user_email('nobody')",
+    "output": "None"
+   }
+  ],
+  "starter_code": "import requests\n\nBASE = \"https://jsonplaceholder.typicode.com\"\n\ndef get_user_email(username):\n    pass\n",
+  "tests": [
+   "assert get_user_email('Bret') == 'Sincere@april.biz'",
+   "assert get_user_email('Samantha') == 'Nathan@yesenia.net'",
+   "assert get_user_email('nobody') is None",
+   "assert get_user_email('Moriah.Stanton') == 'Rey.Padberg@karina.biz'"
+  ],
+  "solution": "import requests\n\nBASE = \"https://jsonplaceholder.typicode.com\"\n\ndef get_user_email(username):\n    r = requests.get(f\"{BASE}/users\", params={\"username\": username}, timeout=10)\n    r.raise_for_status()\n    users = r.json()\n    return users[0][\"email\"] if users else None\n",
+  "model": "```python\nimport requests\n\nBASE = \"https://jsonplaceholder.typicode.com\"\n\ndef get_user_email(username):\n    r = requests.get(f\"{BASE}/users\", params={\"username\": username}, timeout=10)\n    r.raise_for_status()\n    users = r.json()\n    return users[0][\"email\"] if users else None\n```\n\nFilter endpoints return a list, so 'not found' is an empty list with status 200, not a 404. Handling that explicitly avoids an IndexError. Note the dot in 'Moriah.Stanton' is URL-encoded safely by `params=`.",
+  "tags": [
+   "get",
+   "query-params"
+  ]
+ },
+ {
+  "id": "api-120",
+  "topic": "API testing",
+  "difficulty": "core",
+  "kind": "api_code",
+  "question": "Write comment_emails(post_id) that returns the commenter emails for a post using the nested route /posts/{post_id}/comments.",
+  "what_tested": "Nested resource routes",
+  "hint": "Build the path with an f-string.",
+  "endpoint": "GET https://jsonplaceholder.typicode.com/posts/{post_id}/comments",
+  "examples": [
+   {
+    "input": "comment_emails(1)",
+    "output": "['Eliseo@gardner.biz', 'Jayne_Kuhic@sydney.com', 'Nikita@garfield.biz', 'Lew@alysha.tv', 'Hayden@althea.biz']"
+   }
+  ],
+  "starter_code": "import requests\n\nBASE = \"https://jsonplaceholder.typicode.com\"\n\ndef comment_emails(post_id):\n    pass\n",
+  "tests": [
+   "assert comment_emails(1) == ['Eliseo@gardner.biz', 'Jayne_Kuhic@sydney.com', 'Nikita@garfield.biz', 'Lew@alysha.tv', 'Hayden@althea.biz']",
+   "assert comment_emails(2)[0] == 'Presley.Mueller@myrl.com'",
+   "assert len(comment_emails(50)) == 5"
+  ],
+  "solution": "import requests\n\nBASE = \"https://jsonplaceholder.typicode.com\"\n\ndef comment_emails(post_id):\n    r = requests.get(f\"{BASE}/posts/{post_id}/comments\", timeout=10)\n    r.raise_for_status()\n    return [c[\"email\"] for c in r.json()]\n",
+  "model": "```python\nimport requests\n\nBASE = \"https://jsonplaceholder.typicode.com\"\n\ndef comment_emails(post_id):\n    r = requests.get(f\"{BASE}/posts/{post_id}/comments\", timeout=10)\n    r.raise_for_status()\n    return [c[\"email\"] for c in r.json()]\n```\n\nNested routes (`/posts/1/comments`) and query filters (`/comments?postId=1`) usually return the same data; a good API test suite checks they agree.",
+  "tags": [
+   "get",
+   "nested-routes"
+  ]
+ },
+ {
+  "id": "api-121",
+  "topic": "API testing",
+  "difficulty": "core",
+  "kind": "api_code",
+  "question": "Write posts_per_user() that fetches all posts once and returns a dict mapping each userId to their number of posts.",
+  "what_tested": "One request, client-side grouping",
+  "hint": "collections.Counter over the userId values.",
+  "endpoint": "GET https://jsonplaceholder.typicode.com/posts",
+  "examples": [
+   {
+    "input": "posts_per_user()",
+    "output": "{1: 10, 2: 10, 3: 10, ..., 10: 10}"
+   }
+  ],
+  "starter_code": "import requests\n\nBASE = \"https://jsonplaceholder.typicode.com\"\n\ndef posts_per_user():\n    pass\n",
+  "tests": [
+   "assert posts_per_user() == {u: 10 for u in range(1, 11)}",
+   "assert sum(posts_per_user().values()) == 100"
+  ],
+  "solution": "import requests\nfrom collections import Counter\n\nBASE = \"https://jsonplaceholder.typicode.com\"\n\ndef posts_per_user():\n    r = requests.get(f\"{BASE}/posts\", timeout=10)\n    r.raise_for_status()\n    return dict(Counter(post[\"userId\"] for post in r.json()))\n",
+  "model": "```python\nimport requests\nfrom collections import Counter\n\nBASE = \"https://jsonplaceholder.typicode.com\"\n\ndef posts_per_user():\n    r = requests.get(f\"{BASE}/posts\", timeout=10)\n    r.raise_for_status()\n    return dict(Counter(post[\"userId\"] for post in r.json()))\n```\n\nOne request plus local grouping beats ten requests (one per user). Mention the trade-off: for very large collections you'd paginate or use a server-side aggregate endpoint.",
+  "tags": [
+   "get",
+   "aggregation"
+  ]
+ },
+ {
+  "id": "api-122",
+  "topic": "API testing",
+  "difficulty": "core",
+  "kind": "api_code",
+  "question": "Write users_in_city(city) that returns the names of users whose address city matches exactly. The API has no city filter, so filter client-side.",
+  "what_tested": "Client-side filtering on nested fields",
+  "hint": "u['address']['city'] == city",
+  "endpoint": "GET https://jsonplaceholder.typicode.com/users",
+  "examples": [
+   {
+    "input": "users_in_city('Gwenborough')",
+    "output": "['Leanne Graham']"
+   },
+   {
+    "input": "users_in_city('Pune')",
+    "output": "[]"
+   }
+  ],
+  "starter_code": "import requests\n\nBASE = \"https://jsonplaceholder.typicode.com\"\n\ndef users_in_city(city):\n    pass\n",
+  "tests": [
+   "assert users_in_city('Gwenborough') == ['Leanne Graham']",
+   "assert users_in_city('South Elvis') == ['Patricia Lebsack']",
+   "assert users_in_city('Pune') == []"
+  ],
+  "solution": "import requests\n\nBASE = \"https://jsonplaceholder.typicode.com\"\n\ndef users_in_city(city):\n    r = requests.get(f\"{BASE}/users\", timeout=10)\n    r.raise_for_status()\n    return [u[\"name\"] for u in r.json() if u[\"address\"][\"city\"] == city]\n",
+  "model": "```python\nimport requests\n\nBASE = \"https://jsonplaceholder.typicode.com\"\n\ndef users_in_city(city):\n    r = requests.get(f\"{BASE}/users\", timeout=10)\n    r.raise_for_status()\n    return [u[\"name\"] for u in r.json() if u[\"address\"][\"city\"] == city]\n```\n\nWhen an API lacks a filter, filter locally, but say so in an interview: for large datasets that's a performance problem worth raising with the API team.",
+  "tags": [
+   "get",
+   "nested-json"
+  ]
+ },
+ {
+  "id": "api-123",
+  "topic": "API testing",
+  "difficulty": "core",
+  "kind": "api_code",
+  "question": "Write fetch_titles(post_ids) that returns the titles for several posts, reusing ONE requests.Session for all the calls (so connections and headers are shared).",
+  "what_tested": "requests.Session",
+  "hint": "with requests.Session() as s: s.get(...) in a loop.",
+  "endpoint": "GET https://jsonplaceholder.typicode.com/posts/{id} (one call per id)",
+  "examples": [
+   {
+    "input": "fetch_titles([1, 5, 10])",
+    "output": "['sunt aut facere repellat provident occaecati excepturi optio reprehenderit', 'nesciunt quas odio', 'optio molestias id quia eum']"
+   }
+  ],
+  "starter_code": "import requests\n\nBASE = \"https://jsonplaceholder.typicode.com\"\n\ndef fetch_titles(post_ids):\n    pass\n",
+  "tests": [
+   "assert fetch_titles([1, 5, 10]) == ['sunt aut facere repellat provident occaecati excepturi optio reprehenderit', 'nesciunt quas odio', 'optio molestias id quia eum']",
+   "assert fetch_titles([]) == []"
+  ],
+  "solution": "import requests\n\nBASE = \"https://jsonplaceholder.typicode.com\"\n\ndef fetch_titles(post_ids):\n    titles = []\n    with requests.Session() as session:\n        session.headers.update({\"Accept\": \"application/json\"})\n        for pid in post_ids:\n            r = session.get(f\"{BASE}/posts/{pid}\", timeout=10)\n            r.raise_for_status()\n            titles.append(r.json()[\"title\"])\n    return titles\n",
+  "model": "```python\nimport requests\n\nBASE = \"https://jsonplaceholder.typicode.com\"\n\ndef fetch_titles(post_ids):\n    titles = []\n    with requests.Session() as session:\n        session.headers.update({\"Accept\": \"application/json\"})\n        for pid in post_ids:\n            r = session.get(f\"{BASE}/posts/{pid}\", timeout=10)\n            r.raise_for_status()\n            titles.append(r.json()[\"title\"])\n    return titles\n```\n\nA Session reuses TCP and TLS connections (much faster for many calls) and holds shared headers, cookies and auth. In a framework, create it once in a fixture. The `with` block closes its connections afterwards.",
+  "tags": [
+   "session"
+  ]
+ },
+ {
+  "id": "api-124",
+  "topic": "API testing",
+  "difficulty": "deep",
+  "kind": "api_code",
+  "question": "Write longest_title_post() that returns the id of the post with the longest title, fetching all posts in one request.",
+  "what_tested": "Processing a full collection",
+  "hint": "max(posts, key=lambda p: len(p['title']))",
+  "endpoint": "GET https://jsonplaceholder.typicode.com/posts",
+  "examples": [
+   {
+    "input": "longest_title_post()",
+    "output": "50"
+   }
+  ],
+  "starter_code": "import requests\n\nBASE = \"https://jsonplaceholder.typicode.com\"\n\ndef longest_title_post():\n    pass\n",
+  "tests": [
+   "assert longest_title_post() == 50",
+   "assert isinstance(longest_title_post(), int)"
+  ],
+  "solution": "import requests\n\nBASE = \"https://jsonplaceholder.typicode.com\"\n\ndef longest_title_post():\n    r = requests.get(f\"{BASE}/posts\", timeout=10)\n    r.raise_for_status()\n    return max(r.json(), key=lambda p: len(p[\"title\"]))[\"id\"]\n",
+  "model": "```python\nimport requests\n\nBASE = \"https://jsonplaceholder.typicode.com\"\n\ndef longest_title_post():\n    r = requests.get(f\"{BASE}/posts\", timeout=10)\n    r.raise_for_status()\n    return max(r.json(), key=lambda p: len(p[\"title\"]))[\"id\"]\n```\n\n`max` with a key is O(n) and readable. Ask the interviewer how to break ties; here `max` returns the first post with the maximum length.",
+  "tags": [
+   "get",
+   "transform"
+  ]
+ },
+ {
+  "id": "api-125",
+  "topic": "API testing",
+  "difficulty": "core",
+  "kind": "api_code",
+  "question": "Write test_query_params_echo() that calls httpbin's /get with params q='playwright' and page=2, and asserts httpbin echoes them back in `args` (note: query values come back as strings).",
+  "what_tested": "Query parameters, echo services",
+  "hint": "r.json()['args'] == {'q': 'playwright', 'page': '2'}",
+  "endpoint": "GET https://httpbin.org/get?q=playwright&page=2",
+  "examples": [
+   {
+    "input": "GET https://httpbin.org/get?q=playwright&page=2",
+    "output": "200 OK\n{\"args\": {\"page\": \"2\", \"q\": \"playwright\"}, \"headers\": {...}, \"url\": \"https://httpbin.org/get?q=playwright&page=2\"}"
+   }
+  ],
+  "starter_code": "import requests\n\ndef test_query_params_echo():\n    pass\n",
+  "tests": [
+   "test_query_params_echo()"
+  ],
+  "entry": "test_query_params_echo()",
+  "mutants": [
+   {
+    "label": "page echoed wrongly",
+    "set": {
+     "args.page": "3"
+    }
+   },
+   {
+    "label": "a parameter dropped",
+    "delete": [
+     "args.q"
+    ]
+   },
+   {
+    "label": "server returns 502",
+    "status": 502
+   }
+  ],
+  "solution": "import requests\n\ndef test_query_params_echo():\n    r = requests.get(\"https://httpbin.org/get\", params={\"q\": \"playwright\", \"page\": 2}, timeout=10)\n    assert r.status_code == 200\n    assert r.json()[\"args\"] == {\"q\": \"playwright\", \"page\": \"2\"}\n",
+  "model": "```python\nimport requests\n\ndef test_query_params_echo():\n    r = requests.get(\"https://httpbin.org/get\", params={\"q\": \"playwright\", \"page\": 2}, timeout=10)\n    assert r.status_code == 200\n    assert r.json()[\"args\"] == {\"q\": \"playwright\", \"page\": \"2\"}\n```\n\nQuery strings carry no types: everything arrives as text, so the integer 2 comes back as '2'. That's a common source of 'equal but not equal' assertion failures. httpbin is handy for testing your client code itself.",
+  "tags": [
+   "httpbin",
+   "query-params"
+  ]
+ },
+ {
+  "id": "api-126",
+  "topic": "API testing",
+  "difficulty": "core",
+  "kind": "api_code",
+  "question": "Write test_post_json_echo() that POSTs the JSON payload {\"orderId\": \"ORD-1\", \"amount\": \"125.50\", \"currency\": \"INR\"} to httpbin's /post and asserts the echoed `json` field equals the payload exactly.",
+  "what_tested": "Request body verification",
+  "hint": "Use json=payload; httpbin returns what it received under 'json'.",
+  "endpoint": "POST https://httpbin.org/post",
+  "examples": [
+   {
+    "input": "POST https://httpbin.org/post\n{\"orderId\": \"ORD-1\", \"amount\": \"125.50\", \"currency\": \"INR\"}",
+    "output": "200 OK\n{\"json\": {\"orderId\": \"ORD-1\", \"amount\": \"125.50\", \"currency\": \"INR\"}, \"data\": \"...\", \"headers\": {...}}"
+   }
+  ],
+  "starter_code": "import requests\n\ndef test_post_json_echo():\n    pass\n",
+  "tests": [
+   "test_post_json_echo()"
+  ],
+  "entry": "test_post_json_echo()",
+  "mutants": [
+   {
+    "label": "amount altered in transit",
+    "set": {
+     "json.amount": "125.5"
+    }
+   },
+   {
+    "label": "currency missing",
+    "delete": [
+     "json.currency"
+    ]
+   }
+  ],
+  "solution": "import requests\n\ndef test_post_json_echo():\n    payload = {\"orderId\": \"ORD-1\", \"amount\": \"125.50\", \"currency\": \"INR\"}\n    r = requests.post(\"https://httpbin.org/post\", json=payload, timeout=10)\n    assert r.status_code == 200\n    assert r.json()[\"json\"] == payload\n",
+  "model": "```python\nimport requests\n\ndef test_post_json_echo():\n    payload = {\"orderId\": \"ORD-1\", \"amount\": \"125.50\", \"currency\": \"INR\"}\n    r = requests.post(\"https://httpbin.org/post\", json=payload, timeout=10)\n    assert r.status_code == 200\n    assert r.json()[\"json\"] == payload\n```\n\nSending money as a string ('125.50') avoids float precision loss in JSON, a common convention in finance APIs. Echo endpoints verify that your client serialises payloads exactly as intended.",
+  "tags": [
+   "httpbin",
+   "post"
+  ]
+ },
+ {
+  "id": "api-127",
+  "topic": "API testing",
+  "difficulty": "core",
+  "kind": "api_code",
+  "question": "Write test_custom_header() that sends the header X-Request-ID: qa-123 to httpbin's /headers and asserts it is echoed back. httpbin returns header names in Title-Case, so look for 'X-Request-Id'.",
+  "what_tested": "Custom headers",
+  "hint": "requests.get(url, headers={'X-Request-ID': 'qa-123'})",
+  "endpoint": "GET https://httpbin.org/headers",
+  "examples": [
+   {
+    "input": "GET https://httpbin.org/headers\nX-Request-ID: qa-123",
+    "output": "200 OK\n{\"headers\": {\"Accept\": \"*/*\", \"Host\": \"httpbin.org\", \"X-Request-Id\": \"qa-123\", ...}}"
+   }
+  ],
+  "starter_code": "import requests\n\ndef test_custom_header():\n    pass\n",
+  "tests": [
+   "test_custom_header()"
+  ],
+  "entry": "test_custom_header()",
+  "mutants": [
+   {
+    "label": "header not forwarded",
+    "delete": [
+     "headers.X-Request-Id"
+    ]
+   },
+   {
+    "label": "header value changed",
+    "set": {
+     "headers.X-Request-Id": "other"
+    }
+   }
+  ],
+  "solution": "import requests\n\ndef test_custom_header():\n    r = requests.get(\"https://httpbin.org/headers\", headers={\"X-Request-ID\": \"qa-123\"}, timeout=10)\n    assert r.status_code == 200\n    assert r.json()[\"headers\"].get(\"X-Request-Id\") == \"qa-123\"\n",
+  "model": "```python\nimport requests\n\ndef test_custom_header():\n    r = requests.get(\"https://httpbin.org/headers\", headers={\"X-Request-ID\": \"qa-123\"}, timeout=10)\n    assert r.status_code == 200\n    assert r.json()[\"headers\"].get(\"X-Request-Id\") == \"qa-123\"\n```\n\nCorrelation ids like X-Request-ID let you find a failing call's server logs instantly. HTTP header names are case-insensitive; `r.headers` in requests handles that, but a JSON echo is a plain dict, so you must use the exact key.",
+  "tags": [
+   "httpbin",
+   "headers"
+  ]
+ },
+ {
+  "id": "api-128",
+  "topic": "API testing",
+  "difficulty": "core",
+  "kind": "api_code",
+  "question": "Write test_basic_auth() for httpbin's /basic-auth/qa/secret: with auth=('qa', 'secret') expect 200 and authenticated True; without credentials expect 401.",
+  "what_tested": "Authentication: positive and negative",
+  "hint": "requests.get(url, auth=('user', 'pass'))",
+  "endpoint": "GET https://httpbin.org/basic-auth/qa/secret",
+  "examples": [
+   {
+    "input": "GET https://httpbin.org/basic-auth/qa/secret  (auth=('qa', 'secret'))",
+    "output": "200 OK\n{\"authenticated\": true, \"user\": \"qa\"}"
+   },
+   {
+    "input": "GET https://httpbin.org/basic-auth/qa/secret  (no auth)",
+    "output": "401 Unauthorized"
+   }
+  ],
+  "starter_code": "import requests\n\nURL = \"https://httpbin.org/basic-auth/qa/secret\"\n\ndef test_basic_auth():\n    pass\n",
+  "tests": [
+   "test_basic_auth()"
+  ],
+  "entry": "test_basic_auth()",
+  "mutants": [
+   {
+    "label": "authenticated flag false",
+    "set": {
+     "authenticated": false
+    }
+   },
+   {
+    "label": "valid credentials rejected",
+    "status": 401,
+    "only": "GET https://httpbin.org/basic-auth"
+   }
+  ],
+  "solution": "import requests\n\nURL = \"https://httpbin.org/basic-auth/qa/secret\"\n\ndef test_basic_auth():\n    ok = requests.get(URL, auth=(\"qa\", \"secret\"), timeout=10)\n    assert ok.status_code == 200\n    assert ok.json() == {\"authenticated\": True, \"user\": \"qa\"}\n\n    denied = requests.get(URL, timeout=10)\n    assert denied.status_code == 401\n",
+  "model": "```python\nimport requests\n\nURL = \"https://httpbin.org/basic-auth/qa/secret\"\n\ndef test_basic_auth():\n    ok = requests.get(URL, auth=(\"qa\", \"secret\"), timeout=10)\n    assert ok.status_code == 200\n    assert ok.json() == {\"authenticated\": True, \"user\": \"qa\"}\n\n    denied = requests.get(URL, timeout=10)\n    assert denied.status_code == 401\n```\n\nEvery auth test needs the negative case too: an endpoint that returns 200 without credentials is a security bug. In real suites, read credentials from environment variables, never hard-code them.",
+  "tags": [
+   "httpbin",
+   "auth"
+  ]
+ },
+ {
+  "id": "api-129",
+  "topic": "API testing",
+  "difficulty": "core",
+  "kind": "api_code",
+  "question": "Write test_bearer_token() that calls httpbin's /bearer with the header Authorization: Bearer test-token-123 and asserts 200, authenticated True and the token echoed back. Also assert that calling without the header returns 401.",
+  "what_tested": "Bearer token auth",
+  "hint": "headers={'Authorization': f'Bearer {token}'}",
+  "endpoint": "GET https://httpbin.org/bearer",
+  "examples": [
+   {
+    "input": "GET https://httpbin.org/bearer\nAuthorization: Bearer test-token-123",
+    "output": "200 OK\n{\"authenticated\": true, \"token\": \"test-token-123\"}"
+   },
+   {
+    "input": "GET https://httpbin.org/bearer  (no header)",
+    "output": "401 Unauthorized"
+   }
+  ],
+  "starter_code": "import requests\n\nURL = \"https://httpbin.org/bearer\"\n\ndef test_bearer_token():\n    pass\n",
+  "tests": [
+   "test_bearer_token()"
+  ],
+  "entry": "test_bearer_token()",
+  "mutants": [
+   {
+    "label": "token not echoed correctly",
+    "set": {
+     "token": "someone-else"
+    }
+   },
+   {
+    "label": "authenticated is the string 'true'",
+    "set": {
+     "authenticated": "true"
+    }
+   }
+  ],
+  "solution": "import requests\n\nURL = \"https://httpbin.org/bearer\"\n\ndef test_bearer_token():\n    token = \"test-token-123\"\n    r = requests.get(URL, headers={\"Authorization\": f\"Bearer {token}\"}, timeout=10)\n    assert r.status_code == 200\n    body = r.json()\n    assert body[\"authenticated\"] is True\n    assert body[\"token\"] == token\n\n    assert requests.get(URL, timeout=10).status_code == 401\n",
+  "model": "```python\nimport requests\n\nURL = \"https://httpbin.org/bearer\"\n\ndef test_bearer_token():\n    token = \"test-token-123\"\n    r = requests.get(URL, headers={\"Authorization\": f\"Bearer {token}\"}, timeout=10)\n    assert r.status_code == 200\n    body = r.json()\n    assert body[\"authenticated\"] is True\n    assert body[\"token\"] == token\n\n    assert requests.get(URL, timeout=10).status_code == 401\n```\n\nBearer tokens are how most OAuth-protected APIs authenticate. In a framework, a session-scoped fixture fetches the token and sets the header on a shared Session, with automatic refresh on expiry.",
+  "tags": [
+   "httpbin",
+   "auth"
+  ]
+ },
+ {
+  "id": "api-130",
+  "topic": "API testing",
+  "difficulty": "core",
+  "kind": "api_code",
+  "question": "Write get_json_or_none(url) that returns the parsed JSON for a 2xx response and None for any 4xx or 5xx response, using raise_for_status() inside try/except.",
+  "what_tested": "Error handling with raise_for_status",
+  "hint": "except requests.HTTPError: return None",
+  "endpoint": "GET https://httpbin.org/json  and  GET https://httpbin.org/status/500",
+  "examples": [
+   {
+    "input": "get_json_or_none('https://httpbin.org/json')['slideshow']['title']",
+    "output": "'Sample Slide Show'"
+   },
+   {
+    "input": "get_json_or_none('https://httpbin.org/status/500')",
+    "output": "None"
+   }
+  ],
+  "starter_code": "import requests\n\ndef get_json_or_none(url):\n    pass\n",
+  "tests": [
+   "assert get_json_or_none('https://httpbin.org/json')['slideshow']['title'] == 'Sample Slide Show'",
+   "assert get_json_or_none('https://httpbin.org/status/500') is None",
+   "assert get_json_or_none('https://httpbin.org/status/404') is None"
+  ],
+  "solution": "import requests\n\ndef get_json_or_none(url):\n    try:\n        r = requests.get(url, timeout=10)\n        r.raise_for_status()\n    except requests.HTTPError:\n        return None\n    return r.json()\n",
+  "model": "```python\nimport requests\n\ndef get_json_or_none(url):\n    try:\n        r = requests.get(url, timeout=10)\n        r.raise_for_status()\n    except requests.HTTPError:\n        return None\n    return r.json()\n```\n\nCatch `requests.HTTPError` specifically. A bare except would also swallow timeouts and bugs in your own code. Whether to return None or raise is an API design decision; mention the trade-off.",
+  "tags": [
+   "httpbin",
+   "errors"
+  ]
+ },
+ {
+  "id": "api-131",
+  "topic": "API testing",
+  "difficulty": "deep",
+  "kind": "api_code",
+  "question": "Write fetch_with_timeout(url, seconds) that returns the status code, or the string 'timeout' if the server doesn't respond within `seconds`. httpbin's /delay/3 waits 3 seconds before answering.",
+  "what_tested": "Timeouts and exception handling",
+  "hint": "except requests.Timeout: return 'timeout'",
+  "endpoint": "GET https://httpbin.org/delay/3",
+  "examples": [
+   {
+    "input": "fetch_with_timeout('https://httpbin.org/delay/3', 1)",
+    "output": "'timeout'"
+   },
+   {
+    "input": "fetch_with_timeout('https://httpbin.org/get', 10)",
+    "output": "200"
+   }
+  ],
+  "starter_code": "import requests\n\ndef fetch_with_timeout(url, seconds):\n    pass\n",
+  "tests": [
+   "assert fetch_with_timeout('https://httpbin.org/delay/3', 1) == 'timeout'",
+   "assert fetch_with_timeout('https://httpbin.org/get', 10) == 200"
+  ],
+  "solution": "import requests\n\ndef fetch_with_timeout(url, seconds):\n    try:\n        return requests.get(url, timeout=seconds).status_code\n    except requests.Timeout:\n        return \"timeout\"\n",
+  "model": "```python\nimport requests\n\ndef fetch_with_timeout(url, seconds):\n    try:\n        return requests.get(url, timeout=seconds).status_code\n    except requests.Timeout:\n        return \"timeout\"\n```\n\n`requests.Timeout` covers both connect and read timeouts (`ConnectTimeout` and `ReadTimeout`). Without a timeout, requests can wait forever, so every call in a test suite should set one.",
+  "tags": [
+   "httpbin",
+   "timeouts"
+  ]
+ },
+ {
+  "id": "api-132",
+  "topic": "API testing",
+  "difficulty": "deep",
+  "kind": "api_code",
+  "question": "Write retry_get(url, attempts) that retries a GET while the response is a 5xx, up to `attempts` tries in total, and returns a tuple (final_status_code, tries_used). Don't sleep between tries in this exercise.",
+  "what_tested": "Retry logic",
+  "hint": "Loop up to attempts; stop early on a non-5xx response.",
+  "endpoint": "GET https://httpbin.org/status/503  and  GET https://httpbin.org/status/200",
+  "examples": [
+   {
+    "input": "retry_get('https://httpbin.org/status/503', 3)",
+    "output": "(503, 3)"
+   },
+   {
+    "input": "retry_get('https://httpbin.org/status/200', 3)",
+    "output": "(200, 1)"
+   }
+  ],
+  "starter_code": "import requests\n\ndef retry_get(url, attempts):\n    pass\n",
+  "tests": [
+   "assert retry_get('https://httpbin.org/status/503', 3) == (503, 3)",
+   "assert retry_get('https://httpbin.org/status/200', 3) == (200, 1)",
+   "assert retry_get('https://httpbin.org/status/404', 5) == (404, 1)"
+  ],
+  "solution": "import requests\n\ndef retry_get(url, attempts):\n    status = None\n    for tries in range(1, attempts + 1):\n        status = requests.get(url, timeout=10).status_code\n        if status < 500:\n            return status, tries\n    return status, attempts\n",
+  "model": "```python\nimport requests\n\ndef retry_get(url, attempts):\n    status = None\n    for tries in range(1, attempts + 1):\n        status = requests.get(url, timeout=10).status_code\n        if status < 500:\n            return status, tries\n    return status, attempts\n```\n\nRetry only server errors (5xx), never client errors (4xx), which won't fix themselves. In real code, add exponential backoff with jitter, or mount `HTTPAdapter(max_retries=Retry(...))` on a Session instead of a hand-written loop.",
+  "tags": [
+   "httpbin",
+   "retries"
+  ]
+ },
+ {
+  "id": "api-133",
+  "topic": "API testing",
+  "difficulty": "core",
+  "kind": "api_code",
+  "question": "Write test_status_codes() that checks httpbin's /status endpoint returns exactly the code you ask for, for 200, 201, 404 and 500 (loop over them).",
+  "what_tested": "Status-code assertions in a loop",
+  "hint": "f'https://httpbin.org/status/{code}'",
+  "endpoint": "GET https://httpbin.org/status/{code}",
+  "examples": [
+   {
+    "input": "GET https://httpbin.org/status/404",
+    "output": "404 Not Found"
+   }
+  ],
+  "starter_code": "import requests\n\ndef test_status_codes():\n    pass\n",
+  "tests": [
+   "test_status_codes()"
+  ],
+  "entry": "test_status_codes()",
+  "mutants": [
+   {
+    "label": "every call returns 200",
+    "status": 200,
+    "body": ""
+   },
+   {
+    "label": "every call returns 500",
+    "status": 500
+   }
+  ],
+  "solution": "import requests\n\ndef test_status_codes():\n    for code in (200, 201, 404, 500):\n        r = requests.get(f\"https://httpbin.org/status/{code}\", timeout=10)\n        assert r.status_code == code, f\"asked for {code}, got {r.status_code}\"\n",
+  "model": "```python\nimport requests\n\ndef test_status_codes():\n    for code in (200, 201, 404, 500):\n        r = requests.get(f\"https://httpbin.org/status/{code}\", timeout=10)\n        assert r.status_code == code, f\"asked for {code}, got {r.status_code}\"\n```\n\nPutting the expected code in the assertion message tells you which iteration failed. In pytest you'd use `@pytest.mark.parametrize('code', [...])` so each code is a separate test with its own result.",
+  "tags": [
+   "httpbin",
+   "status-codes"
   ]
  }
 ]

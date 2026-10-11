@@ -6,6 +6,13 @@
   "kind": "concept",
   "question": "Tell me about yourself.",
   "what_tested": "Concise professional narrative",
+  "options": [
+   "A short present-past-why-here story",
+   "A chronological walk through every job on your CV",
+   "'It's all on my resume'",
+   "Your personal life story from school onwards"
+  ],
+  "answer": 0,
   "model": "Keep it to about 90 seconds: present, then past, then why you're here. Present: your role, scope and what you're known for ('QA lead running a 20-person automation team on a finance platform, building Playwright and Python frameworks and AI-assisted test generation'). Past: two or three career steps that built toward it, each with one concrete result. Why here: a specific link between the role and what you want next. Avoid reciting your CV line by line or personal life history; end with something that invites a relevant follow-up.",
   "tags": [
    "career"
@@ -18,6 +25,13 @@
   "kind": "concept",
   "question": "Why are you looking to leave your current role?",
   "what_tested": "Positive motivation",
+  "options": [
+   "Say you don't really know",
+   "Moving toward an opportunity",
+   "Say you're only interested in a higher salary",
+   "Explain everything wrong with your manager and team"
+  ],
+  "answer": 1,
   "model": "Frame it as moving toward something, not running from something: more scope, a product you care about, a technical direction (e.g. building a framework from scratch, AI in testing), or a leadership step. Be honest but brief, and never criticise your current employer, manager or team, even if things are difficult; interviewers assume you'll talk about them the same way. Tie the answer to what this role offers specifically.",
   "tags": [
    "career"
@@ -30,6 +44,13 @@
   "kind": "concept",
   "question": "Why do you want to work here?",
   "what_tested": "Research and fit",
+  "options": [
+   "'I've applied to many places; this one replied first'",
+   "'It's a big, well-known company'",
+   "'I heard the perks are great'",
+   "Specific links to their work"
+  ],
+  "answer": 3,
   "model": "Show you've done homework: the product and its users, the engineering culture (blogs, talks, open source), the tech stack in the job description, and recent news. Connect two or three specifics to your experience and goals ('you're moving to Playwright and contract testing; I've led exactly that migration and want to do it at a larger scale'). Generic answers ('great company, good culture') signal low interest.",
   "tags": [
    "career"
@@ -42,6 +63,13 @@
   "kind": "concept",
   "question": "What are your greatest strengths?",
   "what_tested": "Self-awareness with evidence",
+  "options": [
+   "'I'm good at everything'",
+   "A long list of adjectives without examples",
+   "Strengths unrelated to the job",
+   "Relevant strengths with proof"
+  ],
+  "answer": 3,
   "model": "Pick two or three strengths relevant to the role and prove each with a short example and a result. For an SDET or lead: designing maintainable frameworks (cut suite runtime from 90 to 20 minutes), turning flaky suites into trusted ones (flake rate from 8% to under 1%), and influencing developers toward testability. Evidence beats adjectives; 'I'm a hard worker' without proof adds nothing.",
   "tags": [
    "career"
@@ -54,6 +82,13 @@
   "kind": "concept",
   "question": "What is your biggest weakness?",
   "what_tested": "Honest self-improvement",
+  "options": [
+   "'I'm a perfectionist and work too hard'",
+   "A real weakness you're fixing",
+   "'I don't have any weaknesses'",
+   "A weakness that's core to the role, with no plan"
+  ],
+  "answer": 1,
   "model": "Choose a real but non-critical weakness, show awareness of its impact, and describe what you're actively doing about it, with progress. For example: 'I used to take on too much myself instead of delegating, which made me a bottleneck as a lead; now I delegate whole areas with clear outcomes and check in weekly, and two engineers on my team now own framework modules.' Avoid fake weaknesses ('I'm a perfectionist') and anything core to the job.",
   "tags": [
    "career"
@@ -66,6 +101,13 @@
   "kind": "concept",
   "question": "Where do you see yourself in five years?",
   "what_tested": "Career direction",
+  "options": [
+   "'I plan to leave after a year'",
+   "'In your chair'",
+   "Growth that fits this path",
+   "A completely unrelated career"
+  ],
+  "answer": 2,
   "model": "Show ambition that fits the role's path: deeper technical leadership (quality architect, principal SDET), people leadership (QA manager or head of quality), or a blend. Mention the skills you want to grow (test strategy at organisation scale, AI-assisted quality engineering) and how this role helps. Avoid sounding like you'll leave in a year, or naming a completely unrelated goal.",
   "tags": [
    "career"
@@ -78,6 +120,13 @@
   "kind": "concept",
   "question": "Tell me about the achievement you're most proud of.",
   "what_tested": "Impact storytelling",
+  "options": [
+   "A story with no outcome",
+   "A list of tools you used",
+   "Your actions and measurable impact",
+   "A team success without your contribution"
+  ],
+  "answer": 2,
   "model": "Use STAR (Situation, Task, Action, Result) with real numbers. Choose something with clear business impact and your personal contribution, e.g. building a framework that let the team move from a 3-day manual regression to a 40-minute automated one, enabling weekly releases. Spend most of the time on your actions and decisions (why you chose that approach, the trade-offs) and end with the measurable result and what you learned.",
   "tags": [
    "achievement"
@@ -90,6 +139,13 @@
   "kind": "concept",
   "question": "Why did you choose a career in quality engineering?",
   "what_tested": "Motivation",
+  "options": [
+   "'It happened by accident and I stayed'",
+   "'Testing is easier than development'",
+   "A genuine reason and story",
+   "'I couldn't get a developer job'"
+  ],
+  "answer": 2,
   "model": "Give a genuine reason with a story: you enjoy finding how systems break, building tools that make teams faster, or protecting users and the business from costly mistakes. Show how the field has kept you engaged (moving from manual to automation to framework design and AI-assisted testing). Avoid implying QA was a fallback; interviewers look for people who see quality engineering as a craft.",
   "tags": [
    "motivation"
@@ -102,6 +158,13 @@
   "kind": "concept",
   "question": "Describe a failure or a project that didn't go well. What did you learn?",
   "what_tested": "Ownership and learning",
+  "options": [
+   "'I've never failed'",
+   "A failure that was entirely someone else's fault",
+   "A real failure you owned and fixed",
+   "A disguised success"
+  ],
+  "answer": 2,
   "model": "Pick a real failure where you owned part of the outcome. Briefly set the context, explain what went wrong and your role in it, what you did to recover, and what you changed afterwards, ideally a lasting process or habit. For example, an automation rollout where you built too much before getting team buy-in, so adoption stalled; you then piloted with one squad and expanded once they saw value. Avoid blaming others or choosing a disguised success.",
   "tags": [
    "failure"
@@ -114,6 +177,13 @@
   "kind": "concept",
   "question": "What motivates you at work?",
   "what_tested": "Values alignment",
+  "options": [
+   "Specific motivations with an example",
+   "Only salary and benefits",
+   "'Nothing really motivates me'",
+   "Vague answers like 'doing good work'"
+  ],
+  "answer": 0,
   "model": "Be specific and connect it to the role: seeing a team ship confidently because the test signal is trusted, solving hard technical problems like flaky distributed systems, growing engineers on your team, or measurable impact on users. Give a short example of a time that motivation showed up in your work. Avoid answers centred only on compensation or perks.",
   "tags": [
    "motivation"
@@ -126,6 +196,13 @@
   "kind": "concept",
   "question": "Tell me about a time you disagreed with a developer about a bug's severity.",
   "what_tested": "Conflict with evidence",
+  "options": [
+   "Accept the developer's view to avoid conflict",
+   "Escalate to management immediately",
+   "Evidence, impact and the PO's decision",
+   "Reopen the bug repeatedly until they give in"
+  ],
+  "answer": 2,
   "model": "Show you used data and user impact rather than opinion. Situation: you raised a defect as high severity and the developer saw it as an edge case. Actions: you reproduced it reliably, quantified impact (how many users or transactions, financial or compliance risk), listened to their constraints, and involved the product owner to decide priority. Result: the agreed outcome, e.g. fixed before release or shipped with a documented workaround, and a relationship that stayed constructive.",
   "tags": [
    "conflict"
@@ -138,6 +215,13 @@
   "kind": "concept",
   "question": "How do you handle a developer who says 'it works on my machine' or 'not reproducible'?",
   "what_tested": "Collaborative debugging",
+  "options": [
+   "Escalate without more evidence",
+   "Exact evidence; reproduce together",
+   "Close the bug as not reproducible",
+   "Insist they're wrong"
+  ],
+  "answer": 1,
   "model": "Stay factual and helpful: provide exact steps, environment details, the build, test data, screenshots or traces, logs and correlation ids, and check whether the difference is environmental (configuration, data, browser, time zone). Offer to pair and reproduce it together. If it's intermittent, share frequency data. The goal is to solve it together, not win the argument; often the investigation reveals an environment or configuration issue worth fixing too.",
   "tags": [
    "collaboration"
@@ -150,6 +234,13 @@
   "kind": "concept",
   "question": "Tell me about a time you had to push back on an unrealistic deadline.",
   "what_tested": "Managing expectations",
+  "options": [
+   "Silently skip testing to meet it",
+   "Refuse to work to the deadline",
+   "Show risks and offer options",
+   "Agree, then miss it without warning"
+  ],
+  "answer": 2,
   "model": "Show you pushed back with data and options, not refusal. Explain the risk in business terms (what wouldn't be tested, and the likely impact), then offer alternatives: reduce scope, phase the release, risk-based testing of critical paths first, extra help, or moving the date. Example result: the release went ahead on time with a reduced scope and a follow-up release, or the date moved by three days with stakeholder agreement. Decisions should be explicit and owned by the right people.",
   "tags": [
    "conflict",
@@ -163,6 +254,13 @@
   "kind": "concept",
   "question": "A product owner wants to skip testing to hit a launch date. What do you do?",
   "what_tested": "Risk communication",
+  "options": [
+   "Skip testing quietly",
+   "Test everything regardless of the deadline",
+   "Refuse to release",
+   "Risk-based plan; owner decides"
+  ],
+  "answer": 3,
   "model": "Don't just say no, and don't silently comply. Clarify what's at stake, then propose a risk-based plan: which critical flows must be tested (payments, auth, data integrity), what can be tested lightly or after launch, and the residual risks in plain language. Get the decision and the accepted risks documented and agreed by the right owner. Then do the best possible testing within that scope, and plan monitoring and a quick rollback for launch.",
   "tags": [
    "conflict",
@@ -176,6 +274,13 @@
   "kind": "concept",
   "question": "Tell me about a conflict within your team and how you resolved it.",
   "what_tested": "Team conflict resolution",
+  "options": [
+   "Escalate to HR immediately",
+   "Listen, set criteria, facilitate",
+   "Ignore it until it resolves itself",
+   "Pick the most senior person's side"
+  ],
+  "answer": 1,
   "model": "Choose a real professional conflict, e.g. two engineers disagreeing on framework design. Show you listened to both sides privately, focused on goals and facts rather than personalities, brought them together to agree on decision criteria (maintainability, speed, team skills), maybe ran a short spike to compare approaches, and made or facilitated a decision. Result: a decision both could commit to, and an improved working relationship. Mention what you'd do earlier next time.",
   "tags": [
    "conflict",
@@ -189,6 +294,13 @@
   "kind": "concept",
   "question": "Describe a time you worked with a difficult stakeholder.",
   "what_tested": "Stakeholder management",
+  "options": [
+   "Agree to everything they ask",
+   "Avoid them",
+   "Understand them; build trust",
+   "Complain to your manager"
+  ],
+  "answer": 2,
   "model": "Show empathy and structure: you tried to understand what drove their behaviour (pressure from above, past bad experiences with releases), adapted your communication (shorter updates, clear risk summaries, data), set expectations early, and built trust through reliable delivery. Give a concrete turning point and outcome, such as them asking for your risk assessment before each release. Avoid portraying them as the villain.",
   "tags": [
    "stakeholders"
@@ -201,6 +313,13 @@
   "kind": "concept",
   "question": "How do you influence people when you have no authority over them?",
   "what_tested": "Influence",
+  "options": [
+   "Wait for a promotion first",
+   "Do everything yourself",
+   "Escalate until people comply",
+   "Data, pilots, easy adoption"
+  ],
+  "answer": 3,
   "model": "Build credibility and make the right thing easy: understand their goals and pain points, show data (escaped defects, flake rates, time saved), run small pilots that prove value, make adoption low effort (fixtures, templates, pairing sessions), and give credit generously. Example: getting developers to add test ids and write unit tests by showing how it cut their PR feedback time, rather than mandating it. Mention patience: influence builds over several interactions.",
   "tags": [
    "influence"
@@ -213,6 +332,13 @@
   "kind": "concept",
   "question": "How do you work with teams in other locations and time zones?",
   "what_tested": "Distributed collaboration",
+  "options": [
+   "Avoid documentation",
+   "Expect others to work your hours",
+   "Schedule meetings in only your time zone",
+   "Async writing and clean handovers"
+  ],
+  "answer": 3,
   "model": "Mention concrete practices: async-first communication (clear written updates, decisions recorded in tickets or docs), overlapping hours used for real discussions, recorded demos, explicit handover notes for test runs and failures, shared dashboards so status doesn't depend on meetings, and cultural awareness in feedback. Give an example where good handovers turned the time-zone difference into near round-the-clock progress.",
   "tags": [
    "collaboration"
@@ -225,6 +351,13 @@
   "kind": "concept",
   "question": "Tell me about a time you had to depend on another team that wasn't delivering.",
   "what_tested": "Cross-team dependencies",
+  "options": [
+   "Stop your work until they deliver",
+   "Flag early, unblock, escalate",
+   "Wait and blame them later",
+   "Do their work without telling them"
+  ],
+  "answer": 1,
   "model": "Show proactive problem-solving: you identified the risk early, understood the other team's constraints and priorities, agreed on interfaces and dates, unblocked yourself where possible (mocks, contract tests, service virtualisation), escalated respectfully with data when the impact grew, and kept stakeholders informed. Result: your testing proceeded in parallel, and integration risk was reduced by contract tests when their service arrived.",
   "tags": [
    "collaboration"
@@ -237,6 +370,13 @@
   "kind": "concept",
   "question": "How do you give feedback to a developer whose code is consistently buggy?",
   "what_tested": "Constructive feedback",
+  "options": [
+   "Ignore it and keep logging bugs",
+   "Report them to their manager first",
+   "Point out the bugs in public meetings",
+   "Private, specific and supportive"
+  ],
+  "answer": 3,
   "model": "Focus on patterns and solutions, not blame: gather specifics (types of defects, where they cluster), have a private, supportive conversation, and frame it around shared goals (fewer late surprises for both of you). Offer concrete help: pairing on test cases before coding, shared acceptance criteria, unit-testing tips, earlier demos. If needed, involve their lead constructively. Follow up and acknowledge improvement.",
   "tags": [
    "feedback",
@@ -250,6 +390,13 @@
   "kind": "concept",
   "question": "Tell me about a time a bug you should have caught reached production.",
   "what_tested": "Accountability",
+  "options": [
+   "Avoid discussing it",
+   "Explain it was the developer's bug",
+   "Own it and fix the system",
+   "Say it wasn't in the requirements"
+  ],
+  "answer": 2,
   "model": "Own it without self-flagellation: describe the bug and its impact, how it was found, and your immediate actions (reproduce, help with the fix, verify, communicate). Then the root-cause analysis: why your testing missed it (wrong layer, a missing scenario, mocked away, environment difference). Finally, the systemic improvements you made (new regression tests, contract tests, a checklist change, monitoring) and evidence they worked. Interviewers want accountability plus learning.",
   "tags": [
    "ownership"
@@ -262,6 +409,13 @@
   "kind": "concept",
   "question": "Describe a time you improved a process significantly.",
   "what_tested": "Process improvement",
+  "options": [
+   "Measured pain, change, result",
+   "An improvement with no measurable effect",
+   "A process someone else changed",
+   "A vague 'we improved things'"
+  ],
+  "answer": 0,
   "model": "Pick something measurable: regression time, flake rate, release frequency, defect escape rate, or onboarding time. Explain the pain (with numbers), how you diagnosed the cause, the change you drove (e.g. moving setup to APIs and adding sharding, introducing risk-based test selection, or a triage rotation for nightly failures), how you got buy-in, and the result. Include one thing that didn't work at first and how you adjusted.",
   "tags": [
    "improvement"
@@ -274,6 +428,13 @@
   "kind": "concept",
   "question": "Have you introduced test automation from scratch? Walk me through it.",
   "what_tested": "Automation leadership",
+  "options": [
+   "Thin slice, conventions, metrics",
+   "Promise 100% automation in a month",
+   "Write as many scripts as possible first",
+   "Pick the most popular tool without analysis"
+  ],
+  "answer": 0,
   "model": "Cover the arc: assessing the current state and goals; choosing tools with criteria (stack, skills, CI, cost), e.g. Playwright with pytest; building a thin vertical slice first (config, auth, one API test, one UI test, CI and reporting); defining conventions; training the team; prioritising what to automate by risk and repetition; and measuring outcomes (regression time, defects caught, flake rate). Mention change management: early wins, involving developers, and not promising 100% automation.",
   "tags": [
    "automation",
@@ -287,6 +448,13 @@
   "kind": "concept",
   "question": "How did you convince management to invest in automation or quality work?",
   "what_tested": "Business case",
+  "options": [
+   "Say automation is the industry trend",
+   "Demand budget without numbers",
+   "Build it secretly on weekends",
+   "Business case and a pilot"
+  ],
+  "answer": 3,
   "model": "Speak their language: cost of manual regression (hours per release times frequency), cost of escaped defects (incidents, customer impact, rework), and release speed as a competitive factor. Propose a phased plan with milestones and measurable outcomes rather than a big-bang request, and deliver an early pilot result. Example: 'a 6-week pilot cut regression for one product from 3 days to 4 hours; we then got funding for two more engineers'.",
   "tags": [
    "business-case"
@@ -299,6 +467,13 @@
   "kind": "concept",
   "question": "Tell me about a time you dealt with significant technical debt in a test suite.",
   "what_tested": "Managing debt",
+  "options": [
+   "Visible, prioritised, steady paydown",
+   "Rewrite everything immediately",
+   "Blame the previous team",
+   "Ignore it while adding tests"
+  ],
+  "answer": 0,
   "model": "Describe the symptoms (flaky tests, slow runs, duplicated code, nobody trusting results), how you made the debt visible (metrics, a list of worst offenders), how you prioritised (highest pain first), and how you paid it down without stopping delivery (a fixed share of each sprint, a boy-scout rule, migrating tests when touched). Give results: a faster, more trusted suite, and the practices that kept debt from returning.",
   "tags": [
    "tech-debt"
@@ -311,6 +486,13 @@
   "kind": "concept",
   "question": "How do you ensure quality throughout the SDLC, not just at the end?",
   "what_tested": "Quality mindset",
+  "options": [
+   "Asking developers to test more",
+   "Thorough testing at the end",
+   "Only automated regression",
+   "Quality at every stage"
+  ],
+  "answer": 3,
   "model": "Talk through each stage: requirements (testability review, clear acceptance criteria, risks identified in refinement), design (test ids, contracts, observability), development (unit tests, PR checks, contract tests), integration (API tests, preview environments), release (risk-based regression, smoke tests, feature flags), and production (monitoring, synthetic checks, feedback from incidents). The message: quality is a team responsibility, and QA enables it rather than gatekeeping at the end.",
   "tags": [
    "strategy"
@@ -323,6 +505,13 @@
   "kind": "concept",
   "question": "How do you decide what to automate and what to leave manual?",
   "what_tested": "Automation ROI",
+  "options": [
+   "Automate only what's easy",
+   "Never automate UI",
+   "Automate everything",
+   "Repetitive and risky gets automated"
+  ],
+  "answer": 3,
   "model": "Automate what's repetitive, stable, high-risk and frequently run: regression of critical flows, API business rules, data-driven validations and smoke checks. Keep manual or exploratory work for new features still changing, usability and visual judgement, one-off checks, and complex scenarios where automation cost outweighs the value. Revisit regularly, since a manual test run every release for a year is a strong automation candidate. Exploratory testing stays valuable even with high automation coverage.",
   "tags": [
    "strategy"
@@ -335,6 +524,13 @@
   "kind": "concept",
   "question": "Describe how you handled a situation where requirements were ambiguous.",
   "what_tested": "Dealing with ambiguity",
+  "options": [
+   "Refuse to test until specs are complete",
+   "Test whatever you think is right",
+   "Clarify with concrete examples",
+   "Wait until development finishes"
+  ],
+  "answer": 2,
   "model": "Show initiative: you identified the gaps early (in refinement or while writing test scenarios), wrote concrete examples and questions ('what happens when the amount has three decimals?'), clarified with the product owner and developers, and documented the agreed behaviour as acceptance criteria or example-based specifications. Where answers weren't available, you made reasonable, documented assumptions and flagged the risk. Result: fewer late surprises and rework.",
   "tags": [
    "ambiguity"
@@ -347,6 +543,13 @@
   "kind": "concept",
   "question": "Tell me about a time requirements changed late in a sprint.",
   "what_tested": "Adaptability",
+  "options": [
+   "Assess impact and re-plan",
+   "Refuse the change",
+   "Quietly skip testing the change",
+   "Work all weekend without telling anyone"
+  ],
+  "answer": 0,
   "model": "Show calm prioritisation: assess the impact of the change on testing scope and risk, communicate the trade-offs (what can still be covered, what moves out), re-plan with the team, and focus testing on the changed area and its regression risk. Mention how you protected quality, such as risk-based testing and not quietly skipping critical checks, and any process improvement you suggested afterwards (e.g. earlier stakeholder demos).",
   "tags": [
    "adaptability"
@@ -359,6 +562,13 @@
   "kind": "concept",
   "question": "How do you prioritise when you have more testing work than time?",
   "what_tested": "Prioritisation",
+  "options": [
+   "Test in the order tickets arrived",
+   "Risk-based, with clear gaps",
+   "Skip regression entirely",
+   "Test the easiest items first"
+  ],
+  "answer": 1,
   "model": "Risk-based: rank areas by impact (money, security, compliance, user reach) times likelihood of defects (new or complex code, history of bugs, integration points). Test critical paths and high-risk changes first and in depth; lighter checks for low-risk areas; communicate clearly what's not covered and the residual risk. Use automation for regression so manual effort goes to new and risky areas. Give an example of a release where this mattered.",
   "tags": [
    "prioritisation"
@@ -371,6 +581,13 @@
   "kind": "concept",
   "question": "Tell me about a time you made a decision with incomplete information.",
   "what_tested": "Judgement under uncertainty",
+  "options": [
+   "Wait until everything is known",
+   "Guess without analysis",
+   "Pass the decision to someone else",
+   "Decide with mitigations"
+  ],
+  "answer": 3,
   "model": "Describe the situation and the time pressure (e.g. a go/no-go call with a partially failing regression and a release window closing). Explain how you gathered the most relevant information quickly (failure triage, a risk assessment, checks with the developer), the options and trade-offs you considered, the decision and how you mitigated risk (feature flag, monitoring, rollback plan), and the outcome. Interviewers look for structured thinking, not perfect outcomes.",
   "tags": [
    "judgement"
@@ -383,6 +600,13 @@
   "kind": "concept",
   "question": "How do you handle a situation where you're asked to sign off a release you believe isn't ready?",
   "what_tested": "Integrity",
+  "options": [
+   "Show risks; owner decides",
+   "Sign off to avoid conflict",
+   "Sign off but tell colleagues privately it's broken",
+   "Refuse and walk away"
+  ],
+  "answer": 0,
   "model": "Be clear, factual and constructive: present the specific open risks (failing critical tests, untested areas, known defects with impact), recommend options (delay, reduced scope, feature-flag the risky part, extra monitoring), and let the accountable owner make an informed decision. If they proceed, ensure the decision and accepted risks are documented. You shouldn't misrepresent the quality status, and you should support the team in mitigating the risk either way.",
   "tags": [
    "integrity",
@@ -396,6 +620,13 @@
   "kind": "concept",
   "question": "Tell me about a time you went beyond your role to help the team or product.",
   "what_tested": "Initiative",
+  "options": [
+   "Real impact, balanced with your job",
+   "Working 80-hour weeks",
+   "Doing other people's jobs without asking",
+   "Neglecting your core role for side projects"
+  ],
+  "answer": 0,
   "model": "Pick something with real impact outside your formal responsibilities: building a tool developers use daily (a local test-data generator, a PR test-selection script), improving observability that helped diagnose production issues, mentoring another team, or leading an incident investigation. Explain why you stepped in, how you balanced it with your core work, and the result. Show initiative without implying you neglected your main job.",
   "tags": [
    "initiative"
@@ -408,6 +639,13 @@
   "kind": "concept",
   "question": "Describe your experience leading a QA or automation team.",
   "what_tested": "Leadership overview",
+  "options": [
+   "A list of tools the team uses",
+   "Scope, approach, results",
+   "Only problems with your team",
+   "Your job title only"
+  ],
+  "answer": 1,
   "model": "Give the scope (team size, domain, products), your leadership approach and two or three outcomes with numbers. For example: 'I lead around 20 automation engineers on a finance platform; I set the framework direction (Python, Playwright, AI-assisted generation and PR review), run planning and triage, and coach leads. Over a year we cut regression from days to under an hour and brought the flake rate under 1%.' Then mention how you develop people and handle stakeholders.",
   "tags": [
    "leadership"
@@ -420,6 +658,13 @@
   "kind": "concept",
   "question": "How do you mentor junior engineers?",
   "what_tested": "Mentoring",
+  "options": [
+   "Let them figure it out alone",
+   "Only give feedback in annual reviews",
+   "Stretch tasks with support",
+   "Do the hard tasks for them"
+  ],
+  "answer": 2,
   "model": "Describe a structure: understand their goals and current level, give stretch tasks with support (a well-scoped framework feature, owning a test area), pair regularly early on, give specific and timely feedback in code reviews (explaining the why, not just the fix), and create learning paths (locators and waits, then fixtures, then framework design). Share an example of someone you mentored and how they grew, e.g. from writing tests to owning a module.",
   "tags": [
    "mentoring"
@@ -432,6 +677,13 @@
   "kind": "concept",
   "question": "How do you handle an underperforming team member?",
   "what_tested": "Performance management",
+  "options": [
+   "Find the cause; support, then process",
+   "Give their work to others silently",
+   "Ignore it to keep the peace",
+   "Remove them immediately"
+  ],
+  "answer": 0,
   "model": "Start by understanding the cause privately: skills gap, unclear expectations, personal issues, motivation or a poor fit. Set clear, specific expectations and a support plan (training, pairing, smaller milestones), check in regularly, and document progress. Recognise improvement. If performance doesn't improve despite support, follow the formal process fairly and with HR. Show empathy and accountability together, and that the team's standards matter.",
   "tags": [
    "leadership",
@@ -445,6 +697,13 @@
   "kind": "concept",
   "question": "How do you give difficult feedback to someone on your team?",
   "what_tested": "Feedback skills",
+  "options": [
+   "Specific, private and prompt",
+   "Give the feedback in a team meeting",
+   "Wait for the annual review",
+   "Hint indirectly and hope they notice"
+  ],
+  "answer": 0,
   "model": "Prepare specifics: observable behaviour and its impact (e.g. 'three PRs this sprint merged without stability runs, and two caused nightly failures'). Deliver it privately and promptly, focused on the behaviour rather than the person, ask for their perspective, agree on concrete next steps, and follow up. A model like SBI (Situation, Behaviour, Impact) helps. Balance it with regular positive feedback so difficult conversations aren't the only feedback they get.",
   "tags": [
    "leadership",
@@ -458,6 +717,13 @@
   "kind": "concept",
   "question": "How do you measure the effectiveness of your QA team?",
   "what_tested": "Team metrics",
+  "options": [
+   "Outcomes and team health",
+   "Number of test cases written",
+   "Hours worked",
+   "Number of bugs logged per person"
+  ],
+  "answer": 0,
   "model": "Use outcome metrics, not activity counts: escaped defects (and their severity) trending down, defect detection before release, regression cycle time, automation coverage of critical journeys, flake rate and suite reliability, lead time from feature done to release-ready, and stakeholder feedback. Also team health: engagement, skill growth and retention. Avoid vanity metrics like test-case counts or bugs logged per person, which drive the wrong behaviour.",
   "tags": [
    "leadership",
@@ -471,6 +737,13 @@
   "kind": "concept",
   "question": "How do you build a quality culture in an organisation where QA is seen as a gate at the end?",
   "what_tested": "Culture change",
+  "options": [
+   "Mandate quality with rules",
+   "Add more approval gates",
+   "Enable teams; start small",
+   "Accept that QA is a gate"
+  ],
+  "answer": 2,
   "model": "Shift the framing from 'QA tests it' to 'the team owns quality, QA enables it'. Practical steps: join refinement to shape testable requirements, give developers tools (fixtures, test data helpers, fast PR suites), share quality metrics openly, celebrate prevented incidents, run blameless post-mortems, pair developers and testers, and show quick wins. Change takes time; start with one willing team and spread success stories.",
   "tags": [
    "leadership",
@@ -484,6 +757,13 @@
   "kind": "concept",
   "question": "How do you approach test planning and estimation?",
   "what_tested": "Planning",
+  "options": [
+   "Copy last release's estimate",
+   "Give one number without analysis",
+   "Risk-based ranges with the team",
+   "Let the manager decide"
+  ],
+  "answer": 2,
   "model": "Start from scope and risk: features, integrations, environments and data needs. Break the work down (test design, data setup, automation, execution, regression, reporting) and estimate with the team, using history (similar features) and ranges rather than single numbers. Include environment and dependency risks, plus buffers for defect retesting. Revisit estimates as you learn, and communicate changes early. For automation estimates, separate framework work from test scripting.",
   "tags": [
    "planning"
@@ -496,6 +776,13 @@
   "kind": "concept",
   "question": "How would you create a test strategy for a new product?",
   "what_tested": "Strategy design",
+  "options": [
+   "Write a 50-page document nobody reads",
+   "Risks first; a living strategy",
+   "Start automating without a plan",
+   "Copy a template from the internet"
+  ],
+  "answer": 1,
   "model": "Understand the product, users, architecture, risks and release model first. Then define: quality goals and risks; the test levels and who owns each (unit, API, contract, UI, exploratory, performance, security, accessibility); tools and environments; test data approach; automation scope and CI integration; entry and exit criteria and reporting; and how the strategy evolves. Keep it a living, lightweight document, reviewed with engineering and product, not a 50-page artifact nobody reads.",
   "tags": [
    "strategy"
@@ -508,6 +795,13 @@
   "kind": "concept",
   "question": "How do you hire for an SDET role? What do you look for?",
   "what_tested": "Hiring",
+  "options": [
+   "Hire the fastest typist",
+   "Only check years of experience",
+   "Trivia questions about tool syntax",
+   "Practical exercises and rubrics"
+  ],
+  "answer": 3,
   "model": "Assess real skills, not trivia: a practical coding exercise (write a robust test, debug a flaky one), framework or design discussion, a debugging scenario, and how they communicate trade-offs. Look for curiosity, ownership, collaboration and learning ability as much as current tool knowledge. Use a consistent rubric with green and red flags so interviewers calibrate. Value diverse backgrounds; strong testers come from development, manual QA and operations.",
   "tags": [
    "hiring"
@@ -520,6 +814,13 @@
   "kind": "concept",
   "question": "How do you delegate effectively as a lead?",
   "what_tested": "Delegation",
+  "options": [
+   "Delegate tasks but keep all decisions",
+   "Outcomes with real ownership",
+   "Delegate and never check in",
+   "Do everything yourself"
+  ],
+  "answer": 1,
   "model": "Delegate outcomes, not just tasks: explain the goal, constraints and why it matters, agree what 'done' looks like and when to check in, then give real ownership (including decisions) matched to the person's growth goals. Provide support without taking it back at the first problem. Example: delegating ownership of the API client layer to a senior engineer, who then designed and delivered it, freeing you for strategy work.",
   "tags": [
    "leadership"
@@ -532,6 +833,13 @@
   "kind": "concept",
   "question": "How do you keep a team motivated during a long, high-pressure release period?",
   "what_tested": "Team morale",
+  "options": [
+   "Ignore morale until after release",
+   "Protect, recognise, prevent burnout",
+   "Promise bonuses you can't guarantee",
+   "Push harder with longer hours"
+  ],
+  "answer": 1,
   "model": "Make the goal and progress visible, protect the team from unnecessary churn (filter requests, push back on scope creep), share the load fairly, recognise effort publicly and specifically, watch for burnout and act (rotations, time off after the crunch), and keep humour and connection alive. After the release, hold a retrospective so the next one is less painful. Leaders also model calm behaviour under pressure.",
   "tags": [
    "leadership",
@@ -545,6 +853,13 @@
   "kind": "concept",
   "question": "How do you support the career growth of people on your team?",
   "what_tested": "People development",
+  "options": [
+   "Career talks and sponsorship",
+   "Tell them to find growth elsewhere",
+   "Keep top performers in the same role",
+   "Only discuss it at appraisal time"
+  ],
+  "answer": 0,
   "model": "Have regular career conversations separate from task check-ins, understand each person's goals (deeper technical, leadership, a domain), create growth opportunities (owning a framework area, leading a migration, presenting at internal sessions, mentoring others), give sponsorship (putting their names forward), and give honest feedback on gaps with a plan. Example: helping an engineer progress to tech lead over a year by giving them gradually larger ownership.",
   "tags": [
    "leadership",
@@ -558,6 +873,13 @@
   "kind": "concept",
   "question": "How do you onboard new engineers onto your automation team?",
   "what_tested": "Onboarding",
+  "options": [
+   "Two weeks of reading only",
+   "Assign them the hardest task first",
+   "Hand them the repo and wish them luck",
+   "Structured weeks and a buddy"
+  ],
+  "answer": 3,
   "model": "A structured first few weeks: environment setup in one documented step, a buddy, a reading list (framework architecture, conventions, the review checklist), a small first task that ships within the first week, pairing sessions on debugging and CI, and a 30/60/90-day plan. Gather feedback from each new joiner and update docs. Good onboarding is measured by how soon they contribute independently and how confident they feel.",
   "tags": [
    "leadership",
@@ -571,6 +893,13 @@
   "kind": "concept",
   "question": "How do you handle attrition or a key team member leaving suddenly?",
   "what_tested": "Resilience planning",
+  "options": [
+   "Panic and promise unchanged dates",
+   "Hire anyone immediately",
+   "Hide it from stakeholders",
+   "Transfer knowledge; reduce SPOFs"
+  ],
+  "answer": 3,
   "model": "Immediately: understand what they owned, arrange a knowledge transfer and documentation, and redistribute critical work by priority. Communicate honestly with the team and stakeholders about impact on timelines. Longer term: reduce single points of failure (pairing, rotating ownership, documented runbooks), and look at whether there's a pattern behind departures (growth, workload, recognition) to address. Hire with a clear role definition.",
   "tags": [
    "leadership"
@@ -583,6 +912,13 @@
   "kind": "concept",
   "question": "How do you communicate quality status to senior management?",
   "what_tested": "Executive communication",
+  "options": [
+   "Long technical reports",
+   "Raw test counts and logs",
+   "Short, decision-focused updates",
+   "Only report when asked"
+  ],
+  "answer": 2,
   "model": "Short, consistent and decision-focused: the release readiness verdict, the top risks and their business impact, trends (escaped defects, regression time, stability), and what you need from them (decisions, resources). Use a simple traffic-light or one-page summary with the details available on request. Avoid jargon and raw counts. When there's bad news, bring it early, with options.",
   "tags": [
    "communication",
@@ -596,6 +932,13 @@
   "kind": "concept",
   "question": "How do you balance hands-on technical work with management responsibilities as a lead?",
   "what_tested": "Lead balance",
+  "options": [
+   "Write most of the code yourself",
+   "High-leverage technical work",
+   "Stop coding entirely",
+   "Ignore management duties"
+  ],
+  "answer": 1,
   "model": "Be honest about the trade-off: your main job becomes multiplying the team's output, so you stay technical in high-leverage ways (framework architecture, code reviews, technical decisions, prototyping new approaches like AI-assisted testing) rather than owning critical-path tasks that block others when meetings pull you away. Time-box hands-on work, delegate ownership, and keep coding regularly enough to stay credible and current.",
   "tags": [
    "leadership"
@@ -608,6 +951,13 @@
   "kind": "concept",
   "question": "How do you handle disagreement with your manager about the testing approach?",
   "what_tested": "Managing up",
+  "options": [
+   "Agree silently and complain later",
+   "Ignore their decision and do it your way",
+   "Escalate to their manager",
+   "Data, pilot, then commit"
+  ],
+  "answer": 3,
   "model": "Understand their reasoning and constraints first; they may have context you lack. Then present your view with data and trade-offs, ideally with a small experiment or pilot to test it. If they still decide differently, commit to the decision and execute it well, while tracking the risks you raised. Example: proposing contract testing instead of more end-to-end tests, agreeing on a one-team pilot, and expanding after it caught integration bugs.",
   "tags": [
    "managing-up"
@@ -620,6 +970,13 @@
   "kind": "concept",
   "question": "How do you introduce AI tools into a QA team responsibly?",
   "what_tested": "AI adoption",
+  "options": [
+   "Ban AI tools",
+   "Pilot with standards and metrics",
+   "Let everyone use any tool without guidelines",
+   "Replace reviewers with AI"
+  ],
+  "answer": 1,
   "model": "Start with clear use cases and guard rails: AI-assisted test generation, PR review comments, failure summarisation, test-data generation. Pilot with willing engineers, define standards (human review of all generated code, locator and assertion rules, no secrets or customer data in prompts, approved tools only), measure outcomes (time saved, defects introduced, review effort), and share learnings. Address fears honestly: AI changes tasks, and skilled reviewers become more valuable.",
   "tags": [
    "ai",
@@ -633,6 +990,13 @@
   "kind": "concept",
   "question": "Tell me about a time you had to manage competing priorities from multiple stakeholders.",
   "what_tested": "Stakeholder balancing",
+  "options": [
+   "Pick your favourite project",
+   "Visible priorities; right owner decides",
+   "Try to do everything at once",
+   "Do whatever the loudest person asks"
+  ],
+  "answer": 1,
   "model": "Show structure: make the competing requests visible in one place, clarify the business value and urgency of each with the stakeholders, and align on priorities with whoever owns the trade-off (often a product lead or manager) rather than deciding silently. Communicate the decision and its consequences to everyone. Example result: a priority order everyone accepted, with a timeline for the deferred work.",
   "tags": [
    "stakeholders",
@@ -646,6 +1010,13 @@
   "kind": "concept",
   "question": "How do you keep your testing skills current?",
   "what_tested": "Continuous learning",
+  "options": [
+   "Only listing certificates",
+   "'I don't need to'",
+   "'I learn on the job when needed'",
+   "Concrete habits plus an example"
+  ],
+  "answer": 3,
   "model": "Mention concrete habits: following release notes for your core tools (Playwright, pytest), reading engineering blogs and testing communities, building small side projects or internal prototypes (this interview-prep tool counts), attending meetups or conferences, experimenting with AI-assisted testing, and teaching others through internal sessions or articles. Give one recent thing you learned and applied at work.",
   "tags": [
    "learning"
@@ -658,6 +1029,13 @@
   "kind": "concept",
   "question": "Tell me about a time you had to learn a new tool or technology quickly.",
   "what_tested": "Rapid learning",
+  "options": [
+   "Docs, a spike, then share",
+   "Watching videos for weeks first",
+   "Learning everything before starting",
+   "Refusing until trained"
+  ],
+  "answer": 0,
   "model": "Describe the trigger (e.g. moving from Selenium to Playwright under a deadline), your approach (official docs and examples first, a small spike on a real flow, pairing with someone experienced, focusing on the 20% of features you'd use most), how you applied it, and the result. Mention how you shared the knowledge with the team (a starter template or a workshop), which multiplies the value of your learning.",
   "tags": [
    "learning"
@@ -670,6 +1048,13 @@
   "kind": "concept",
   "question": "Describe a time you received critical feedback. How did you respond?",
   "what_tested": "Receiving feedback",
+  "options": [
+   "Ignore it",
+   "Explain why the feedback was wrong",
+   "Become defensive",
+   "Understand and change something"
+  ],
+  "answer": 3,
   "model": "Show openness: describe the feedback (e.g. your status updates were too technical for stakeholders), your initial reaction honestly, how you sought to understand it (asked for examples), what you changed (one-page summaries focused on risk and decisions), and the outcome (better stakeholder trust). Thank the person, implicitly or explicitly. Interviewers look for low defensiveness and real change.",
   "tags": [
    "feedback"
@@ -682,6 +1067,13 @@
   "kind": "concept",
   "question": "How do you handle a situation where you don't know the answer to a technical question?",
   "what_tested": "Intellectual honesty",
+  "options": [
+   "Change the subject",
+   "Admit it; explain how you'd find out",
+   "Bluff an answer confidently",
+   "Refuse to answer"
+  ],
+  "answer": 1,
   "model": "Say so plainly, then show how you'd find out: reason from what you do know, outline how you'd investigate (docs, a quick experiment, asking an expert), and follow up. In an interview, thinking aloud about how you'd approach it is better than bluffing, because interviewers usually probe bluffs with 'show me the exact code'. In a team, admitting gaps builds trust and models a healthy learning culture.",
   "tags": [
    "honesty"
@@ -694,6 +1086,13 @@
   "kind": "concept",
   "question": "How have you adapted to a major change at work (re-org, new process, new technology)?",
   "what_tested": "Change resilience",
+  "options": [
+   "Complain without action",
+   "Ignore it and keep old ways",
+   "Resist the change",
+   "Adapt and help others adapt"
+  ],
+  "answer": 3,
   "model": "Pick a real change, e.g. moving to agile squads, a new CI platform, or a shift to AI-assisted development. Describe your initial concerns, how you sought to understand the reasons, what you did to adapt and help others adapt (documentation, training, feedback to leadership), and the outcome. Show you can be constructive about change while raising real risks through the right channels.",
   "tags": [
    "adaptability"
@@ -706,6 +1105,13 @@
   "kind": "concept",
   "question": "You find a critical bug the night before a major release. What do you do?",
   "what_tested": "Release crisis",
+  "options": [
+   "Confirm, assess, inform owners now",
+   "Wait until morning to mention it",
+   "Fix it yourself in production",
+   "Hide it until after release"
+  ],
+  "answer": 0,
   "model": "Confirm and reproduce it quickly, assess the impact (who is affected, how badly, is there a workaround?), and inform the release owner, developers and product owner immediately with clear evidence, not just a ticket. Help evaluate the options: fix and retest (if low risk and quick), feature-flag or disable the affected feature, delay the release, or ship with a documented known issue. Support the decision with focused retesting and monitoring. Speed and clarity matter more than blame.",
   "tags": [
    "situational",
@@ -719,6 +1125,13 @@
   "kind": "concept",
   "question": "Production is down on a weekend and you're on call. Walk me through your actions.",
   "what_tested": "Incident response",
+  "options": [
+   "Start debugging alone without telling anyone",
+   "Communicate, mitigate, verify",
+   "Restart random services",
+   "Wait until Monday"
+  ],
+  "answer": 1,
   "model": "Acknowledge the alert and join the incident channel or bridge. Assess impact and scope (which users or features). Gather evidence (dashboards, logs, recent deployments). Communicate status early and regularly. Coordinate with the right owners; mitigate first (rollback, feature flag, failover) before root-causing. Once stable, verify recovery (smoke tests, monitoring), then document a timeline for the blameless post-mortem and track the follow-up actions. As QA, you're often key in verifying the fix and adding regression coverage.",
   "tags": [
    "situational",
@@ -732,6 +1145,13 @@
   "kind": "concept",
   "question": "Your developers don't write unit tests and push everything to QA. How do you change that?",
   "what_tested": "Driving testing culture",
+  "options": [
+   "Report them to management",
+   "Write all unit tests yourself",
+   "Make unit testing easy and visible",
+   "Refuse to test their code"
+  ],
+  "answer": 2,
   "model": "Understand why first: time pressure, lack of skills, no examples, slow tooling. Then make it easier and visible: provide unit-test examples and templates, pair on writing tests for a recent bug, add fast checks to PRs, share data on defects caught late versus early and the rework cost, and get engineering leadership aligned on a definition of done that includes tests. Celebrate teams that improve. Avoid positioning QA as police.",
   "tags": [
    "situational",
@@ -745,6 +1165,13 @@
   "kind": "concept",
   "question": "You inherit an automation framework that's slow, flaky and poorly designed. What's your plan?",
   "what_tested": "Turnaround",
+  "options": [
+   "Rewrite from scratch immediately",
+   "Measure, stabilise, improve stepwise",
+   "Keep adding tests to it",
+   "Ignore it and build a parallel framework secretly"
+  ],
+  "answer": 1,
   "model": "First, assess and measure: run time, flake rate, failure categories, the worst tests, and who uses the results. Stabilise quickly: quarantine flaky tests, fix the top offenders, add artifacts for debugging. Then decide between incremental refactoring and a gradual rewrite (usually incremental), focusing on high-value areas. Set conventions, add linting and reviews, and track improvement. Communicate a roadmap with milestones so stakeholders see progress, and don't stop delivery while you fix it.",
   "tags": [
    "situational",
@@ -758,6 +1185,13 @@
   "kind": "concept",
   "question": "You're asked to estimate automating 500 existing manual test cases. How do you respond?",
   "what_tested": "Estimation under scrutiny",
+  "options": [
+   "Multiply 500 by an average time",
+   "Refuse to estimate",
+   "Promise all 500 in a sprint",
+   "Triage, pilot, phased estimate"
+  ],
+  "answer": 3,
   "model": "Don't estimate 500 × an average blindly. First triage the cases: remove duplicates and obsolete ones, identify what's better tested at API or unit level, group by flow, and rank by risk and execution frequency. Estimate framework work separately from scripting, use a pilot of 20–30 representative cases to measure the real rate, then give a phased plan with ranges and early value (critical regression first). Often the result is fewer, better tests than the 500.",
   "tags": [
    "situational",
@@ -771,6 +1205,13 @@
   "kind": "concept",
   "question": "A client escalates that your team missed defects in the last release. How do you handle it?",
   "what_tested": "Escalation handling",
+  "options": [
+   "Promise it will never happen again without analysis",
+   "Facts, fix plan, blameless RCA",
+   "Blame the client's requirements",
+   "Defend the team and deny responsibility"
+  ],
+  "answer": 1,
   "model": "Acknowledge the impact without being defensive and get the facts: which defects, severity and how they escaped. Communicate an immediate plan (fixes, verification) and a timeline. Do a blameless root-cause analysis covering test coverage, environment differences, requirements gaps and process issues, then present concrete improvements with owners and dates. Follow up to show they were implemented. Rebuilding trust comes from transparency and consistent delivery.",
   "tags": [
    "situational",
@@ -784,6 +1225,13 @@
   "kind": "concept",
   "question": "Two of your senior engineers want to use different tools for the same problem. How do you decide?",
   "what_tested": "Technical decision making",
+  "options": [
+   "Criteria and a short proof of concept",
+   "Pick the more senior engineer's choice",
+   "Let them both use different tools",
+   "Choose the newest tool"
+  ],
+  "answer": 0,
   "model": "Make the decision about criteria, not people: agree upfront on what matters (fit with the stack, team skills, maintainability, community support, CI integration, cost), time-box a small proof of concept of both on a real scenario, compare the results against the criteria, and decide, documenting the reasoning in a decision record. Make sure both engineers feel heard and get credit, and give the 'losing' side a meaningful role in the rollout.",
   "tags": [
    "situational",
@@ -797,6 +1245,13 @@
   "kind": "concept",
   "question": "You discover a team member has been marking tests as passed without running them. What do you do?",
   "what_tested": "Integrity issues",
+  "options": [
+   "Shame them publicly",
+   "Ignore it if the tests usually pass",
+   "Report them without verifying",
+   "Verify, talk privately, fix causes"
+  ],
+  "answer": 3,
   "model": "Verify the facts first, then talk privately and directly: describe what you found, listen to their explanation (pressure, unclear expectations, tooling issues), and be clear that it's unacceptable because it hides risk from the whole team. Fix the immediate risk by re-running the affected tests. Address the root causes (unrealistic workload, process gaps such as no evidence requirements) and follow your organisation's process for misconduct if it's serious. Then add safeguards, like automated evidence of execution.",
   "tags": [
    "situational",
@@ -810,6 +1265,13 @@
   "kind": "concept",
   "question": "Your automation suite is green but customers keep reporting bugs. What's going on, and what do you do?",
   "what_tested": "Coverage reality check",
+  "options": [
+   "A coverage gap; map the misses",
+   "Celebrate the green suite",
+   "Add more of the same tests",
+   "Customers are using it wrong"
+  ],
+  "answer": 0,
   "model": "A green suite that misses customer bugs suggests a coverage or relevance gap: tests checking the wrong things (weak assertions), heavy mocking hiding integration issues, environment differences from production, missing real-world data, or untested user paths. Analyse the reported bugs: map each to why tests missed it, then add coverage at the right layer, use production analytics to prioritise flows, add contract tests and production monitoring, and review assertion quality. Celebrate the green suite less until it's meaningful.",
   "tags": [
    "situational",
@@ -823,6 +1285,13 @@
   "kind": "concept",
   "question": "Management wants 100% test automation. How do you respond?",
   "what_tested": "Managing expectations",
+  "options": [
+   "Refuse outright",
+   "Reframe to outcome targets",
+   "Quietly automate trivial checks to hit the number",
+   "Agree and promise 100%"
+  ],
+  "answer": 1,
   "model": "Agree with the intent (faster, more reliable releases), then reframe the goal: 100% automation isn't achievable or valuable, because exploratory, usability and some edge-case testing need humans, and some automation costs more than it saves. Propose meaningful targets instead: automate critical journeys and API business rules, regression cycle time under X hours, escaped defects down by Y%, with a roadmap. Show the ROI logic so the conversation moves from a number to outcomes.",
   "tags": [
    "situational",
@@ -836,6 +1305,13 @@
   "kind": "concept",
   "question": "A developer asks you to approve their PR quickly, but you notice the tests they added don't really test anything. What do you do?",
   "what_tested": "Review integrity",
+  "options": [
+   "Rewrite their tests silently",
+   "Explain the gap; offer to pair",
+   "Reject it without explanation",
+   "Approve it to be nice"
+  ],
+  "answer": 1,
   "model": "Review respectfully but don't rubber-stamp: point out specifically what's missing (e.g. assertions only check the status code, or the test would pass even if the feature broke) and suggest concrete improvements or offer to pair for 15 minutes. If there's genuine urgency, agree on a follow-up ticket with an owner rather than silently approving. Consistent, helpful reviews raise the team's standard over time.",
   "tags": [
    "situational",
@@ -849,6 +1325,13 @@
   "kind": "concept",
   "question": "How would you handle being asked to test a feature with no documentation or acceptance criteria?",
   "what_tested": "Testing without specs",
+  "options": [
+   "Gather, explore, confirm examples",
+   "Refuse to test",
+   "Wait for documentation",
+   "Test randomly"
+  ],
+  "answer": 0,
   "model": "Gather information from every source: the developer's walkthrough, the product owner, the design files, similar existing features, and the API contract if any. Do exploratory testing to learn the behaviour, write down your understanding as examples and confirm them with the product owner, and flag risky assumptions. Turn the confirmed examples into acceptance criteria and automated tests. Suggest a lightweight process so future features come with criteria.",
   "tags": [
    "situational",
@@ -862,6 +1345,13 @@
   "kind": "concept",
   "question": "What would you do in your first 90 days as a QA lead here?",
   "what_tested": "Leadership onboarding plan",
+  "options": [
+   "Listen, quick wins, then roadmap",
+   "Only observe for 90 days",
+   "Replace the tools immediately",
+   "Change all processes in week one"
+  ],
+  "answer": 0,
   "model": "First 30 days: listen and learn: meet the team and stakeholders, understand the products, architecture, release process, current test assets and pain points, and look at metrics. Days 30–60: identify quick wins (e.g. fixing the flakiest tests, improving failure reports) and propose a strategy with priorities, validated with stakeholders. Days 60–90: start executing the roadmap, set up regular reporting, and establish team rituals and growth plans. Avoid changing everything before understanding why things are the way they are.",
   "tags": [
    "leadership",
@@ -875,6 +1365,13 @@
   "kind": "concept",
   "question": "How do you handle working on a project where you strongly disagree with a technical decision that's already been made?",
   "what_tested": "Disagree and commit",
+  "options": [
+   "Raise it once, then commit",
+   "Refuse to work on it",
+   "Keep arguing until it changes",
+   "Undermine the decision quietly"
+  ],
+  "answer": 0,
   "model": "Raise the concern once, clearly and with evidence, through the right channel, ideally proposing what data would change the decision. If the decision stands, commit fully and execute it well; don't undermine it or say 'I told you so'. Track the risks you identified and raise them again with data if they materialise. Showing you can disagree constructively and still deliver builds trust for future decisions.",
   "tags": [
    "collaboration"
@@ -887,6 +1384,13 @@
   "kind": "concept",
   "question": "Tell me about a time you used data to change someone's mind.",
   "what_tested": "Data-driven persuasion",
+  "options": [
+   "Repeat your opinion louder",
+   "Give up",
+   "Escalate to authority",
+   "Simple data and open listening"
+  ],
+  "answer": 3,
   "model": "Describe the disagreement (e.g. whether to keep a 2-hour UI regression in the PR pipeline), the data you gathered (failure history showed 90% of real bugs were caught by API tests and a small UI subset), how you presented it simply (one chart, and the cost in developer hours per week), the decision that followed (a 15-minute smoke tier on PRs, full suite nightly) and the result. Show you also listened and adjusted to their concerns.",
   "tags": [
    "influence"
@@ -899,6 +1403,13 @@
   "kind": "concept",
   "question": "What questions do you have for us?",
   "what_tested": "Engaged curiosity",
+  "options": [
+   "Prepared questions about the role",
+   "Questions answered on their website",
+   "'No questions'",
+   "Only salary and leave"
+  ],
+  "answer": 0,
   "model": "Always have a few prepared, showing genuine interest in how you'd succeed. Good ones: 'What does success look like for this role in the first six months?', 'How is quality owned across dev and QA here?', 'What's the current state of automation and CI, and the biggest pain point?', 'How are releases done and how often?', 'What's the team structure and how do you support growth?' Avoid asking only about salary or leave in early rounds, or saying 'no questions'.",
   "tags": [
    "closing"
@@ -911,6 +1422,13 @@
   "kind": "concept",
   "question": "Tell me about a time you had to explain a technical issue to a non-technical audience.",
   "what_tested": "Communication clarity",
+  "options": [
+   "Show the stack trace",
+   "Business impact, no jargon",
+   "Avoid explaining",
+   "Use precise technical terms"
+  ],
+  "answer": 1,
   "model": "Choose an example like explaining why a release needed a delay because of a payment rounding bug. Show how you translated it into business impact ('about 1 in 500 refunds would be off by one paisa, which breaks reconciliation and creates compliance risk'), used an analogy or a simple visual, avoided jargon, and focused on options and the decision needed. Mention how you checked understanding and the outcome.",
   "tags": [
    "communication"
@@ -923,6 +1441,13 @@
   "kind": "concept",
   "question": "How do you handle stress and avoid burnout in demanding release cycles?",
   "what_tested": "Sustainability",
+  "options": [
+   "Avoid demanding projects",
+   "Prioritise and protect focus",
+   "Work longer hours indefinitely",
+   "Ignore stress"
+  ],
+  "answer": 1,
   "model": "Give practical habits: prioritising ruthlessly and saying no or 'not now' with reasons, automating repetitive work, breaking big problems into small wins, protecting focus time, taking real breaks after crunch periods, and asking for help early. As a lead, also watch the team for signs of burnout and fix systemic causes (unrealistic plans, unstable environments). Show self-awareness without suggesting you can't handle pressure.",
   "tags": [
    "wellbeing"
@@ -935,6 +1460,13 @@
   "kind": "concept",
   "question": "Describe a time you had to say no to a request.",
   "what_tested": "Healthy boundaries",
+  "options": [
+   "Agree, then don't deliver",
+   "Offer an alternative",
+   "Say yes to everything",
+   "Say no without explanation"
+  ],
+  "answer": 1,
   "model": "Show that you said no to the request but yes to the person's underlying goal: you understood what they actually needed, explained why the request as asked wasn't feasible or wise (capacity, risk, priorities), offered an alternative (a later date, a smaller scope, a different approach, someone else who could help), and kept the relationship positive. Example: declining to add a large ad-hoc regression run mid-sprint and instead proposing a risk-based subset that met the actual need.",
   "tags": [
    "prioritisation"
@@ -947,6 +1479,13 @@
   "kind": "concept",
   "question": "How do you ensure fairness and inclusion in your team?",
   "what_tested": "Inclusive leadership",
+  "options": [
+   "Fair, structured, inclusive practices",
+   "Leave it to HR",
+   "Treat everyone the same and ignore differences",
+   "Only focus on output"
+  ],
+  "answer": 0,
   "model": "Concrete practices: rotating visible and interesting work fairly, making sure quieter or remote members are heard in meetings (round-robins, written input before decisions), consistent, criteria-based reviews and promotions, structured hiring rubrics, addressing disrespectful behaviour promptly, and being flexible about different working needs. Give an example of a change you made, such as structured interview scorecards that reduced bias.",
   "tags": [
    "leadership",
@@ -960,6 +1499,13 @@
   "kind": "concept",
   "question": "Tell me about a time you had to make an unpopular decision.",
   "what_tested": "Decisive leadership",
+  "options": [
+   "Explain, consult, follow up",
+   "Avoid unpopular decisions",
+   "Let the team vote on everything",
+   "Announce it without explanation"
+  ],
+  "answer": 0,
   "model": "Pick a real example, e.g. freezing new test development for two sprints to fix flakiness, or retiring a tool the team liked. Explain the reasoning and data, how you consulted people beforehand, how you communicated the decision (the why, what changes, how it affects them), how you handled pushback, and the outcome. Show you can make tough calls while respecting people's concerns and following up on the impact.",
   "tags": [
    "leadership"
@@ -972,6 +1518,13 @@
   "kind": "concept",
   "question": "How do you stay productive when requirements, priorities and environments keep changing?",
   "what_tested": "Working amid churn",
+  "options": [
+   "Ignore priority changes",
+   "Wait for things to stabilise",
+   "Small increments, visible priorities",
+   "Complain about changes"
+  ],
+  "answer": 2,
   "model": "Keep work in small, independently valuable pieces so a change in priority doesn't waste much; maintain a clear, visible priority list agreed with stakeholders; build resilience into automation (API setup, mocks for unstable dependencies, environment health checks); and raise the cost of churn with data in retrospectives (e.g. time lost to environment downtime) to drive systemic fixes. Flexibility plus visibility beats frustration.",
   "tags": [
    "adaptability"
@@ -984,6 +1537,13 @@
   "kind": "concept",
   "question": "Why should we hire you over other candidates?",
   "what_tested": "Closing pitch",
+  "options": [
+   "Three evidence-backed points",
+   "Criticise other candidates",
+   "Repeat your CV",
+   "'Because I need a job'"
+  ],
+  "answer": 0,
   "model": "Summarise your value in three points aligned with the role's needs, each backed by evidence. For example: hands-on depth in Python, Playwright and API automation with frameworks you've built; leadership of a large automation team with measurable improvements in speed and reliability; and forward-looking experience applying AI to test generation and review. Close with genuine enthusiasm for the specific challenges they described, without disparaging other candidates.",
   "tags": [
    "closing"
@@ -996,6 +1556,13 @@
   "kind": "concept",
   "question": "Walk me through your current project and your role in it.",
   "what_tested": "Project walkthrough",
+  "options": [
+   "Only the company's name",
+   "Confidential details you shouldn't share",
+   "Domain, role and what you drove",
+   "A list of every ticket you worked on"
+  ],
+  "answer": 2,
   "model": "Structure it so the interviewer can follow: the business domain and users (one sentence), the architecture at a high level (front end, services, integrations), the team setup, then your role and responsibilities, and two or three things you personally drove with results (e.g. built the Playwright framework, cut regression time, introduced contract tests or AI-assisted PR review). Prepare a simple diagram in your head. Expect deep follow-ups on anything you mention, so only claim what you can explain in detail.",
   "tags": [
    "project"
@@ -1008,6 +1575,13 @@
   "kind": "concept",
   "question": "Explain the automation framework you built or work with, end to end.",
   "what_tested": "Framework walkthrough",
+  "options": [
+   "The tools without the reasoning",
+   "Only the folder names",
+   "Layers, choices and an improvement",
+   "'It's a standard framework'"
+  ],
+  "answer": 2,
   "model": "Cover: tech stack and why (Python, pytest, Playwright, requests); folder structure and layers (tests, page and component objects, API clients, fixtures, data factories, config); how auth, test data and environments are handled; parallel execution and CI integration; reporting and artifacts; how flakiness is managed; and conventions and reviews. Finish with an improvement you made and one you'd make next, which shows critical thinking about your own work.",
   "tags": [
    "project",
@@ -1021,6 +1595,13 @@
   "kind": "concept",
   "question": "What's the biggest technical challenge you've solved in test automation?",
   "what_tested": "Problem-solving depth",
+  "options": [
+   "A simple task with no trade-offs",
+   "Constraints, options, reasoning",
+   "A problem someone else solved",
+   "A list of tools"
+  ],
+  "answer": 1,
   "model": "Pick a genuinely hard problem: stabilising a suite against an eventually consistent microservice system, testing a complex payment flow with third-party dependencies, scaling parallel runs without data collisions, or automating authentication with SSO and MFA. Explain the constraints, the options you considered, why you chose your approach, the implementation details that mattered, and the measurable result. Interviewers probe depth, so be ready to go two or three levels down.",
   "tags": [
    "technical"
@@ -1033,6 +1614,13 @@
   "kind": "concept",
   "question": "Tell me about a time you automated something that saved the team significant time.",
   "what_tested": "Efficiency impact",
+  "options": [
+   "Before and after numbers",
+   "A script nobody used",
+   "Someone else's tool",
+   "Automation with no measurable benefit"
+  ],
+  "answer": 0,
   "model": "Choose something with clear before and after numbers: an automated regression replacing days of manual effort, a test-data generator replacing manual database setup, a script that triages nightly failures by signature, or a CI job that creates PR environments. Explain how you spotted the opportunity, built it incrementally, got adoption, and quantified the savings (hours per week or release, fewer errors).",
   "tags": [
    "impact"
@@ -1045,6 +1633,13 @@
   "kind": "concept",
   "question": "Tell me about a time you used AI tools in your testing work. What went well and what didn't?",
   "what_tested": "AI in practice",
+  "options": [
+   "I refuse to use AI",
+   "AI writes all my tests perfectly",
+   "Only hype without examples",
+   "Balanced, with guard rails"
+  ],
+  "answer": 3,
   "model": "Be concrete and balanced: e.g. using AI agents to generate first drafts of Playwright tests from user stories and to review PRs for missing assertions or hard waits. Share what worked (faster scaffolding, consistent review comments), what didn't (hallucinated APIs, weak or missing assertions, locators that ignored your conventions), and the guard rails you added (human review, conventions documented for the agent, CI checks). Interviewers value candid, experienced judgement over hype.",
   "tags": [
    "ai"
@@ -1057,6 +1652,13 @@
   "kind": "concept",
   "question": "How do you work with product owners and business analysts?",
   "what_tested": "Business collaboration",
+  "options": [
+   "Wait for finished requirements",
+   "Only talk to them when bugs appear",
+   "Engage early with examples",
+   "Let developers handle them"
+  ],
+  "answer": 2,
   "model": "Engage early: refine stories together, ask 'what happens if…' questions to uncover edge cases, propose acceptance criteria as concrete examples, share risk assessments in business terms, and demo test coverage or findings. During releases, give them clear go/no-go information. Example: catching a missing rule for partial refunds during refinement, which saved a sprint of rework. Treat them as partners in defining 'correct'.",
   "tags": [
    "collaboration"
@@ -1069,6 +1671,13 @@
   "kind": "concept",
   "question": "What is your role in agile ceremonies as a QA or SDET?",
   "what_tested": "Agile participation",
+  "options": [
+   "Attend silently",
+   "Shape, estimate, surface risks",
+   "Only test after the sprint",
+   "Skip ceremonies to save time"
+  ],
+  "answer": 1,
   "model": "Refinement: clarify requirements, raise testability and risk questions, help write acceptance criteria. Planning: estimate test and automation work, flag dependencies such as environments and data. Stand-ups: surface blockers and quality risks early. Reviews and demos: show what was verified. Retrospectives: bring data on escaped defects, flakiness and bottlenecks, and propose improvements. QA should influence quality throughout the sprint, not just test at the end.",
   "tags": [
    "agile"
@@ -1081,6 +1690,13 @@
   "kind": "concept",
   "question": "Tell me about a time you had to deliver bad news to stakeholders.",
   "what_tested": "Delivering bad news",
+  "options": [
+   "Wait until the last minute",
+   "Soften it until it's unclear",
+   "Early, factual, with options",
+   "Let someone else deliver it"
+  ],
+  "answer": 2,
   "model": "Show timing, clarity and options: you raised the issue as soon as you had enough evidence (e.g. a critical defect that put the release date at risk), explained the facts and impact plainly, came with options and a recommendation, and took responsibility for follow-up. Avoid surprise at the last minute or burying the message. Result: stakeholders made an informed decision and trusted your reporting more afterwards.",
   "tags": [
    "communication"
@@ -1093,6 +1709,13 @@
   "kind": "concept",
   "question": "What would your colleagues say about working with you?",
   "what_tested": "Self-perception",
+  "options": [
+   "'I don't know'",
+   "True traits with examples",
+   "Traits unrelated to work",
+   "'They'd say I'm perfect'"
+  ],
+  "answer": 1,
   "model": "Pick two or three traits that are true and relevant, and back each with a short example or real feedback you've received: 'reliable when things go wrong' (you led triage during a release incident), 'raises the bar without being difficult' (code reviews that teach), 'makes complex things clear' (stakeholder updates). Optionally mention one piece of constructive feedback you've acted on, which adds credibility.",
   "tags": [
    "self-awareness"
@@ -1105,6 +1728,13 @@
   "kind": "concept",
   "question": "Tell me about a time you took a calculated risk at work.",
   "what_tested": "Risk-taking",
+  "options": [
+   "A mitigated, communicated risk",
+   "A risk someone else took",
+   "'I never take risks'",
+   "A reckless gamble that happened to work"
+  ],
+  "answer": 0,
   "model": "Describe a decision where the payoff justified the risk and you managed the downside: e.g. replacing a large slow UI suite with API tests plus a smaller smoke set, or adopting Playwright mid-project. Explain how you assessed the risk, mitigated it (pilot, running both in parallel, rollback plan), communicated it, and the outcome. If it didn't fully work, explain what you learned; calculated risks don't always pay off.",
   "tags": [
    "judgement"
@@ -1117,6 +1747,13 @@
   "kind": "concept",
   "question": "How do you manage working across multiple projects or teams at the same time?",
   "what_tested": "Multi-project juggling",
+  "options": [
+   "Overcommit silently",
+   "Agreed priorities and time-boxing",
+   "Work on whatever is loudest",
+   "Focus on one and ignore the rest"
+  ],
+  "answer": 1,
   "model": "Explain your system: a single visible priority list agreed with the leads or managers involved, time-boxing (dedicated days or blocks per project), reducing context switching, reusing assets across projects (shared fixtures and clients), clear communication of availability, and escalating conflicts early rather than silently overcommitting. Give an example where you delivered for several teams and how you kept quality consistent.",
   "tags": [
    "prioritisation"
@@ -1129,6 +1766,13 @@
   "kind": "concept",
   "question": "Tell me about a time your estimate was badly wrong. What happened?",
   "what_tested": "Estimation honesty",
+  "options": [
+   "Early re-plan and a new approach",
+   "Blame changing requirements only",
+   "Hide the overrun",
+   "'My estimates are always right'"
+  ],
+  "answer": 0,
   "model": "Pick a real example (e.g. automating a flow that turned out to involve a complex third-party iframe and unstable test data). Explain why the estimate was off, when you realised it, how you communicated early and re-planned (scope, help, dates), and what you changed in your estimation approach afterwards: spikes for unknowns, ranges instead of single numbers, and counting environment and data work explicitly.",
   "tags": [
    "estimation"
@@ -1141,6 +1785,13 @@
   "kind": "concept",
   "question": "How do you balance speed of delivery with quality?",
   "what_tested": "Speed vs quality trade-off",
+  "options": [
+   "Always choose quality regardless of time",
+   "Always choose speed",
+   "Automation plus explicit trade-offs",
+   "Let developers decide alone"
+  ],
+  "answer": 2,
   "model": "Show that you see them as complementary in the long run and make explicit trade-offs in the short run: invest in fast, reliable automation so speed doesn't cost quality; use risk-based testing to focus effort; use feature flags and progressive rollout to reduce release risk; and when a trade-off is necessary, make it visible and agreed (what's not tested, and the mitigation). Give an example of a release where this approach let you ship fast and safely.",
   "tags": [
    "judgement"
@@ -1153,6 +1804,13 @@
   "kind": "concept",
   "question": "Tell me about a time you helped a struggling colleague.",
   "what_tested": "Teamwork",
+  "options": [
+   "Do their work for them",
+   "Report them to the manager",
+   "Help practically; they own it",
+   "Leave it to them"
+  ],
+  "answer": 2,
   "model": "Describe noticing the struggle (missed estimates, frustration with a flaky area), approaching them supportively, understanding the blocker (e.g. unfamiliar with async debugging or the framework), helping practically (pairing, documentation, splitting the task), and letting them own the result. Mention the outcome for them and the team, and keep the focus on their success rather than your heroics.",
   "tags": [
    "teamwork"
@@ -1165,6 +1823,13 @@
   "kind": "concept",
   "question": "How do you work in an onsite–offshore model with clients?",
   "what_tested": "Delivery models",
+  "options": [
+   "Clear ownership and handovers",
+   "Communicate only weekly",
+   "Rely on one onsite person for everything",
+   "Avoid client contact"
+  ],
+  "answer": 0,
   "model": "Highlight practices that make it work: clear ownership split and handover rituals across time zones, written daily summaries (progress, blockers, failures with artifacts), shared dashboards so status doesn't depend on meetings, early escalation of risks, overlapping hours used for decisions, and building direct relationships with client stakeholders. Give an example where good handovers or proactive communication prevented a delivery issue.",
   "tags": [
    "collaboration",
@@ -1178,6 +1843,13 @@
   "kind": "concept",
   "question": "How do you handle client communication when testing reveals the client's own requirements were wrong?",
   "what_tested": "Client diplomacy",
+  "options": [
+   "Tell them their requirements are wrong",
+   "Hide it until delivery",
+   "Evidence, shared framing, options",
+   "Build what they asked anyway"
+  ],
+  "answer": 2,
   "model": "Stay factual and solution-oriented: show the evidence (what the requirement said, what the system does, the business consequence) without blaming, frame it as a shared discovery, and propose options with their impact on timeline and cost. Escalate through the agreed channel and get the decision documented. Clients value partners who catch problems early, and handling it tactfully builds long-term trust.",
   "tags": [
    "stakeholders",
@@ -1191,6 +1863,13 @@
   "kind": "concept",
   "question": "Tell me about a time you worked under compliance or regulatory constraints.",
   "what_tested": "Regulated environments",
+  "options": [
+   "Synthetic data and audit evidence",
+   "Use production data for realism",
+   "Ignore compliance in test environments",
+   "Leave compliance to legal"
+  ],
+  "answer": 0,
   "model": "For finance or healthcare domains, mention concrete constraints: no production personal data in tests (masked or synthetic data), audit trails and evidence of testing, segregation of duties, validated environments, traceability from requirements to tests, and change control. Give an example of how you adapted automation to meet them, such as test evidence attached to tickets automatically, or synthetic data generators, without slowing delivery unnecessarily.",
   "tags": [
    "compliance"
@@ -1203,6 +1882,13 @@
   "kind": "concept",
   "question": "How do you deal with repetitive or tedious parts of the job?",
   "what_tested": "Attitude to routine work",
+  "options": [
+   "Avoid routine tasks",
+   "Complain about them",
+   "Delegate all of them",
+   "Do it, then automate it"
+  ],
+  "answer": 3,
   "model": "Show a pragmatic, improving mindset: do what's needed reliably, but look for ways to reduce the tedium for everyone through automation, templates, better tooling or process changes. Example: automating test-evidence collection for audits, or scripting environment checks that used to be manual every morning. Avoid implying you neglect routine responsibilities.",
   "tags": [
    "attitude"
@@ -1215,6 +1901,13 @@
   "kind": "concept",
   "question": "Tell me about a time you led an initiative without having a formal leadership title.",
   "what_tested": "Informal leadership",
+  "options": [
+   "Propose, rally, share credit",
+   "Take over others' work",
+   "Do it alone without telling anyone",
+   "Wait to be assigned"
+  ],
+  "answer": 0,
   "model": "Describe seeing a problem nobody owned (e.g. a growing flaky test backlog, or no API test coverage), proposing a plan, rallying people through clear benefits and small early wins, coordinating the work, and the outcome. Highlight how you influenced without authority, shared credit, and how it shaped your path toward formal leadership.",
   "tags": [
    "leadership",
@@ -1228,6 +1921,13 @@
   "kind": "concept",
   "question": "How would you respond if your manager micromanaged your work?",
   "what_tested": "Working relationships",
+  "options": [
+   "Ignore their requests",
+   "Escalate immediately",
+   "More transparency, then talk",
+   "Complain to colleagues"
+  ],
+  "answer": 2,
   "model": "Assume good intent first: micromanagement often comes from pressure or lack of visibility. Proactively increase transparency (regular concise updates, visible task boards, early risk flags), ask what information they need to feel confident, and agree on check-in points and decision rights. If it continues, have a respectful direct conversation about working style and trust, with examples. Show maturity rather than resentment.",
   "tags": [
    "managing-up"
@@ -1240,6 +1940,13 @@
   "kind": "concept",
   "question": "Describe a time you contributed to improving security or data privacy in testing.",
   "what_tested": "Security awareness",
+  "options": [
+   "A concrete fix with buy-in",
+   "Sharing passwords to speed things up",
+   "No examples",
+   "Security is the security team's job"
+  ],
+  "answer": 0,
   "model": "Examples: removing hard-coded credentials from a test repo and moving to a vault, masking tokens and personal data in test reports and logs, replacing production data copies with synthetic data, adding secret scanning to CI, or adding authorisation (IDOR) tests that found real issues. Explain the risk you saw, what you changed, how you got buy-in, and the outcome.",
   "tags": [
    "security"
@@ -1252,6 +1959,13 @@
   "kind": "concept",
   "question": "If you joined and found no test strategy and only manual testing, what would you do first?",
   "what_tested": "Greenfield quality leadership",
+  "options": [
+   "Present a huge plan on day one",
+   "Automate everything immediately",
+   "Risks, quick wins, phased plan",
+   "Keep doing manual testing only"
+  ],
+  "answer": 2,
   "model": "Start by understanding the product, risks, release process and the people (what's painful today?). Quick wins: a smoke checklist for every release, risk-based priorities for manual testing, and a bug triage routine. Then propose a phased strategy: an automation foundation on the most critical flows and APIs, CI integration, test data and environment fixes, and metrics. Bring developers and product along through early visible value, not a big plan presented on day one.",
   "tags": [
    "strategy",
