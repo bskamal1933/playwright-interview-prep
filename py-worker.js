@@ -93,11 +93,25 @@ self.onmessage = async (e) => {
     const ns = py.globals.get("dict")();
     const t0 = performance.now();
     let error = null;
+    const plain = type === "exec";          // "Run code": just run the script, no grading
+    const sim = needsRequests ? py.pyimport("apisim") : null;
+    if (plain && sim) sim.install_fallback(); // real API first, recorded copy if unreachable
     try {
       await py.runPythonAsync(code, { globals: ns });
     } catch (err) {
       error = cleanTrace(err && err.message);
+    } finally {
+      if (plain && sim) sim.uninstall();
     }
+    if (plain) {
+      const fell = sim ? sim.FELL_BACK : false, calls = sim ? sim.CALLS : 0;
+      if (sim) sim.destroy();
+      ns.destroy();
+      self.postMessage({ id, ok: true, plain: true, stdout: out.join("\n"), error, results: [],
+                         mode: calls ? (fell ? "recorded" : "live") : null, ms: Math.round(performance.now() - t0) });
+      return;
+    }
+    if (sim) sim.destroy();
 
     let results = [];
     let mode = null;

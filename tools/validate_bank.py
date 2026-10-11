@@ -104,6 +104,8 @@ def main():
                     apisim = _apisim
                 if not q.get("endpoint") or not q.get("examples") or not q.get("tests"):
                     problems.append(f"{where}: API task needs endpoint, examples and tests")
+                if not q.get("reference"):
+                    problems.append(f"{where}: API task needs reference data (run tools/gen_api_reference.py)")
                 if not q.get("starter_code") or not q.get("solution"):
                     problems.append(f"{where}: API task needs starter_code and solution")
                     continue

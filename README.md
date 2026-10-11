@@ -8,8 +8,8 @@ Free mock-interview practice for **SDET / QA automation** roles built on **Pytho
 
 - **Three question formats, all scored automatically:**
   - **Multiple choice** for theory questions: four options, instant right/wrong, then the full explanation.
-  - **Python coding** tasks with example input and output, a live editor, and hidden tests (`Run tests` shows which pass, the actual value on failures, stdout and tracebacks).
-  - **Real-time API coding**: write tests with the `requests` library against live public APIs ([JSONPlaceholder](https://jsonplaceholder.typicode.com) and [httpbin](https://httpbin.org)). Your test must pass against the real API **and** fail against deliberately broken responses (a 500, a missing field, a wrong value), which proves your assertions actually catch bugs.
+  - **Python coding** tasks with example input and output, a live editor, and hidden tests. `▶ Run code` runs your code as a script and shows its output; `Run tests` shows which hidden checks pass, the actual value on failures, stdout and tracebacks. The editor scrolls both ways, resizes, and has a full-screen mode.
+  - **Real-time API coding**: write tests with the `requests` library against live public APIs ([JSONPlaceholder](https://jsonplaceholder.typicode.com) and [httpbin](https://httpbin.org)). Your test must pass against the real API **and** fail against deliberately broken responses (a 500, a missing field, a wrong value), which proves your assertions actually catch bugs. Each task shows **reference data** for every call it needs (method, URL, headers, JSON payload and a sample response) with copy buttons, so you spend your time on the test rather than guessing field names.
 - **10-question sessions** with a 5 Python / 3 Playwright / 2 API mix. Topic order and questions are picked at random, unseen questions first. Shorter sessions keep the same ratio, and Framework, CI & flakiness and Behavioral sections can be added.
 - **A colourful report**: pie charts for the overall result (correct, partly correct, incorrect, skipped) and for questions by section, plus per-section accuracy, coaching notes and a question log.
 - Runs entirely in your browser: no sign-up and no backend. Progress is saved in your browser only. API tasks call the public test APIs directly; if they're unreachable, a recorded copy of the API is used so you can still practise.
@@ -57,6 +57,7 @@ pywheels/                  requests and its dependencies (pure-Python wheels, re
 pyharness/apisim.py        grading harness for API tasks + recorded copies of JSONPlaceholder and httpbin
 pyharness/jsonplaceholder.json   JSONPlaceholder's published dataset
 tools/validate_bank.py     checks the bank and runs every coding and API task
+tools/gen_api_reference.py records the reference data shown for API tasks (rerun after editing one)
 skill/                     a Claude skill version of the interview helper
 ```
 
@@ -68,7 +69,7 @@ Add entries to the right `data/<module>.json` file. Common fields: `id` (unique,
 |---|---|
 | `concept` (multiple choice) | `options` (2-6 strings, similar length so the answer isn't obvious), `answer` (index of the correct option) |
 | `python_code` | `examples` (`[{"input", "output"}]`), `starter_code`, `tests` (assert snippets), `solution` |
-| `api_code` | `endpoint`, `examples`, `starter_code`, `tests` (e.g. `["test_get_post()"]`), `entry` (the call that runs the candidate's test), `mutants` (broken responses, e.g. `{"label": "server returns 500", "status": 500}`, `{"label": "title empty", "set": {"title": ""}}`, `{"label": "id missing", "delete": ["id"]}`, `{"label": "only 9 items", "truncate": 9}`), `solution` |
+| `api_code` | `endpoint`, `examples`, `starter_code`, `tests` (e.g. `["test_get_post()"]`), `entry` (the call that runs the candidate's test), `reference` (generated: run `python tools/gen_api_reference.py`), `mutants` (broken responses, e.g. `{"label": "server returns 500", "status": 500}`, `{"label": "title empty", "set": {"title": ""}}`, `{"label": "id missing", "delete": ["id"]}`, `{"label": "only 9 items", "truncate": 9}`), `solution` |
 
 Run `pip install requests && python tools/validate_bank.py` before opening a pull request.
 

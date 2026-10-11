@@ -2033,6 +2033,21 @@
   "tags": [
    "get",
    "assertions"
+  ],
+  "reference": [
+   {
+    "method": "GET",
+    "url": "https://jsonplaceholder.typicode.com/posts/1",
+    "headers": {},
+    "status": 200,
+    "reason": "OK",
+    "response": {
+     "userId": 1,
+     "id": 1,
+     "title": "sunt aut facere repellat provident occaecati excepturi optio reprehenderit",
+     "body": "quia et suscipit\nsuscipit recusandae consequuntur expedita et cum\nreprehenderit molestiae ut ut quas totam\nnostrum re…"
+    }
+   }
   ]
  },
  {
@@ -2076,6 +2091,30 @@
   "tags": [
    "get",
    "collections"
+  ],
+  "reference": [
+   {
+    "method": "GET",
+    "url": "https://jsonplaceholder.typicode.com/posts",
+    "headers": {},
+    "status": 200,
+    "reason": "OK",
+    "response": [
+     {
+      "userId": 1,
+      "id": 1,
+      "title": "sunt aut facere repellat provident occaecati excepturi optio reprehenderit",
+      "body": "quia et suscipit\nsuscipit recusandae consequuntur expedita et cum\nreprehenderit molestiae ut ut quas totam\nnostrum re…"
+     },
+     {
+      "userId": 1,
+      "id": 2,
+      "title": "qui est esse",
+      "body": "est rerum tempore vitae\nsequi sint nihil reprehenderit dolor beatae ea dolores neque\nfugiat blanditiis voluptate porr…"
+     },
+     "… 98 more"
+    ]
+   }
   ]
  },
  {
@@ -2117,6 +2156,16 @@
   "tags": [
    "negative",
    "status-codes"
+  ],
+  "reference": [
+   {
+    "method": "GET",
+    "url": "https://jsonplaceholder.typicode.com/posts/9999",
+    "headers": {},
+    "status": 404,
+    "reason": "Not Found",
+    "response": {}
+   }
   ]
  },
  {
@@ -2168,6 +2217,29 @@
   "tags": [
    "post",
    "status-codes"
+  ],
+  "reference": [
+   {
+    "method": "POST",
+    "url": "https://jsonplaceholder.typicode.com/posts",
+    "headers": {
+     "Content-Type": "application/json"
+    },
+    "status": 201,
+    "reason": "Created",
+    "response": {
+     "title": "QA automation",
+     "body": "Testing with requests",
+     "userId": 1,
+     "id": 101
+    },
+    "body_kind": "json",
+    "body": {
+     "title": "QA automation",
+     "body": "Testing with requests",
+     "userId": 1
+    }
+   }
   ]
  },
  {
@@ -2212,6 +2284,30 @@
   "model": "```python\nimport requests\n\nBASE = \"https://jsonplaceholder.typicode.com\"\n\ndef test_update_post():\n    payload = {\"id\": 1, \"title\": \"Updated title\", \"body\": \"Updated body\", \"userId\": 1}\n    r = requests.put(f\"{BASE}/posts/1\", json=payload, timeout=10)\n    assert r.status_code == 200\n    updated = r.json()\n    assert updated[\"id\"] == 1\n    assert updated[\"title\"] == \"Updated title\"\n    assert updated[\"body\"] == \"Updated body\"\n```\n\nPUT replaces the whole resource and should be idempotent: sending it twice leaves the same state. A good follow-up test sends the same PUT twice and compares responses.",
   "tags": [
    "put"
+  ],
+  "reference": [
+   {
+    "method": "PUT",
+    "url": "https://jsonplaceholder.typicode.com/posts/1",
+    "headers": {
+     "Content-Type": "application/json"
+    },
+    "status": 200,
+    "reason": "OK",
+    "response": {
+     "id": 1,
+     "title": "Updated title",
+     "body": "Updated body",
+     "userId": 1
+    },
+    "body_kind": "json",
+    "body": {
+     "id": 1,
+     "title": "Updated title",
+     "body": "Updated body",
+     "userId": 1
+    }
+   }
   ]
  },
  {
@@ -2252,6 +2348,27 @@
   "model": "```python\nimport requests\n\nBASE = \"https://jsonplaceholder.typicode.com\"\n\ndef test_patch_post():\n    r = requests.patch(f\"{BASE}/posts/1\", json={\"title\": \"Patched\"}, timeout=10)\n    assert r.status_code == 200\n    post = r.json()\n    assert post[\"title\"] == \"Patched\"\n    assert post[\"body\"].startswith(\"quia et suscipit\"), \"PATCH must not wipe other fields\"\n```\n\nThe interesting assertion is the second one: a PATCH implemented like a PUT silently wipes fields that weren't sent. That's a real-world bug worth a dedicated test.",
   "tags": [
    "patch"
+  ],
+  "reference": [
+   {
+    "method": "PATCH",
+    "url": "https://jsonplaceholder.typicode.com/posts/1",
+    "headers": {
+     "Content-Type": "application/json"
+    },
+    "status": 200,
+    "reason": "OK",
+    "response": {
+     "userId": 1,
+     "id": 1,
+     "title": "Patched",
+     "body": "quia et suscipit\nsuscipit recusandae consequuntur expedita et cum\nreprehenderit molestiae ut ut quas totam\nnostrum re…"
+    },
+    "body_kind": "json",
+    "body": {
+     "title": "Patched"
+    }
+   }
   ]
  },
  {
@@ -2294,6 +2411,16 @@
   "model": "```python\nimport requests\n\nBASE = \"https://jsonplaceholder.typicode.com\"\n\ndef test_delete_post():\n    r = requests.delete(f\"{BASE}/posts/1\", timeout=10)\n    assert r.status_code == 200\n    assert r.json() == {}\n```\n\nMany APIs return 204 No Content for deletes; this one returns 200 with `{}`, so always assert against the documented contract. On a real API, follow up with a GET expecting 404 to prove the delete happened.",
   "tags": [
    "delete"
+  ],
+  "reference": [
+   {
+    "method": "DELETE",
+    "url": "https://jsonplaceholder.typicode.com/posts/1",
+    "headers": {},
+    "status": 200,
+    "reason": "OK",
+    "response": {}
+   }
   ]
  },
  {
@@ -2338,6 +2465,32 @@
   "model": "```python\nimport requests\n\nBASE = \"https://jsonplaceholder.typicode.com\"\n\ndef test_comments_for_post():\n    r = requests.get(f\"{BASE}/comments\", params={\"postId\": 1}, timeout=10)\n    assert r.status_code == 200\n    comments = r.json()\n    assert len(comments) == 5\n    for c in comments:\n        assert c[\"postId\"] == 1, c\n        assert \"@\" in c[\"email\"], c[\"email\"]\n```\n\n`params=` handles URL encoding correctly, which matters for values with spaces or special characters. Asserting every item matches the filter catches a broken filter that returns extra records.",
   "tags": [
    "query-params"
+  ],
+  "reference": [
+   {
+    "method": "GET",
+    "url": "https://jsonplaceholder.typicode.com/comments?postId=1",
+    "headers": {},
+    "status": 200,
+    "reason": "OK",
+    "response": [
+     {
+      "postId": 1,
+      "id": 1,
+      "name": "id labore ex et quam laborum",
+      "email": "Eliseo@gardner.biz",
+      "body": "laudantium enim quasi est quidem magnam voluptate ipsam eos\ntempora quo necessitatibus\ndolor quam autem quasi\nreicien…"
+     },
+     {
+      "postId": 1,
+      "id": 2,
+      "name": "quo vero reiciendis velit similique earum",
+      "email": "Jayne_Kuhic@sydney.com",
+      "body": "est natus enim nihil est dolore omnis voluptatem numquam\net omnis occaecati quod ullam at\nvoluptatem error expedita p…"
+     },
+     "… 3 more"
+    ]
+   }
   ]
  },
  {
@@ -2376,6 +2529,30 @@
   "model": "```python\nimport requests\n\nBASE = \"https://jsonplaceholder.typicode.com\"\n\ndef test_pagination():\n    r = requests.get(f\"{BASE}/posts\", params={\"_page\": 2, \"_limit\": 10}, timeout=10)\n    assert r.status_code == 200\n    ids = [p[\"id\"] for p in r.json()]\n    assert ids == list(range(11, 21)), ids\n```\n\nComparing the exact id list checks page size, offset and order in one assertion, and the failure message shows the actual ids. A fuller pagination test walks every page and confirms no overlaps or gaps.",
   "tags": [
    "pagination"
+  ],
+  "reference": [
+   {
+    "method": "GET",
+    "url": "https://jsonplaceholder.typicode.com/posts?_page=2&_limit=10",
+    "headers": {},
+    "status": 200,
+    "reason": "OK",
+    "response": [
+     {
+      "userId": 2,
+      "id": 11,
+      "title": "et ea vero quia laudantium autem",
+      "body": "delectus reiciendis molestiae occaecati non minima eveniet qui voluptatibus\naccusamus in eum beatae sit\nvel qui neque…"
+     },
+     {
+      "userId": 2,
+      "id": 12,
+      "title": "in quibusdam tempore odit est dolorem",
+      "body": "itaque id aut magnam\npraesentium quia et ea odit et ea voluptas et\nsapiente quia nihil amet occaecati quia id volupta…"
+     },
+     "… 8 more"
+    ]
+   }
   ]
  },
  {
@@ -2429,6 +2606,38 @@
   "tags": [
    "schema",
    "nested-json"
+  ],
+  "reference": [
+   {
+    "method": "GET",
+    "url": "https://jsonplaceholder.typicode.com/users/1",
+    "headers": {},
+    "status": 200,
+    "reason": "OK",
+    "response": {
+     "id": 1,
+     "name": "Leanne Graham",
+     "username": "Bret",
+     "email": "Sincere@april.biz",
+     "address": {
+      "street": "Kulas Light",
+      "suite": "Apt. 556",
+      "city": "Gwenborough",
+      "zipcode": "92998-3874",
+      "geo": {
+       "lat": "-37.3159",
+       "lng": "81.1496"
+      }
+     },
+     "phone": "1-770-736-8031 x56442",
+     "website": "hildegard.org",
+     "company": {
+      "name": "Romaguera-Crona",
+      "catchPhrase": "Multi-layered client-server neural-net",
+      "bs": "harness real-time e-markets"
+     }
+    }
+   }
   ]
  },
  {
@@ -2473,6 +2682,64 @@
   "model": "```python\nimport requests\nfrom collections import Counter\n\nBASE = \"https://jsonplaceholder.typicode.com\"\n\ndef test_unique_emails():\n    r = requests.get(f\"{BASE}/users\", timeout=10)\n    assert r.status_code == 200\n    users = r.json()\n    assert len(users) == 10\n    emails = [u[\"email\"].lower() for u in users]\n    dupes = [e for e, n in Counter(emails).items() if n > 1]\n    assert not dupes, f\"duplicate emails: {dupes}\"\n```\n\nReporting which emails are duplicated (not just that duplicates exist) makes the failure actionable. Lower-casing matters because email addresses are case-insensitive in practice.",
   "tags": [
    "data-integrity"
+  ],
+  "reference": [
+   {
+    "method": "GET",
+    "url": "https://jsonplaceholder.typicode.com/users",
+    "headers": {},
+    "status": 200,
+    "reason": "OK",
+    "response": [
+     {
+      "id": 1,
+      "name": "Leanne Graham",
+      "username": "Bret",
+      "email": "Sincere@april.biz",
+      "address": {
+       "street": "Kulas Light",
+       "suite": "Apt. 556",
+       "city": "Gwenborough",
+       "zipcode": "92998-3874",
+       "geo": {
+        "lat": "-37.3159",
+        "lng": "81.1496"
+       }
+      },
+      "phone": "1-770-736-8031 x56442",
+      "website": "hildegard.org",
+      "company": {
+       "name": "Romaguera-Crona",
+       "catchPhrase": "Multi-layered client-server neural-net",
+       "bs": "harness real-time e-markets"
+      }
+     },
+     {
+      "id": 2,
+      "name": "Ervin Howell",
+      "username": "Antonette",
+      "email": "Shanna@melissa.tv",
+      "address": {
+       "street": "Victor Plains",
+       "suite": "Suite 879",
+       "city": "Wisokyburgh",
+       "zipcode": "90566-7771",
+       "geo": {
+        "lat": "-43.9509",
+        "lng": "-34.4618"
+       }
+      },
+      "phone": "010-692-6593 x09125",
+      "website": "anastasia.net",
+      "company": {
+       "name": "Deckow-Crist",
+       "catchPhrase": "Proactive didactic contingency",
+       "bs": "synergize scalable supply-chains"
+      }
+     },
+     "… 8 more"
+    ]
+   }
   ]
  },
  {
@@ -2511,6 +2778,21 @@
   "model": "```python\nimport requests\n\nBASE = \"https://jsonplaceholder.typicode.com\"\n\ndef test_json_content_type():\n    r = requests.get(f\"{BASE}/posts/1\", timeout=10)\n    assert r.status_code == 200\n    assert \"application/json\" in r.headers.get(\"Content-Type\", \"\"), r.headers.get(\"Content-Type\")\n```\n\nUse `in` rather than equality, because the header often carries a charset suffix. A wrong Content-Type breaks clients that rely on it (browsers, typed SDKs) even when the body looks fine.",
   "tags": [
    "headers"
+  ],
+  "reference": [
+   {
+    "method": "GET",
+    "url": "https://jsonplaceholder.typicode.com/posts/1",
+    "headers": {},
+    "status": 200,
+    "reason": "OK",
+    "response": {
+     "userId": 1,
+     "id": 1,
+     "title": "sunt aut facere repellat provident occaecati excepturi optio reprehenderit",
+     "body": "quia et suscipit\nsuscipit recusandae consequuntur expedita et cum\nreprehenderit molestiae ut ut quas totam\nnostrum re…"
+    }
+   }
   ]
  },
  {
@@ -2556,6 +2838,29 @@
   "tags": [
    "post",
    "types"
+  ],
+  "reference": [
+   {
+    "method": "POST",
+    "url": "https://jsonplaceholder.typicode.com/todos",
+    "headers": {
+     "Content-Type": "application/json"
+    },
+    "status": 201,
+    "reason": "Created",
+    "response": {
+     "title": "Write API tests",
+     "completed": false,
+     "userId": 1,
+     "id": 201
+    },
+    "body_kind": "json",
+    "body": {
+     "title": "Write API tests",
+     "completed": false,
+     "userId": 1
+    }
+   }
   ]
  },
  {
@@ -2585,6 +2890,60 @@
   "tags": [
    "get",
    "transform"
+  ],
+  "reference": [
+   {
+    "method": "GET",
+    "url": "https://jsonplaceholder.typicode.com/posts?userId=1",
+    "headers": {},
+    "status": 200,
+    "reason": "OK",
+    "response": [
+     {
+      "userId": 1,
+      "id": 1,
+      "title": "sunt aut facere repellat provident occaecati excepturi optio reprehenderit",
+      "body": "quia et suscipit\nsuscipit recusandae consequuntur expedita et cum\nreprehenderit molestiae ut ut quas totam\nnostrum re…"
+     },
+     {
+      "userId": 1,
+      "id": 2,
+      "title": "qui est esse",
+      "body": "est rerum tempore vitae\nsequi sint nihil reprehenderit dolor beatae ea dolores neque\nfugiat blanditiis voluptate porr…"
+     },
+     "… 8 more"
+    ]
+   },
+   {
+    "method": "GET",
+    "url": "https://jsonplaceholder.typicode.com/posts?userId=3",
+    "headers": {},
+    "status": 200,
+    "reason": "OK",
+    "response": [
+     {
+      "userId": 3,
+      "id": 21,
+      "title": "asperiores ea ipsam voluptatibus modi minima quia sint",
+      "body": "repellat aliquid praesentium dolorem quo\nsed totam minus non itaque\nnihil labore molestiae sunt dolor eveniet hic rec…"
+     },
+     {
+      "userId": 3,
+      "id": 22,
+      "title": "dolor sint quo a velit explicabo quia nam",
+      "body": "eos qui et ipsum ipsam suscipit aut\nsed omnis non odio\nexpedita earum mollitia molestiae aut atque rem suscipit\nnam i…"
+     },
+     "… 8 more"
+    ]
+   },
+   {
+    "method": "GET",
+    "url": "https://jsonplaceholder.typicode.com/posts?userId=999",
+    "headers": {},
+    "status": 200,
+    "reason": "OK",
+    "response": []
+   }
   ]
  },
  {
@@ -2618,6 +2977,74 @@
   "tags": [
    "get",
    "aggregation"
+  ],
+  "reference": [
+   {
+    "method": "GET",
+    "url": "https://jsonplaceholder.typicode.com/todos?userId=1",
+    "headers": {},
+    "status": 200,
+    "reason": "OK",
+    "response": [
+     {
+      "userId": 1,
+      "id": 1,
+      "title": "delectus aut autem",
+      "completed": false
+     },
+     {
+      "userId": 1,
+      "id": 2,
+      "title": "quis ut nam facilis et officia qui",
+      "completed": false
+     },
+     "… 18 more"
+    ]
+   },
+   {
+    "method": "GET",
+    "url": "https://jsonplaceholder.typicode.com/todos?userId=2",
+    "headers": {},
+    "status": 200,
+    "reason": "OK",
+    "response": [
+     {
+      "userId": 2,
+      "id": 21,
+      "title": "suscipit repellat esse quibusdam voluptatem incidunt",
+      "completed": false
+     },
+     {
+      "userId": 2,
+      "id": 22,
+      "title": "distinctio vitae autem nihil ut molestias quo",
+      "completed": true
+     },
+     "… 18 more"
+    ]
+   },
+   {
+    "method": "GET",
+    "url": "https://jsonplaceholder.typicode.com/todos?userId=5",
+    "headers": {},
+    "status": 200,
+    "reason": "OK",
+    "response": [
+     {
+      "userId": 5,
+      "id": 81,
+      "title": "suscipit qui totam",
+      "completed": true
+     },
+     {
+      "userId": 5,
+      "id": 82,
+      "title": "voluptates eum voluptas et dicta",
+      "completed": false
+     },
+     "… 18 more"
+    ]
+   }
   ]
  },
  {
@@ -2651,6 +3078,80 @@
   "tags": [
    "get",
    "query-params"
+  ],
+  "reference": [
+   {
+    "method": "GET",
+    "url": "https://jsonplaceholder.typicode.com/users?username=Bret",
+    "headers": {},
+    "status": 200,
+    "reason": "OK",
+    "response": [
+     {
+      "id": 1,
+      "name": "Leanne Graham",
+      "username": "Bret",
+      "email": "Sincere@april.biz",
+      "address": {
+       "street": "Kulas Light",
+       "suite": "Apt. 556",
+       "city": "Gwenborough",
+       "zipcode": "92998-3874",
+       "geo": {
+        "lat": "-37.3159",
+        "lng": "81.1496"
+       }
+      },
+      "phone": "1-770-736-8031 x56442",
+      "website": "hildegard.org",
+      "company": {
+       "name": "Romaguera-Crona",
+       "catchPhrase": "Multi-layered client-server neural-net",
+       "bs": "harness real-time e-markets"
+      }
+     }
+    ]
+   },
+   {
+    "method": "GET",
+    "url": "https://jsonplaceholder.typicode.com/users?username=Samantha",
+    "headers": {},
+    "status": 200,
+    "reason": "OK",
+    "response": [
+     {
+      "id": 3,
+      "name": "Clementine Bauch",
+      "username": "Samantha",
+      "email": "Nathan@yesenia.net",
+      "address": {
+       "street": "Douglas Extension",
+       "suite": "Suite 847",
+       "city": "McKenziehaven",
+       "zipcode": "59590-4157",
+       "geo": {
+        "lat": "-68.6102",
+        "lng": "-47.0653"
+       }
+      },
+      "phone": "1-463-123-4447",
+      "website": "ramiro.info",
+      "company": {
+       "name": "Romaguera-Jacobson",
+       "catchPhrase": "Face to face bifurcated interface",
+       "bs": "e-enable strategic applications"
+      }
+     }
+    ]
+   },
+   {
+    "method": "GET",
+    "url": "https://jsonplaceholder.typicode.com/users?username=nobody",
+    "headers": {},
+    "status": 200,
+    "reason": "OK",
+    "response": []
+   }
   ]
  },
  {
@@ -2679,6 +3180,80 @@
   "tags": [
    "get",
    "nested-routes"
+  ],
+  "reference": [
+   {
+    "method": "GET",
+    "url": "https://jsonplaceholder.typicode.com/posts/1/comments",
+    "headers": {},
+    "status": 200,
+    "reason": "OK",
+    "response": [
+     {
+      "postId": 1,
+      "id": 1,
+      "name": "id labore ex et quam laborum",
+      "email": "Eliseo@gardner.biz",
+      "body": "laudantium enim quasi est quidem magnam voluptate ipsam eos\ntempora quo necessitatibus\ndolor quam autem quasi\nreicien…"
+     },
+     {
+      "postId": 1,
+      "id": 2,
+      "name": "quo vero reiciendis velit similique earum",
+      "email": "Jayne_Kuhic@sydney.com",
+      "body": "est natus enim nihil est dolore omnis voluptatem numquam\net omnis occaecati quod ullam at\nvoluptatem error expedita p…"
+     },
+     "… 3 more"
+    ]
+   },
+   {
+    "method": "GET",
+    "url": "https://jsonplaceholder.typicode.com/posts/2/comments",
+    "headers": {},
+    "status": 200,
+    "reason": "OK",
+    "response": [
+     {
+      "postId": 2,
+      "id": 6,
+      "name": "et fugit eligendi deleniti quidem qui sint nihil autem",
+      "email": "Presley.Mueller@myrl.com",
+      "body": "doloribus at sed quis culpa deserunt consectetur qui praesentium\naccusamus fugiat dicta\nvoluptatem rerum ut voluptate…"
+     },
+     {
+      "postId": 2,
+      "id": 7,
+      "name": "repellat consequatur praesentium vel minus molestias voluptatum",
+      "email": "Dallas@ole.me",
+      "body": "maiores sed dolores similique labore et inventore et\nquasi temporibus esse sunt id et\neos voluptatem aliquam\naliquid …"
+     },
+     "… 3 more"
+    ]
+   },
+   {
+    "method": "GET",
+    "url": "https://jsonplaceholder.typicode.com/posts/50/comments",
+    "headers": {},
+    "status": 200,
+    "reason": "OK",
+    "response": [
+     {
+      "postId": 50,
+      "id": 246,
+      "name": "magnam earum qui eaque sunt excepturi",
+      "email": "Jaycee.Turner@euna.name",
+      "body": "quia est sed eos animi optio dolorum\nconsequatur reiciendis exercitationem ipsum nihil omnis\nbeatae sed corporis enim…"
+     },
+     {
+      "postId": 50,
+      "id": 247,
+      "name": "vel aut blanditiis magni accusamus dolor soluta",
+      "email": "Wilbert@cheyenne.ca",
+      "body": "explicabo nam nihil atque sint aut\nqui qui rerum excepturi soluta quis et\net mollitia et voluptate minima nihil\nsed q…"
+     },
+     "… 3 more"
+    ]
+   }
   ]
  },
  {
@@ -2706,6 +3281,30 @@
   "tags": [
    "get",
    "aggregation"
+  ],
+  "reference": [
+   {
+    "method": "GET",
+    "url": "https://jsonplaceholder.typicode.com/posts",
+    "headers": {},
+    "status": 200,
+    "reason": "OK",
+    "response": [
+     {
+      "userId": 1,
+      "id": 1,
+      "title": "sunt aut facere repellat provident occaecati excepturi optio reprehenderit",
+      "body": "quia et suscipit\nsuscipit recusandae consequuntur expedita et cum\nreprehenderit molestiae ut ut quas totam\nnostrum re…"
+     },
+     {
+      "userId": 1,
+      "id": 2,
+      "title": "qui est esse",
+      "body": "est rerum tempore vitae\nsequi sint nihil reprehenderit dolor beatae ea dolores neque\nfugiat blanditiis voluptate porr…"
+     },
+     "… 98 more"
+    ]
+   }
   ]
  },
  {
@@ -2738,6 +3337,64 @@
   "tags": [
    "get",
    "nested-json"
+  ],
+  "reference": [
+   {
+    "method": "GET",
+    "url": "https://jsonplaceholder.typicode.com/users",
+    "headers": {},
+    "status": 200,
+    "reason": "OK",
+    "response": [
+     {
+      "id": 1,
+      "name": "Leanne Graham",
+      "username": "Bret",
+      "email": "Sincere@april.biz",
+      "address": {
+       "street": "Kulas Light",
+       "suite": "Apt. 556",
+       "city": "Gwenborough",
+       "zipcode": "92998-3874",
+       "geo": {
+        "lat": "-37.3159",
+        "lng": "81.1496"
+       }
+      },
+      "phone": "1-770-736-8031 x56442",
+      "website": "hildegard.org",
+      "company": {
+       "name": "Romaguera-Crona",
+       "catchPhrase": "Multi-layered client-server neural-net",
+       "bs": "harness real-time e-markets"
+      }
+     },
+     {
+      "id": 2,
+      "name": "Ervin Howell",
+      "username": "Antonette",
+      "email": "Shanna@melissa.tv",
+      "address": {
+       "street": "Victor Plains",
+       "suite": "Suite 879",
+       "city": "Wisokyburgh",
+       "zipcode": "90566-7771",
+       "geo": {
+        "lat": "-43.9509",
+        "lng": "-34.4618"
+       }
+      },
+      "phone": "010-692-6593 x09125",
+      "website": "anastasia.net",
+      "company": {
+       "name": "Deckow-Crist",
+       "catchPhrase": "Proactive didactic contingency",
+       "bs": "synergize scalable supply-chains"
+      }
+     },
+     "… 8 more"
+    ]
+   }
   ]
  },
  {
@@ -2764,6 +3421,47 @@
   "model": "```python\nimport requests\n\nBASE = \"https://jsonplaceholder.typicode.com\"\n\ndef fetch_titles(post_ids):\n    titles = []\n    with requests.Session() as session:\n        session.headers.update({\"Accept\": \"application/json\"})\n        for pid in post_ids:\n            r = session.get(f\"{BASE}/posts/{pid}\", timeout=10)\n            r.raise_for_status()\n            titles.append(r.json()[\"title\"])\n    return titles\n```\n\nA Session reuses TCP and TLS connections (much faster for many calls) and holds shared headers, cookies and auth. In a framework, create it once in a fixture. The `with` block closes its connections afterwards.",
   "tags": [
    "session"
+  ],
+  "reference": [
+   {
+    "method": "GET",
+    "url": "https://jsonplaceholder.typicode.com/posts/1",
+    "headers": {},
+    "status": 200,
+    "reason": "OK",
+    "response": {
+     "userId": 1,
+     "id": 1,
+     "title": "sunt aut facere repellat provident occaecati excepturi optio reprehenderit",
+     "body": "quia et suscipit\nsuscipit recusandae consequuntur expedita et cum\nreprehenderit molestiae ut ut quas totam\nnostrum re…"
+    }
+   },
+   {
+    "method": "GET",
+    "url": "https://jsonplaceholder.typicode.com/posts/5",
+    "headers": {},
+    "status": 200,
+    "reason": "OK",
+    "response": {
+     "userId": 1,
+     "id": 5,
+     "title": "nesciunt quas odio",
+     "body": "repudiandae veniam quaerat sunt sed\nalias aut fugiat sit autem sed est\nvoluptatem omnis possimus esse voluptatibus qu…"
+    }
+   },
+   {
+    "method": "GET",
+    "url": "https://jsonplaceholder.typicode.com/posts/10",
+    "headers": {},
+    "status": 200,
+    "reason": "OK",
+    "response": {
+     "userId": 1,
+     "id": 10,
+     "title": "optio molestias id quia eum",
+     "body": "quo et expedita modi cum officia vel magni\ndoloribus qui repudiandae\nvero nisi sit\nquos veniam quod sed accusamus ver…"
+    }
+   }
   ]
  },
  {
@@ -2791,6 +3489,30 @@
   "tags": [
    "get",
    "transform"
+  ],
+  "reference": [
+   {
+    "method": "GET",
+    "url": "https://jsonplaceholder.typicode.com/posts",
+    "headers": {},
+    "status": 200,
+    "reason": "OK",
+    "response": [
+     {
+      "userId": 1,
+      "id": 1,
+      "title": "sunt aut facere repellat provident occaecati excepturi optio reprehenderit",
+      "body": "quia et suscipit\nsuscipit recusandae consequuntur expedita et cum\nreprehenderit molestiae ut ut quas totam\nnostrum re…"
+     },
+     {
+      "userId": 1,
+      "id": 2,
+      "title": "qui est esse",
+      "body": "est rerum tempore vitae\nsequi sint nihil reprehenderit dolor beatae ea dolores neque\nfugiat blanditiis voluptate porr…"
+     },
+     "… 98 more"
+    ]
+   }
   ]
  },
  {
@@ -2836,6 +3558,28 @@
   "tags": [
    "httpbin",
    "query-params"
+  ],
+  "reference": [
+   {
+    "method": "GET",
+    "url": "https://httpbin.org/get?q=playwright&page=2",
+    "headers": {},
+    "status": 200,
+    "reason": "OK",
+    "response": {
+     "args": {
+      "q": "playwright",
+      "page": "2"
+     },
+     "headers": {
+      "User-Agent": "python-requests/2.34.2",
+      "Accept-Encoding": "gzip, deflate",
+      "Accept": "*/*",
+      "Connection": "keep-alive"
+     },
+     "url": "https://httpbin.org/get?q=playwright&page=2"
+    }
+   }
   ]
  },
  {
@@ -2877,6 +3621,42 @@
   "tags": [
    "httpbin",
    "post"
+  ],
+  "reference": [
+   {
+    "method": "POST",
+    "url": "https://httpbin.org/post",
+    "headers": {
+     "Content-Type": "application/json"
+    },
+    "status": 200,
+    "reason": "OK",
+    "response": {
+     "args": {},
+     "headers": {
+      "User-Agent": "python-requests/2.34.2",
+      "Accept-Encoding": "gzip, deflate",
+      "Accept": "*/*",
+      "Connection": "keep-alive",
+      "Content-Length": "59",
+      "Content-Type": "application/json"
+     },
+     "url": "https://httpbin.org/post",
+     "data": "{\"orderId\": \"ORD-1\", \"amount\": \"125.50\", \"currency\": \"INR\"}",
+     "json": {
+      "orderId": "ORD-1",
+      "amount": "125.50",
+      "currency": "INR"
+     },
+     "form": {}
+    },
+    "body_kind": "json",
+    "body": {
+     "orderId": "ORD-1",
+     "amount": "125.50",
+     "currency": "INR"
+    }
+   }
   ]
  },
  {
@@ -2918,6 +3698,26 @@
   "tags": [
    "httpbin",
    "headers"
+  ],
+  "reference": [
+   {
+    "method": "GET",
+    "url": "https://httpbin.org/headers",
+    "headers": {
+     "X-Request-ID": "qa-123"
+    },
+    "status": 200,
+    "reason": "OK",
+    "response": {
+     "headers": {
+      "User-Agent": "python-requests/2.34.2",
+      "Accept-Encoding": "gzip, deflate",
+      "Accept": "*/*",
+      "Connection": "keep-alive",
+      "X-Request-Id": "qa-123"
+     }
+    }
+   }
   ]
  },
  {
@@ -2962,6 +3762,21 @@
   "tags": [
    "httpbin",
    "auth"
+  ],
+  "reference": [
+   {
+    "method": "GET",
+    "url": "https://httpbin.org/basic-auth/qa/secret",
+    "headers": {
+     "Authorization": "Basic cWE6c2VjcmV0"
+    },
+    "status": 200,
+    "reason": "OK",
+    "response": {
+     "authenticated": true,
+     "user": "qa"
+    }
+   }
   ]
  },
  {
@@ -3007,6 +3822,21 @@
   "tags": [
    "httpbin",
    "auth"
+  ],
+  "reference": [
+   {
+    "method": "GET",
+    "url": "https://httpbin.org/bearer",
+    "headers": {
+     "Authorization": "Bearer test-token-123"
+    },
+    "status": 200,
+    "reason": "OK",
+    "response": {
+     "authenticated": true,
+     "token": "test-token-123"
+    }
+   }
   ]
  },
  {
@@ -3039,6 +3869,52 @@
   "tags": [
    "httpbin",
    "errors"
+  ],
+  "reference": [
+   {
+    "method": "GET",
+    "url": "https://httpbin.org/json",
+    "headers": {},
+    "status": 200,
+    "reason": "OK",
+    "response": {
+     "slideshow": {
+      "author": "Yours Truly",
+      "date": "date of publication",
+      "slides": [
+       {
+        "title": "Wake up to WonderWidgets!",
+        "type": "all"
+       },
+       {
+        "items": [
+         "Why <em>WonderWidgets</em> are great",
+         "Who <em>buys</em> WonderWidgets"
+        ],
+        "title": "Overview",
+        "type": "all"
+       }
+      ],
+      "title": "Sample Slide Show"
+     }
+    }
+   },
+   {
+    "method": "GET",
+    "url": "https://httpbin.org/status/500",
+    "headers": {},
+    "status": 500,
+    "reason": "Internal Server Error",
+    "response": ""
+   },
+   {
+    "method": "GET",
+    "url": "https://httpbin.org/status/404",
+    "headers": {},
+    "status": 404,
+    "reason": "Not Found",
+    "response": ""
+   }
   ]
  },
  {
@@ -3070,6 +3946,25 @@
   "tags": [
    "httpbin",
    "timeouts"
+  ],
+  "reference": [
+   {
+    "method": "GET",
+    "url": "https://httpbin.org/get",
+    "headers": {},
+    "status": 200,
+    "reason": "OK",
+    "response": {
+     "args": {},
+     "headers": {
+      "User-Agent": "python-requests/2.34.2",
+      "Accept-Encoding": "gzip, deflate",
+      "Accept": "*/*",
+      "Connection": "keep-alive"
+     },
+     "url": "https://httpbin.org/get"
+    }
+   }
   ]
  },
  {
@@ -3102,6 +3997,32 @@
   "tags": [
    "httpbin",
    "retries"
+  ],
+  "reference": [
+   {
+    "method": "GET",
+    "url": "https://httpbin.org/status/503",
+    "headers": {},
+    "status": 503,
+    "reason": "Service Unavailable",
+    "response": ""
+   },
+   {
+    "method": "GET",
+    "url": "https://httpbin.org/status/200",
+    "headers": {},
+    "status": 200,
+    "reason": "OK",
+    "response": ""
+   },
+   {
+    "method": "GET",
+    "url": "https://httpbin.org/status/404",
+    "headers": {},
+    "status": 404,
+    "reason": "Not Found",
+    "response": ""
+   }
   ]
  },
  {
@@ -3140,6 +4061,32 @@
   "tags": [
    "httpbin",
    "status-codes"
+  ],
+  "reference": [
+   {
+    "method": "GET",
+    "url": "https://httpbin.org/status/200",
+    "headers": {},
+    "status": 200,
+    "reason": "OK",
+    "response": ""
+   },
+   {
+    "method": "GET",
+    "url": "https://httpbin.org/status/201",
+    "headers": {},
+    "status": 201,
+    "reason": "Created",
+    "response": ""
+   },
+   {
+    "method": "GET",
+    "url": "https://httpbin.org/status/404",
+    "headers": {},
+    "status": 404,
+    "reason": "Not Found",
+    "response": ""
+   }
   ]
  }
 ]

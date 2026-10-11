@@ -225,16 +225,51 @@ def _make_response(request, status, body, headers):
     return r
 
 
+NETWORK_ERRORS = (requests.exceptions.ConnectionError, requests.exceptions.SSLError)
+LOG = None          # set to a list to record (request, response) pairs, e.g. for reference data
+FELL_BACK = False   # set by install_fallback() when a live call was served from the recorded copy
+CALLS = 0           # requests made since install_fallback()
+
+
+def _log(request, response):
+    if LOG is not None:
+        LOG.append((request, response))
+    return response
+
+
+def _recorded(request, timeout, mutant=None):
+    host = urllib.parse.urlparse(request.url).hostname
+    handler = HOSTS.get(host)
+    if handler is None:
+        raise requests.exceptions.ConnectionError(f"No recorded copy of {host}; use the URLs given in the task.")
+    status, body, headers = handler(request, timeout)
+    status, body, headers = apply_mutant(mutant, request, status, body, headers)
+    return _make_response(request, status, body, headers)
+
+
 def install(mutant=None):
     """Route requests to the recorded APIs (optionally with a mutant applied)."""
     def send(self, request, stream=False, timeout=None, verify=True, cert=None, proxies=None):
-        host = urllib.parse.urlparse(request.url).hostname
-        handler = HOSTS.get(host)
-        if handler is None:
-            raise requests.exceptions.ConnectionError(f"No recorded copy of {host}; use the URLs given in the task.")
-        status, body, headers = handler(request, timeout)
-        status, body, headers = apply_mutant(mutant, request, status, body, headers)
-        return _make_response(request, status, body, headers)
+        return _log(request, _recorded(request, timeout, mutant))
+    HTTPAdapter.send = send
+
+
+def install_fallback():
+    """Call the real APIs; if one is unreachable, answer that request from the recorded copy instead."""
+    global FELL_BACK, CALLS
+    FELL_BACK, CALLS = False, 0
+
+    def send(self, request, stream=False, timeout=None, verify=True, cert=None, proxies=None):
+        global FELL_BACK, CALLS
+        CALLS += 1
+        try:
+            return _log(request, _ORIGINAL_SEND(self, request, stream=stream, timeout=timeout, verify=verify,
+                                                cert=cert, proxies=proxies))
+        except NETWORK_ERRORS:
+            if urllib.parse.urlparse(request.url).hostname not in HOSTS:
+                raise
+            FELL_BACK = True
+            return _log(request, _recorded(request, timeout))
     HTTPAdapter.send = send
 
 
@@ -243,7 +278,6 @@ def uninstall():
 
 
 # ---------------------------------------------------------------- task runner
-NETWORK_ERRORS = (requests.exceptions.ConnectionError, requests.exceptions.SSLError)
 
 
 def _run_snippets(snippets, ns):

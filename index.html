@@ -191,6 +191,22 @@ body.ide-locked{overflow:hidden}
 .console .muted{color:#9AA1C0}
 .console pre{background:none;padding:0;margin:4px 0;color:inherit;white-space:pre-wrap}
 .console .sum{font-weight:600;margin-bottom:6px}
+.ref{border:1px solid var(--line);border-radius:10px;margin:0 0 12px;background:var(--surface)}
+.ref>summary{cursor:pointer;padding:10px 14px;font:600 12px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--accent);list-style-position:inside}
+.ref>summary span{font:400 13px var(--f-body,inherit);letter-spacing:0;text-transform:none;color:var(--muted);margin-left:6px}
+.ref-body{padding:0 14px 14px;display:grid;gap:14px}
+.call{border-top:1px solid var(--line);padding-top:12px;display:grid;gap:10px;min-width:0}
+.call:first-child{border-top:0;padding-top:0}
+.callhead{display:flex;align-items:center;gap:8px;flex-wrap:wrap;min-width:0}
+.callhead code{word-break:break-all}
+.meth{font:700 11px var(--f-mono);padding:3px 7px;border-radius:5px;background:var(--accent-soft);color:var(--accent)}
+.st{font:600 12px var(--f-mono);color:var(--muted);margin-left:auto}
+.callgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:12px}
+.callgrid>div{min-width:0}
+.callgrid h5{margin:0 0 4px;font:600 11px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:8px}
+.callgrid pre{margin:0 0 10px;max-height:220px;overflow:auto;font-size:12.5px}
+.callgrid .none{font-size:13px;color:var(--muted);margin:0 0 10px}
+.copy{font:600 10.5px var(--f-mono);padding:2px 7px;border-radius:5px;border:1px solid var(--line);background:var(--bg);color:var(--fg);cursor:pointer;text-transform:none;letter-spacing:0}
 .runpill{font:600 11px var(--f-mono);padding:3px 8px;border-radius:999px;background:var(--surface);color:var(--muted);border:1px solid var(--line)}
 .runpill.pass{color:var(--s3);border-color:var(--s3)} .runpill.fail{color:var(--s1);border-color:var(--s1)}
 
@@ -676,6 +692,39 @@ ${S.jd ? "Target role / job description (tailor questions to it):\n"+S.jd.slice(
       }).join("") + `</div>`;
   }
 
+  // Python literal for copy buttons (True/False/None instead of JSON's true/false/null)
+  function pyLit(v, ind = ""){
+    const n = ind + "    ";
+    if (v === null || v === undefined) return "None";
+    if (v === true) return "True"; if (v === false) return "False";
+    if (typeof v === "number") return String(v);
+    if (typeof v === "string") return JSON.stringify(v);
+    if (Array.isArray(v)) return v.length ? "[\n" + v.map(x => n + pyLit(x, n)).join(",\n") + "\n" + ind + "]" : "[]";
+    const ks = Object.keys(v);
+    return ks.length ? "{\n" + ks.map(k => n + JSON.stringify(k) + ": " + pyLit(v[k], n)).join(",\n") + "\n" + ind + "}" : "{}";
+  }
+  const REF_COPY = [];
+  function copyBtn(text){ REF_COPY.push(text); return `<button class="copy" type="button" data-copy="${REF_COPY.length - 1}">Copy</button>`; }
+  function refHTML(calls){
+    REF_COPY.length = 0;
+    const body = calls.map(c => {
+      const hk = Object.keys(c.headers || {});
+      const auto = c.body_kind === "json" ? "requests sets Content-Type for you when you pass json=" : "";
+      const headers = hk.length
+        ? `<h5>Headers ${copyBtn(pyLit(c.headers))}</h5><pre>${esc(hk.map(k => `${k}: ${c.headers[k]}`).join("\n"))}</pre>${auto ? `<p class="none" style="margin-top:-6px">${auto}</p>` : ""}`
+        : `<h5>Headers</h5><p class="none">None needed beyond requests' defaults.</p>`;
+      const payload = c.body_kind
+        ? `<h5>${c.body_kind === "json" ? "JSON payload (json=)" : c.body_kind === "form" ? "Form data (data=)" : "Body"} ${copyBtn(typeof c.body === "string" ? JSON.stringify(c.body) : pyLit(c.body))}</h5><pre>${esc(typeof c.body === "string" ? c.body : JSON.stringify(c.body, null, 2))}</pre>`
+        : "";
+      const resp = typeof c.response === "string" ? (c.response ? c.response : "(empty body)") : JSON.stringify(c.response, null, 2);
+      return `<div class="call">
+        <div class="callhead"><span class="meth">${esc(c.method)}</span><code>${esc(c.url)}</code><span class="st">${esc(String(c.status))} ${esc(c.reason || "")}</span></div>
+        <div class="callgrid"><div>${headers}${payload}</div><div><h5>Sample response</h5><pre>${esc(resp)}</pre></div></div>
+      </div>`;
+    }).join("");
+    return `<details class="ref" open><summary>Reference data<span>headers, payload and a sample response for each call</span></summary><div class="ref-body">${body}</div></details>`;
+  }
+
   function taskHTML(it){
     const q = it.q;
     let h = "";
@@ -685,6 +734,7 @@ ${S.jd ? "Target role / job description (tailor questions to it):\n"+S.jd.slice(
         <div class="exrow"><span class="exk">Input</span><pre>${esc(ex.input)}</pre></div>
         <div class="exrow"><span class="exk">Output</span><pre>${esc(ex.output)}</pre></div></div>`).join("") + `</div>`;
     }
+    if (q.kind === "api_code" && Array.isArray(q.reference) && q.reference.length) h += refHTML(q.reference);
     let how = "";
     if (q.kind === "api_code"){
       how = q.mutants?.length
@@ -722,9 +772,15 @@ ${S.jd ? "Target role / job description (tailor questions to it):\n"+S.jd.slice(
                  : `<button class="btn primary" id="submitBtn" type="button" ${mcq && it.choice == null ? "disabled" : ""}>${mcq ? "Check answer" : "Submit"}</button>
                     ${q.hint ? `<button class="btn ghost" id="hintBtn" type="button">Hint</button>`:""}
                     <button class="btn ghost" id="dunnoBtn" type="button">Skip and show answer</button>
-                    <span class="grow"></span><span class="kbd">${mcq ? "Keys A–D to pick" : "Ctrl + Enter to submit"}</span>`}
+                    <span class="grow"></span><span class="kbd">${mcq ? "Keys A–D to pick" : coding && runnable(it) ? "In the editor: Ctrl + Enter run tests · Ctrl + Shift + Enter run code" : "Ctrl + Enter to submit"}</span>`}
       </div>`;
     wireIde(it);
+    $("#qBody").querySelectorAll(".copy").forEach(b => b.onclick = async () => {
+      const t = REF_COPY[+b.dataset.copy] || "";
+      try { await navigator.clipboard.writeText(t); }
+      catch(_) { const x = document.createElement("textarea"); x.value = t; document.body.appendChild(x); x.select(); try{ document.execCommand("copy"); }catch(__){} x.remove(); }
+      b.textContent = "Copied"; setTimeout(() => { b.textContent = "Copy"; }, 1400);
+    });
     const ta = $("#answer");
     if (ta){
       ta.addEventListener("input", () => { it.answer = ta.value; save(); });
@@ -767,14 +823,17 @@ ${S.jd ? "Target role / job description (tailor questions to it):\n"+S.jd.slice(
     const file = q.kind === "python_code" ? "solution.py" : q.kind === "api_code" ? "test_api.py" : "test_ui.py";
     const note = !runnable(it) ? "Reviewed by AI · not executed" : q.kind === "api_code" ? "Python 3.12 · requests · live API" : `Python 3.12 · ${q.tests?.length || 0} hidden tests`;
     const ex = (q.examples||[]).slice(0,2).map(x=>`<pre>${esc(x.input)}</pre> → <pre>${esc(x.output)}</pre>`).join(" &nbsp; ");
+    const refMini = (q.reference||[]).filter(c => c.body_kind || Object.keys(c.headers||{}).length).slice(0,2).map(c =>
+      `<div style="margin-top:6px"><span class="meth">${esc(c.method)}</span> ${Object.keys(c.headers||{}).length ? `headers <pre>${esc(JSON.stringify(c.headers))}</pre>` : ""} ${c.body_kind ? `${c.body_kind === "json" ? "json=" : "data="} <pre>${esc(JSON.stringify(c.body))}</pre>` : ""}</div>`).join("");
     return `<div class="ide" id="ide">
-      <div class="ide-q"><b>${esc(q.question)}</b>${q.endpoint?`<div class="muted" style="margin-top:4px"><code>${esc(q.endpoint)}</code></div>`:""}${ex?`<div style="margin-top:6px">${ex}</div>`:""}</div>
+      <div class="ide-q"><b>${esc(q.question)}</b>${q.endpoint?`<div class="muted" style="margin-top:4px"><code>${esc(q.endpoint)}</code></div>`:""}${ex?`<div style="margin-top:6px">${ex}</div>`:""}${refMini}</div>
       <div class="ide-bar">
         <span class="file">${file}</span><span class="note">${note}</span><span class="grow"></span>
         ${runnable(it) ? `<span class="runpill" id="pyState"></span>` : ""}
         <button class="btn sm ghost" type="button" id="resetCode">Reset</button>
         <button class="btn sm ghost" type="button" id="fullBtn" aria-pressed="false" title="Full-screen editor (Esc to exit)">⛶ Full screen</button>
-        ${runnable(it) ? `<button class="btn sm primary" type="button" id="runBtn">Run tests</button>` : ""}
+        ${runnable(it) ? `<button class="btn sm ghost" type="button" id="execBtn" title="Run your code as a script and see its output (Ctrl + Shift + Enter)">▶ Run code</button>
+        <button class="btn sm primary" type="button" id="runBtn" title="Run the hidden checks (Ctrl + Enter)">Run tests</button>` : ""}
       </div>
       <div class="ide-wrap"><div class="gutter" id="gutter" aria-hidden="true"></div>
         <textarea class="code" id="code" wrap="off" spellcheck="false" autocapitalize="off" autocomplete="off" aria-label="Code editor">${esc(it.code)}</textarea></div>
@@ -796,7 +855,7 @@ ${S.jd ? "Target role / job description (tailor questions to it):\n"+S.jd.slice(
     $("#fullBtn").onclick = () => setFull(!$("#ide").classList.contains("full"));
     ed.addEventListener("input", () => { it.code = ed.value; save(); fit(); });
     ed.addEventListener("keydown", e => {
-      if ((e.ctrlKey||e.metaKey) && e.key === "Enter"){ e.preventDefault(); runnable(it) ? doRun(it) : null; return; }
+      if ((e.ctrlKey||e.metaKey) && e.key === "Enter"){ e.preventDefault(); if (runnable(it)) e.shiftKey ? doExec(it) : doRun(it); return; }
       if (e.key === "Tab" && !e.shiftKey){ e.preventDefault(); insert(ed, "    "); }
       else if (e.key === "Enter"){
         const before = ed.value.slice(0, ed.selectionStart);
@@ -810,6 +869,7 @@ ${S.jd ? "Target role / job description (tailor questions to it):\n"+S.jd.slice(
     $("#resetCode").onclick = () => { ed.value = it.q.starter_code || ""; it.code = ed.value; it.run = null; save(); fit(); $("#console").hidden = true; };
     if (runnable(it)){
       $("#runBtn").onclick = () => doRun(it);
+      $("#execBtn").onclick = () => doExec(it);
       pyPill();
       if (PY.state === "idle") bootPy().then(pyPill);
     }
@@ -825,6 +885,44 @@ ${S.jd ? "Target role / job description (tailor questions to it):\n"+S.jd.slice(
     const p = $("#pyState"); if (!p) return;
     p.className = "runpill";
     p.textContent = {idle:"Runtime idle", loading:"Loading Python…", ready:"Python ready", failed:"Runner unavailable"}[PY.state] || "";
+  }
+
+  async function doExec(it){
+    const btn = $("#execBtn"), run = $("#runBtn"), con = $("#console");
+    if (!btn || btn.disabled) return;
+    btn.disabled = true; if (run) run.disabled = true; con.hidden = false;
+    const code = it.code || "";
+    const net = /\b(import|from)\s+requests\b/.test(code);
+    con.innerHTML = `<div class="muted">${PY.state !== "ready" ? "Loading Python runtime (first run takes a few seconds)…" : net ? "Running (calling the API)…" : "Running…"}</div>`;
+    pyPill();
+    let d;
+    const ok = await bootPy();
+    if (!ok) d = {unavailable:true};
+    else {
+      d = await pyCall({type:"exec", code}, net ? 45000 : 10000);
+      if (d.timeout) d = {timeout:true}; else if (!d.ok) d = {unavailable:true, error:d.error};
+    }
+    if (btn.isConnected) btn.disabled = false; if (run?.isConnected) run.disabled = false;
+    pyPill(); renderExec(d, it);
+  }
+
+  function renderExec(d, it){
+    const con = $("#console"); if (!con) return;
+    con.hidden = false;
+    if (d.unavailable){ con.innerHTML = `<div class="no">The Python runner couldn't start in this view${d.error ? ": " + esc(d.error) : ""}.</div>`; return; }
+    if (d.timeout){ con.innerHTML = `<div class="no">Stopped after the time limit. Check for an infinite loop or a request without a timeout.</div>`; return; }
+    let h = `<div class="sum ${d.error ? "no" : "ok"}">${d.error ? "Run failed" : "Ran successfully"} <span class="muted">· Run code · ${d.ms} ms</span></div>`;
+    if (d.mode === "live") h += `<div class="muted" style="margin-bottom:6px">● Requests went to the live API</div>`;
+    else if (d.mode === "recorded") h += `<div class="muted" style="margin-bottom:6px">● The live API isn't reachable from this view, so requests were answered by a recorded copy of it</div>`;
+    if (d.stdout) h += `<div class="muted" style="margin-top:6px">Output</div><pre>${esc(d.stdout.slice(0, 8000))}</pre>`;
+    if (d.error) h += `<pre class="no">${esc(d.error)}</pre>`;
+    if (!d.stdout && !d.error){
+      const fn = (it.q.entry || "").trim() || (it.q.examples?.[0]?.input || "").trim();
+      const call = fn.replace(/^print\((.*)\)$/, "$1");
+      const tip = !fn ? "<code>print(...)</code>" : /^test_/.test(call) ? `<code>${esc(call)}</code> (it runs silently when every assert holds) or <code>print(...)</code> a response` : `<code>print(${esc(call)})</code>`;
+      h += `<div class="muted">No output. Your code only defines things, so nothing is printed. Add a call at the bottom to try it, e.g. ${tip}, or click Run tests to grade it.</div>`;
+    }
+    con.innerHTML = h;
   }
 
   async function doRun(it){
