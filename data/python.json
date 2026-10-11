@@ -3551,5 +3551,1443 @@
    "modules",
    "design"
   ]
+ },
+ {
+  "id": "py-146",
+  "topic": "Python",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "Python doesn't support classic method overloading. What happens if a class defines `def area(self, r)` and then `def area(self, w, h)`?",
+  "what_tested": "Method overloading in Python",
+  "options": [
+   "The second def replaces the first; area(5) raises TypeError",
+   "It raises a SyntaxError as soon as the class body is defined",
+   "Both versions are kept and the first matching signature wins",
+   "Python picks the right version by argument count at call time"
+  ],
+  "answer": 0,
+  "model": "A class body is just a namespace: the second `def area` rebinds the name, so only `area(self, w, h)` exists and `area(5)` fails with TypeError (missing argument).\n\nWays to get overloading-like behaviour:\n- default/optional arguments: `def area(self, w, h=None)`\n- `*args` and branch on `len(args)`\n- `functools.singledispatch` / `singledispatchmethod` to dispatch on the **type** of the first argument\n- `typing.overload` only documents signatures for type checkers; you still write one real implementation.\n\nInterview line: \"Python resolves names, not signatures, so overloading is done with defaults, *args or singledispatch.\"",
+  "tags": [
+   "oop",
+   "overloading"
+  ]
+ },
+ {
+  "id": "py-147",
+  "topic": "Python",
+  "difficulty": "deep",
+  "kind": "concept",
+  "question": "What does `functools.singledispatch` give you?",
+  "what_tested": "singledispatch",
+  "options": [
+   "A way to run several overloads in turn and merge their results",
+   "One function whose implementation is picked by the argument's type",
+   "A decorator that makes the function run only once per process",
+   "Compile-time checking that every argument has its declared type"
+  ],
+  "answer": 1,
+  "model": "```python\nfrom functools import singledispatch\n\n@singledispatch\ndef to_text(value):            # fallback\n    return str(value)\n\n@to_text.register\ndef _(value: list):\n    return \", \".join(map(to_text, value))\n\n@to_text.register\ndef _(value: bool):\n    return \"yes\" if value else \"no\"\n```\nDispatch is on the **runtime type of the first argument**, including subclasses. For methods use `functools.singledispatchmethod` (dispatches on the first argument after `self`). Useful in frameworks for formatting report values or converting test data by type.",
+  "tags": [
+   "overloading",
+   "functions"
+  ]
+ },
+ {
+  "id": "py-148",
+  "topic": "Python",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "What is `typing.overload` used for?",
+  "what_tested": "typing.overload",
+  "options": [
+   "Caching compiled bytecode separately for each call signature",
+   "Declaring extra signatures for type checkers only",
+   "Marking methods that every subclass is required to override",
+   "Registering implementations that Python selects at runtime"
+  ],
+  "answer": 1,
+  "model": "`@overload`-decorated stubs are only seen by static type checkers (mypy, pyright) and IDEs. At runtime they're replaced by the final undecorated implementation, which must handle every case itself.\n\n```python\nfrom typing import overload\n\n@overload\ndef get(key: int) -> str: ...\n@overload\ndef get(key: str) -> int: ...\ndef get(key):                 # the only one that runs\n    ...\n```",
+  "tags": [
+   "overloading",
+   "typing"
+  ]
+ },
+ {
+  "id": "py-149",
+  "topic": "Python",
+  "difficulty": "warm-up",
+  "kind": "concept",
+  "question": "What is method overriding?",
+  "what_tested": "Overriding basics",
+  "options": [
+   "Defining two methods with one name but different arguments",
+   "Calling the parent's method explicitly via Parent.method(self)",
+   "Marking a method private so that subclasses can't access it",
+   "A subclass redefining a parent method with the same name"
+  ],
+  "answer": 3,
+  "model": "```python\nclass BasePage:\n    def is_loaded(self):\n        return True\n\nclass LoginPage(BasePage):\n    def is_loaded(self):                 # overrides BasePage.is_loaded\n        return self.page.get_by_role(\"button\", name=\"Sign in\").is_visible()\n```\nPython looks the method up on the instance's class first, then along the MRO, so `LoginPage().is_loaded()` runs the subclass version. To extend instead of replace, call `super().is_loaded()` inside it.",
+  "tags": [
+   "oop",
+   "overriding"
+  ]
+ },
+ {
+  "id": "py-150",
+  "topic": "Python",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "A child class defines `__init__` but never calls `super().__init__(...)`. What's the usual symptom?",
+  "what_tested": "Overriding __init__",
+  "options": [
+   "Python calls the parent's __init__ automatically after the child's",
+   "The class can't be instantiated and raises TypeError immediately",
+   "Parent attributes are never set, so AttributeError appears later",
+   "The child's __init__ is skipped and the parent's version runs"
+  ],
+  "answer": 2,
+  "model": "Python does **not** chain constructors automatically. If `BasePage.__init__` sets `self.page` and `self.timeout`, a `LoginPage.__init__` that forgets `super().__init__(page)` leaves those attributes unset, and the first `self.page...` raises `AttributeError: 'LoginPage' object has no attribute 'page'`.\n\n```python\nclass LoginPage(BasePage):\n    def __init__(self, page):\n        super().__init__(page)       # sets self.page, self.timeout\n        self.submit = page.get_by_role(\"button\", name=\"Sign in\")\n```",
+  "tags": [
+   "oop",
+   "overriding",
+   "inheritance"
+  ]
+ },
+ {
+  "id": "py-151",
+  "topic": "Python",
+  "difficulty": "deep",
+  "kind": "concept",
+  "question": "Given `class A`, `class B(A)`, `class C(A)` and `class D(B, C)`, what is `D.__mro__`?",
+  "what_tested": "MRO and C3 linearisation",
+  "options": [
+   "D, C, B, A, object",
+   "D, B, C, A, object",
+   "D, B, A, C, object",
+   "D, A, B, C, object"
+  ],
+  "answer": 1,
+  "model": "Python uses C3 linearisation: a class comes before its parents, parents keep the order you listed them, and a shared base (A) appears only once, after every class that inherits from it. So it's `D → B → C → A → object`.\n\nThis is why `super()` means \"next class in the MRO\", not \"my parent\": inside `B`, `super().method()` calls **C**'s method when the object is a `D`. Cooperative multiple inheritance relies on every class calling `super()`.",
+  "tags": [
+   "oop",
+   "inheritance",
+   "mro"
+  ]
+ },
+ {
+  "id": "py-152",
+  "topic": "Python",
+  "difficulty": "deep",
+  "kind": "concept",
+  "question": "Inside `class B(A)`, what does `super().save()` call when the object is an instance of `class D(B, C)`?",
+  "what_tested": "super() follows the MRO",
+  "options": [
+   "Always A.save, because A is B's declared parent class",
+   "The save() of the class after B in D's MRO, e.g. C",
+   "object.save, which doesn't exist and raises an error",
+   "B.save again, so the call recurses until it overflows"
+  ],
+  "answer": 1,
+  "model": "`super()` is bound to the instance's MRO (`D, B, C, A, object`), and returns the class **after B** in that order. So in a diamond, B's `super()` reaches C, and C's `super()` reaches A. Each method running exactly once depends on all of them calling `super()`.",
+  "tags": [
+   "oop",
+   "inheritance",
+   "mro"
+  ]
+ },
+ {
+  "id": "py-153",
+  "topic": "Python",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "What's a mixin, and why are they common in test frameworks?",
+  "what_tested": "Mixins",
+  "options": [
+   "The main base class, which must always be inherited from first",
+   "An abstract class whose methods are not allowed to have bodies",
+   "A metaclass that merges attributes from two different modules",
+   "A small class adding one reusable capability via inheritance"
+  ],
+  "answer": 3,
+  "model": "```python\nclass ScreenshotMixin:\n    def snap(self, name):\n        self.page.screenshot(path=f\"artifacts/{name}.png\")\n\nclass LoginPage(ScreenshotMixin, BasePage):\n    ...\n```\nMixins are small, don't stand alone, usually have no `__init__` (or call `super().__init__`), and are listed **before** the main base class so their methods win in the MRO. Keep them few; deep mixin stacks are hard to debug.",
+  "tags": [
+   "oop",
+   "inheritance"
+  ]
+ },
+ {
+  "id": "py-154",
+  "topic": "Python",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you make `Money(5) + Money(3)` return `Money(8)`?",
+  "what_tested": "Operator overloading",
+  "options": [
+   "Define __add__ returning a new Money",
+   "Inherit from int so that + works automatically",
+   "Define a __plus__ method on the Money class",
+   "Override the built-in sum() for Money objects"
+  ],
+  "answer": 0,
+  "model": "Operators map to special methods: `+` → `__add__`, `-` → `__sub__`, `==` → `__eq__`, `<` → `__lt__`, `len()` → `__len__`, `in` → `__contains__`, `[]` → `__getitem__`.\n\n```python\nclass Money:\n    def __init__(self, amount):\n        self.amount = amount\n    def __add__(self, other):\n        if not isinstance(other, Money):\n            return NotImplemented          # lets Python try other.__radd__\n        return Money(self.amount + other.amount)\n    def __radd__(self, other):              # makes sum([...]) work (0 + Money)\n        return self if other == 0 else self.__add__(other)\n```\nReturn `NotImplemented` (not raise) for unsupported types.",
+  "tags": [
+   "oop",
+   "dunder",
+   "overloading"
+  ]
+ },
+ {
+  "id": "py-155",
+  "topic": "Python",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "Two objects of a class with no `__eq__` have identical attributes. What does `a == b` return?",
+  "what_tested": "Default equality",
+  "options": [
+   "True: Python compares instance attributes by default",
+   "False: default __eq__ compares identity",
+   "True, but only when both objects were created by copy()",
+   "It raises TypeError because there's no __eq__ method"
+  ],
+  "answer": 1,
+  "model": "`object.__eq__` falls back to identity (`a is b`). To compare by value, define `__eq__` (and `__hash__` if the objects go in sets/dict keys), or use `@dataclass`, which generates `__eq__` from the fields. This matters when asserting `expected == actual` on custom result objects.",
+  "tags": [
+   "oop",
+   "dunder"
+  ]
+ },
+ {
+  "id": "py-156",
+  "topic": "Python",
+  "difficulty": "deep",
+  "kind": "concept",
+  "question": "What does `@functools.total_ordering` do?",
+  "what_tested": "Rich comparisons",
+  "options": [
+   "Keeps the class's instances sorted automatically as they're made",
+   "Makes every attribute comparable by generating a __hash__ method",
+   "Lets objects of unrelated classes be compared without any errors",
+   "Derives the other comparisons from __eq__ and __lt__ (or similar)"
+  ],
+  "answer": 3,
+  "model": "```python\nfrom functools import total_ordering\n\n@total_ordering\nclass Version:\n    def __init__(self, s): self.parts = tuple(map(int, s.split(\".\")))\n    def __eq__(self, o): return self.parts == o.parts\n    def __lt__(self, o): return self.parts < o.parts\n```\nNow `<=`, `>`, `>=` work and `sorted(versions)` works. Comparing tuples is the trick that makes '1.10' > '1.9'.",
+  "tags": [
+   "oop",
+   "dunder"
+  ]
+ },
+ {
+  "id": "py-157",
+  "topic": "Python",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "What does defining `__call__` on a class let you do?",
+  "what_tested": "Callable objects",
+  "options": [
+   "Intercept each attribute lookup on the instance",
+   "Run setup code automatically when imported",
+   "Make every method on the class behave as static",
+   "Call instances like functions, e.g. policy(fn)"
+  ],
+  "answer": 3,
+  "model": "Callable objects are functions with state. Class-based decorators use this:\n```python\nclass CountCalls:\n    def __init__(self, fn):\n        self.fn, self.calls = fn, 0\n    def __call__(self, *args, **kwargs):\n        self.calls += 1\n        return self.fn(*args, **kwargs)\n```\npytest's `monkeypatch`, mocks (`Mock()` is callable) and many hooks rely on this protocol.",
+  "tags": [
+   "oop",
+   "dunder"
+  ]
+ },
+ {
+  "id": "py-158",
+  "topic": "Python",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "Which methods make an object usable in a `for` loop as its own iterator?",
+  "what_tested": "Iterator protocol",
+  "options": [
+   "__loop__ and __end__ defined on the class",
+   "__getattr__ together with a __len__ method",
+   "__iter__ returning self, and __next__",
+   "__enter__ and __exit__ for the loop scope"
+  ],
+  "answer": 2,
+  "model": "`for x in obj` calls `iter(obj)` (→ `__iter__`) then `next()` (→ `__next__`) until `StopIteration`. A class with only `__getitem__` also iterates (legacy). Generators implement the protocol for you, which is why `yield` is usually simpler than a hand-written iterator class.",
+  "tags": [
+   "oop",
+   "dunder",
+   "generators"
+  ]
+ },
+ {
+  "id": "py-159",
+  "topic": "Python",
+  "difficulty": "deep",
+  "kind": "concept",
+  "question": "In a context manager, what happens if `__exit__` returns True?",
+  "what_tested": "__exit__ return value",
+  "options": [
+   "The exception is re-raised with extra context added",
+   "The return value is ignored and the error propagates",
+   "The with block is executed again from the beginning",
+   "The exception from the with block is suppressed"
+  ],
+  "answer": 3,
+  "model": "`__exit__(exc_type, exc, tb)` receives the exception (or three `None`s). Returning a truthy value swallows it, which is how `contextlib.suppress` works. In test helpers you almost always want `return False` (or no return) so failures still surface; accidentally returning True hides real bugs.",
+  "tags": [
+   "context-managers",
+   "dunder"
+  ]
+ },
+ {
+  "id": "py-160",
+  "topic": "Python",
+  "difficulty": "deep",
+  "kind": "concept",
+  "question": "What's the difference between `__getattr__` and `__getattribute__`?",
+  "what_tested": "Attribute lookup hooks",
+  "options": [
+   "__getattr__ is a fallback; __getattribute__ runs on every access",
+   "They're aliases: defining either one gives exactly the same behaviour",
+   "__getattribute__ only runs for names that start with an underscore",
+   "__getattr__ handles class attributes, __getattribute__ instance ones"
+  ],
+  "answer": 0,
+  "model": "`__getattr__` is the safe one: a fallback for missing attributes (handy for proxies/wrappers, e.g. delegating unknown calls to a wrapped Playwright page). Overriding `__getattribute__` intercepts everything and easily causes infinite recursion unless you call `object.__getattribute__(self, name)`.",
+  "tags": [
+   "oop",
+   "dunder",
+   "internals"
+  ]
+ },
+ {
+  "id": "py-161",
+  "topic": "Python",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "What happens when you instantiate a class that inherits from `ABC` and still has an unimplemented `@abstractmethod`?",
+  "what_tested": "Abstract base classes",
+  "options": [
+   "It works, and calling the missing method returns None",
+   "NotImplementedError when the method is first called",
+   "A warning is printed, but the object is still created",
+   "TypeError at instantiation naming the abstract method"
+  ],
+  "answer": 3,
+  "model": "`abc.ABC` + `@abstractmethod` enforces an interface at **instantiation** time. Useful for framework contracts: e.g. every `BasePage` subclass must implement `url` or `is_loaded()`. Contrast with raising `NotImplementedError` in a base method, which only fails when called.",
+  "tags": [
+   "oop",
+   "abstraction"
+  ]
+ },
+ {
+  "id": "py-162",
+  "topic": "Python",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "What does Python do with an attribute named `self.__token` inside `class Client`?",
+  "what_tested": "Name mangling",
+  "options": [
+   "Raises an error whenever it's read outside the class",
+   "Makes it truly private and unreadable from outside",
+   "Nothing at all; it's purely a naming convention",
+   "Stores it as _Client__token (name mangling)"
+  ],
+  "answer": 3,
+  "model": "Two leading underscores (and at most one trailing) triggers name mangling: `self.__token` is stored as `self._Client__token`. It prevents accidental overrides by subclasses, but it's not security; anyone can still read `_Client__token`. A single underscore `_token` is the normal \"internal, don't touch\" convention.",
+  "tags": [
+   "oop",
+   "encapsulation"
+  ]
+ },
+ {
+  "id": "py-163",
+  "topic": "Python",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "Why use a `@classmethod` like `User.from_dict(data)`?",
+  "what_tested": "Alternative constructors",
+  "options": [
+   "It's faster than __init__ because it skips validation",
+   "It can only be called on instances, not on the class",
+   "It gets cls, so subclasses build their own type",
+   "It hides the method so it's private to the class"
+  ],
+  "answer": 2,
+  "model": "`cls` is whatever class the method was called on, so `AdminUser.from_dict(...)` returns an `AdminUser`. Common in frameworks: `Config.from_env(\"staging\")`, `TestData.from_json(path)`. `@staticmethod` gets neither `self` nor `cls`; it's just a function namespaced in the class.",
+  "tags": [
+   "oop"
+  ]
+ },
+ {
+  "id": "py-164",
+  "topic": "Python",
+  "difficulty": "deep",
+  "kind": "concept",
+  "question": "What is a descriptor, and which everyday feature is built on it?",
+  "what_tested": "Descriptors",
+  "options": [
+   "A class attribute with __get__/__set__; property uses one",
+   "A docstring convention that documents a class attribute",
+   "A metaclass that generates and describes a class's fields",
+   "A type hint that Python checks and enforces at runtime"
+  ],
+  "answer": 0,
+  "model": "When an attribute on the **class** defines `__get__` (and maybe `__set__`/`__delete__`), attribute access on instances is routed through it. `property`, `classmethod`, `staticmethod`, and bound methods all work this way. Frameworks use descriptors for validated fields (ORMs, pydantic-like models).",
+  "tags": [
+   "oop",
+   "internals"
+  ]
+ },
+ {
+  "id": "py-165",
+  "topic": "Python",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How many levels of nested functions does a decorator that takes arguments, like `@retry(times=3)`, need?",
+  "what_tested": "Decorators with arguments",
+  "options": [
+   "Three: factory, decorator, wrapper",
+   "Four, because functools.wraps adds an extra level",
+   "One, since the arguments go straight to the wrapper",
+   "Two, exactly as for a decorator without any arguments"
+  ],
+  "answer": 0,
+  "model": "```python\nimport functools\n\ndef retry(times=3):                      # 1. factory: receives arguments\n    def decorator(fn):                   # 2. decorator: receives the function\n        @functools.wraps(fn)\n        def wrapper(*args, **kwargs):    # 3. wrapper: runs on each call\n            for attempt in range(times):\n                try:\n                    return fn(*args, **kwargs)\n                except Exception:\n                    if attempt == times - 1:\n                        raise\n        return wrapper\n    return decorator\n```\n`@retry(times=3)` first calls `retry(3)`, then applies the returned decorator.",
+  "tags": [
+   "decorators"
+  ]
+ },
+ {
+  "id": "py-166",
+  "topic": "Python",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "With `@a` stacked above `@b` on `def f()`, what is `f` afterwards?",
+  "what_tested": "Decorator stacking order",
+  "options": [
+   "a(f) and b(f) run independently",
+   "b(a(f)): applied top to bottom",
+   "a(b(f)): b is applied first",
+   "Only the top decorator is applied"
+  ],
+  "answer": 2,
+  "model": "Decorators apply bottom-up (closest to the function first), and at call time the outer wrapper (`a`) runs first. Order matters, e.g. with `@pytest.mark.parametrize` stacked over `@retry`, or `@login_required` over `@cache`.",
+  "tags": [
+   "decorators"
+  ]
+ },
+ {
+  "id": "py-167",
+  "topic": "Python",
+  "difficulty": "deep",
+  "kind": "concept",
+  "question": "What can a class decorator do that a metaclass is often used for?",
+  "what_tested": "Class decorators",
+  "options": [
+   "Modify or register the finished class",
+   "Replace __new__ to control how instances are made",
+   "Decorate each method automatically at call time",
+   "Nothing, because decorators only work on functions"
+  ],
+  "answer": 0,
+  "model": "A class decorator is just `cls = deco(cls)`. `@dataclass`, `@total_ordering` and plugin registries (`@register_page(\"login\")`) are class decorators. They're simpler than metaclasses and enough for most framework needs.",
+  "tags": [
+   "decorators",
+   "oop"
+  ]
+ },
+ {
+  "id": "py-168",
+  "topic": "Python",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "In what order does Python look up a name inside a nested function?",
+  "what_tested": "LEGB scope",
+  "options": [
+   "Built-in, Global, Enclosing, Local",
+   "Local, Enclosing, Global, Built-in",
+   "Global, Local, Built-in, Enclosing",
+   "Local, Global, Enclosing, Built-in"
+  ],
+  "answer": 1,
+  "model": "LEGB. Assigning to a name makes it local for the whole function, so `count += 1` on an outer variable raises `UnboundLocalError` unless you declare `nonlocal count` (enclosing function) or `global count` (module). Closures in decorators and fixture factories rely on the **E**nclosing scope.",
+  "tags": [
+   "functions",
+   "scope"
+  ]
+ },
+ {
+  "id": "py-169",
+  "topic": "Python",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "What does `def f(a, *, timeout=30)` enforce?",
+  "what_tested": "Keyword-only arguments",
+  "options": [
+   "timeout can only ever be passed positionally",
+   "timeout is keyword-only: f(x, timeout=60)",
+   "f accepts any number of extra positional args",
+   "a becomes optional and defaults to None"
+  ],
+  "answer": 1,
+  "model": "Everything after a bare `*` is keyword-only. Great for helper APIs: `click(locator, *, timeout=60_000, force=False)` so callers can't accidentally pass `60000` as the wrong positional argument. Similarly `/` makes the parameters before it positional-only.",
+  "tags": [
+   "functions"
+  ]
+ },
+ {
+  "id": "py-170",
+  "topic": "Python",
+  "difficulty": "deep",
+  "kind": "concept",
+  "question": "What does the GIL mean for a test suite that makes many HTTP calls?",
+  "what_tested": "GIL and I/O",
+  "options": [
+   "Threads can never overlap at all, so they don't help here",
+   "The GIL makes HTTP calls thread-safe, so no locks are needed",
+   "Concurrent HTTP calls are only possible with multiprocessing",
+   "Threads still help: the GIL is released during network I/O"
+  ],
+  "answer": 3,
+  "model": "The GIL lets only one thread execute Python bytecode at a time, but it's released during blocking I/O (sockets, files, `time.sleep`). So `ThreadPoolExecutor` speeds up many API calls; CPU-heavy work needs `multiprocessing` (or a free-threaded build). `asyncio` with an async client (httpx, Playwright async) is another I/O option. pytest-xdist uses processes, sidestepping the GIL.",
+  "tags": [
+   "concurrency",
+   "internals"
+  ]
+ },
+ {
+  "id": "py-171",
+  "topic": "Python",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "What does `raise ConfigError('bad env') from err` add compared to a plain raise inside `except`?",
+  "what_tested": "Exception chaining",
+  "options": [
+   "It retries the failing operation once before raising",
+   "It sets err as the explicit __cause__ in the traceback",
+   "It suppresses err so that only ConfigError is reported",
+   "It converts err into a warning and carries on running"
+  ],
+  "answer": 1,
+  "model": "`raise X from err` sets `X.__cause__ = err` and the traceback shows both. A plain raise inside `except` also chains implicitly (`__context__`, \"During handling of the above exception, another exception occurred\"). `raise X from None` hides the original, which is rarely what you want in test tooling.",
+  "tags": [
+   "exceptions"
+  ]
+ },
+ {
+  "id": "py-172",
+  "topic": "Python",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "In `try / except / else / finally`, when does the `else` block run?",
+  "what_tested": "try/else/finally",
+  "options": [
+   "Only when an exception was caught by except",
+   "Always, but only after the finally block ends",
+   "Only when the finally block itself raises",
+   "Only when try raised nothing, before finally"
+  ],
+  "answer": 3,
+  "model": "Order: `try` → (`except` if it raised) or (`else` if it didn't) → `finally` always. Put only the risky line in `try`, follow-up logic in `else`, and cleanup (close browser, delete test data) in `finally`.",
+  "tags": [
+   "exceptions"
+  ]
+ },
+ {
+  "id": "py-173",
+  "topic": "Python",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "Why define a small hierarchy of custom exceptions in a test framework?",
+  "what_tested": "Custom exceptions",
+  "options": [
+   "Custom exceptions are raised and caught faster than built-ins",
+   "pytest only reports custom exception types as test failures",
+   "They stop long tracebacks from being printed in CI logs",
+   "Callers can catch a whole family or one specific case"
+  ],
+  "answer": 3,
+  "model": "```python\nclass FrameworkError(Exception): ...\nclass ConfigError(FrameworkError): ...\nclass TestDataError(FrameworkError): ...\n```\nIt separates **framework** problems from **product** assertion failures in reports, lets retry logic target specific errors, and gives clearer failure messages than a bare `Exception`.",
+  "tags": [
+   "exceptions",
+   "design"
+  ]
+ },
+ {
+  "id": "py-174",
+  "topic": "Python",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "Why prefer the `logging` module over `print` in framework code?",
+  "what_tested": "logging vs print",
+  "options": [
+   "logging output is hidden in CI, which keeps the build log clean",
+   "print() is not allowed inside pytest tests and raises an error",
+   "Levels and handlers are configurable, and pytest captures logs",
+   "logging is faster because it skips string formatting entirely"
+  ],
+  "answer": 2,
+  "model": "`logger = logging.getLogger(__name__)` per module, `logger.info(...)`/`debug(...)`. pytest shows captured logs on failure and `log_cli = true` / `log_cli_level = INFO` in pytest.ini streams them live. Levels let CI run at INFO and local debugging at DEBUG without code changes.",
+  "tags": [
+   "stdlib",
+   "logging"
+  ]
+ },
+ {
+  "id": "py-175",
+  "topic": "Python",
+  "difficulty": "core",
+  "kind": "python_code",
+  "question": "Write binary_search(nums, target) that returns the index of target in a sorted list, or -1 if it isn't there. Don't use list.index or bisect.",
+  "what_tested": "Binary search, O(log n)",
+  "hint": "Keep lo and hi pointers and look at the middle each step.",
+  "examples": [
+   {
+    "input": "binary_search([1, 3, 5, 7, 9], 7)",
+    "output": "3"
+   },
+   {
+    "input": "binary_search([1, 3, 5, 7, 9], 4)",
+    "output": "-1"
+   }
+  ],
+  "starter_code": "def binary_search(nums, target):\n    pass\n",
+  "tests": [
+   "assert binary_search([1, 3, 5, 7, 9], 7) == 3",
+   "assert binary_search([1, 3, 5, 7, 9], 4) == -1",
+   "assert binary_search([], 1) == -1",
+   "assert binary_search([2], 2) == 0",
+   "assert binary_search(list(range(0, 1000, 2)), 998) == 499"
+  ],
+  "solution": "def binary_search(nums, target):\n    lo, hi = 0, len(nums) - 1\n    while lo <= hi:\n        mid = (lo + hi) // 2\n        if nums[mid] == target:\n            return mid\n        if nums[mid] < target:\n            lo = mid + 1\n        else:\n            hi = mid - 1\n    return -1\n",
+  "model": "```python\ndef binary_search(nums, target):\n    lo, hi = 0, len(nums) - 1\n    while lo <= hi:\n        mid = (lo + hi) // 2\n        if nums[mid] == target:\n            return mid\n        if nums[mid] < target:\n            lo = mid + 1\n        else:\n            hi = mid - 1\n    return -1\n```\n\nO(log n) time, O(1) space. Off-by-one errors are the classic bug: use `lo <= hi` with `hi = len - 1`. In real code, `bisect.bisect_left` does this for you.",
+  "tags": [
+   "dsa",
+   "searching"
+  ]
+ },
+ {
+  "id": "py-176",
+  "topic": "Python",
+  "difficulty": "core",
+  "kind": "python_code",
+  "question": "Write group_anagrams(words) that groups words that are anagrams of each other. Return a list of groups, each group sorted, and the groups sorted by their first word.",
+  "what_tested": "Hashing with a canonical key",
+  "hint": "Words that are anagrams have the same sorted letters.",
+  "examples": [
+   {
+    "input": "group_anagrams(['eat', 'tea', 'tan', 'ate', 'nat', 'bat'])",
+    "output": "[['ate', 'eat', 'tea'], ['bat'], ['nat', 'tan']]"
+   },
+   {
+    "input": "group_anagrams([])",
+    "output": "[]"
+   }
+  ],
+  "starter_code": "def group_anagrams(words):\n    pass\n",
+  "tests": [
+   "assert group_anagrams(['eat', 'tea', 'tan', 'ate', 'nat', 'bat']) == [['ate', 'eat', 'tea'], ['bat'], ['nat', 'tan']]",
+   "assert group_anagrams([]) == []",
+   "assert group_anagrams(['a']) == [['a']]",
+   "assert group_anagrams(['ab', 'ba', 'abc']) == [['ab', 'ba'], ['abc']]"
+  ],
+  "solution": "from collections import defaultdict\n\ndef group_anagrams(words):\n    groups = defaultdict(list)\n    for w in words:\n        groups[\"\".join(sorted(w))].append(w)\n    return sorted(sorted(g) for g in groups.values())\n",
+  "model": "```python\nfrom collections import defaultdict\n\ndef group_anagrams(words):\n    groups = defaultdict(list)\n    for w in words:\n        groups[\"\".join(sorted(w))].append(w)\n    return sorted(sorted(g) for g in groups.values())\n```\n\nKey idea: a canonical key per group (sorted letters, or a 26-letter count tuple for O(k) per word). `defaultdict(list)` avoids the 'if key not in dict' dance. Overall O(n · k log k).",
+  "tags": [
+   "dsa",
+   "hashing",
+   "strings"
+  ]
+ },
+ {
+  "id": "py-177",
+  "topic": "Python",
+  "difficulty": "deep",
+  "kind": "python_code",
+  "question": "Write merge_intervals(intervals) that merges overlapping [start, end] intervals and returns them sorted by start. Touching intervals like [1, 3] and [3, 5] count as overlapping.",
+  "what_tested": "Sorting + sweep",
+  "hint": "Sort by start, then extend the last merged interval or start a new one.",
+  "examples": [
+   {
+    "input": "merge_intervals([[1, 3], [2, 6], [8, 10], [15, 18]])",
+    "output": "[[1, 6], [8, 10], [15, 18]]"
+   },
+   {
+    "input": "merge_intervals([[1, 4], [4, 5]])",
+    "output": "[[1, 5]]"
+   }
+  ],
+  "starter_code": "def merge_intervals(intervals):\n    pass\n",
+  "tests": [
+   "assert merge_intervals([[1, 3], [2, 6], [8, 10], [15, 18]]) == [[1, 6], [8, 10], [15, 18]]",
+   "assert merge_intervals([[1, 4], [4, 5]]) == [[1, 5]]",
+   "assert merge_intervals([]) == []",
+   "assert merge_intervals([[5, 7], [1, 2]]) == [[1, 2], [5, 7]]",
+   "assert merge_intervals([[1, 10], [2, 3], [4, 5]]) == [[1, 10]]"
+  ],
+  "solution": "def merge_intervals(intervals):\n    merged = []\n    for start, end in sorted(intervals):\n        if merged and start <= merged[-1][1]:\n            merged[-1][1] = max(merged[-1][1], end)\n        else:\n            merged.append([start, end])\n    return merged\n",
+  "model": "```python\ndef merge_intervals(intervals):\n    merged = []\n    for start, end in sorted(intervals):\n        if merged and start <= merged[-1][1]:\n            merged[-1][1] = max(merged[-1][1], end)\n        else:\n            merged.append([start, end])\n    return merged\n```\n\nO(n log n) for the sort, then one pass. The `max` matters when one interval contains the next. QA use: merging maintenance windows or overlapping booking slots in test data.",
+  "tags": [
+   "dsa",
+   "sorting",
+   "intervals"
+  ]
+ },
+ {
+  "id": "py-178",
+  "topic": "Python",
+  "difficulty": "core",
+  "kind": "python_code",
+  "question": "Write top_k_frequent(items, k) that returns the k most frequent items, most frequent first. Break ties by the item's natural order (smaller first).",
+  "what_tested": "Counting + sorting with a compound key",
+  "hint": "Counter, then sort by (-count, item).",
+  "examples": [
+   {
+    "input": "top_k_frequent([1, 1, 1, 2, 2, 3], 2)",
+    "output": "[1, 2]"
+   },
+   {
+    "input": "top_k_frequent(['b', 'a', 'b', 'a', 'c'], 2)",
+    "output": "['a', 'b']"
+   }
+  ],
+  "starter_code": "def top_k_frequent(items, k):\n    pass\n",
+  "tests": [
+   "assert top_k_frequent([1, 1, 1, 2, 2, 3], 2) == [1, 2]",
+   "assert top_k_frequent(['b', 'a', 'b', 'a', 'c'], 2) == ['a', 'b']",
+   "assert top_k_frequent([], 3) == []",
+   "assert top_k_frequent([4, 4, 5], 5) == [4, 5]"
+  ],
+  "solution": "from collections import Counter\n\ndef top_k_frequent(items, k):\n    counts = Counter(items)\n    return sorted(counts, key=lambda x: (-counts[x], x))[:k]\n",
+  "model": "```python\nfrom collections import Counter\n\ndef top_k_frequent(items, k):\n    counts = Counter(items)\n    return sorted(counts, key=lambda x: (-counts[x], x))[:k]\n```\n\nSorting is O(n log n); `heapq.nsmallest(k, counts, key=...)` is O(n log k) for big n and small k. Note `Counter.most_common` doesn't guarantee the tie order you need.",
+  "tags": [
+   "dsa",
+   "hashing",
+   "heap"
+  ]
+ },
+ {
+  "id": "py-179",
+  "topic": "Python",
+  "difficulty": "warm-up",
+  "kind": "python_code",
+  "question": "Write longest_common_prefix(words) that returns the longest prefix shared by all strings ('' if none or the list is empty).",
+  "what_tested": "String scanning",
+  "hint": "Compare characters column by column, or use zip(*words).",
+  "examples": [
+   {
+    "input": "longest_common_prefix(['flower', 'flow', 'flight'])",
+    "output": "'fl'"
+   },
+   {
+    "input": "longest_common_prefix(['dog', 'racecar', 'car'])",
+    "output": "''"
+   }
+  ],
+  "starter_code": "def longest_common_prefix(words):\n    pass\n",
+  "tests": [
+   "assert longest_common_prefix(['flower', 'flow', 'flight']) == 'fl'",
+   "assert longest_common_prefix(['dog', 'racecar', 'car']) == ''",
+   "assert longest_common_prefix([]) == ''",
+   "assert longest_common_prefix(['test_login']) == 'test_login'",
+   "assert longest_common_prefix(['test_a', 'test_b', 'test_']) == 'test_'"
+  ],
+  "solution": "def longest_common_prefix(words):\n    prefix = []\n    for chars in zip(*words):\n        if len(set(chars)) != 1:\n            break\n        prefix.append(chars[0])\n    return \"\".join(prefix)\n",
+  "model": "```python\ndef longest_common_prefix(words):\n    prefix = []\n    for chars in zip(*words):\n        if len(set(chars)) != 1:\n            break\n        prefix.append(chars[0])\n    return \"\".join(prefix)\n```\n\n`zip(*words)` walks the strings column by column and stops at the shortest. `os.path.commonprefix(words)` does the same thing in the standard library.",
+  "tags": [
+   "dsa",
+   "strings"
+  ]
+ },
+ {
+  "id": "py-180",
+  "topic": "Python",
+  "difficulty": "deep",
+  "kind": "python_code",
+  "question": "Write three_sum(nums) that returns all unique triplets [a, b, c] with a + b + c == 0. Each triplet sorted ascending, and the list of triplets sorted.",
+  "what_tested": "Sorting + two pointers, de-duplication",
+  "hint": "Sort, fix one number, then move two pointers inward; skip repeated values.",
+  "examples": [
+   {
+    "input": "three_sum([-1, 0, 1, 2, -1, -4])",
+    "output": "[[-1, -1, 2], [-1, 0, 1]]"
+   },
+   {
+    "input": "three_sum([0, 0, 0, 0])",
+    "output": "[[0, 0, 0]]"
+   }
+  ],
+  "starter_code": "def three_sum(nums):\n    pass\n",
+  "tests": [
+   "assert three_sum([-1, 0, 1, 2, -1, -4]) == [[-1, -1, 2], [-1, 0, 1]]",
+   "assert three_sum([0, 0, 0, 0]) == [[0, 0, 0]]",
+   "assert three_sum([1, 2, 3]) == []",
+   "assert three_sum([]) == []",
+   "assert three_sum([-2, 0, 1, 1, 2]) == [[-2, 0, 2], [-2, 1, 1]]"
+  ],
+  "solution": "def three_sum(nums):\n    nums = sorted(nums)\n    out = []\n    for i in range(len(nums) - 2):\n        if i > 0 and nums[i] == nums[i - 1]:\n            continue\n        lo, hi = i + 1, len(nums) - 1\n        while lo < hi:\n            s = nums[i] + nums[lo] + nums[hi]\n            if s < 0:\n                lo += 1\n            elif s > 0:\n                hi -= 1\n            else:\n                out.append([nums[i], nums[lo], nums[hi]])\n                lo += 1\n                while lo < hi and nums[lo] == nums[lo - 1]:\n                    lo += 1\n                hi -= 1\n    return out\n",
+  "model": "```python\ndef three_sum(nums):\n    nums = sorted(nums)\n    out = []\n    for i in range(len(nums) - 2):\n        if i > 0 and nums[i] == nums[i - 1]:\n            continue\n        lo, hi = i + 1, len(nums) - 1\n        while lo < hi:\n            s = nums[i] + nums[lo] + nums[hi]\n            if s < 0:\n                lo += 1\n            elif s > 0:\n                hi -= 1\n            else:\n                out.append([nums[i], nums[lo], nums[hi]])\n                lo += 1\n                while lo < hi and nums[lo] == nums[lo - 1]:\n                    lo += 1\n                hi -= 1\n    return out\n```\n\nO(n²) time. The brute force is O(n³) with a set for de-duplication; interviewers want the sorted two-pointer version and the explanation of the skip-duplicates step.",
+  "tags": [
+   "dsa",
+   "two-pointers"
+  ]
+ },
+ {
+  "id": "py-181",
+  "topic": "Python",
+  "difficulty": "deep",
+  "kind": "python_code",
+  "question": "Write subarray_sum_count(nums, k) that returns how many contiguous subarrays sum to exactly k. Numbers can be negative.",
+  "what_tested": "Prefix sums + hash map",
+  "hint": "Track how many times each running total has been seen; look up total - k.",
+  "examples": [
+   {
+    "input": "subarray_sum_count([1, 1, 1], 2)",
+    "output": "2"
+   },
+   {
+    "input": "subarray_sum_count([1, 2, 3], 3)",
+    "output": "2"
+   }
+  ],
+  "starter_code": "def subarray_sum_count(nums, k):\n    pass\n",
+  "tests": [
+   "assert subarray_sum_count([1, 1, 1], 2) == 2",
+   "assert subarray_sum_count([1, 2, 3], 3) == 2",
+   "assert subarray_sum_count([1, -1, 0], 0) == 3",
+   "assert subarray_sum_count([], 0) == 0",
+   "assert subarray_sum_count([3, 4, 7, 2, -3, 1, 4, 2], 7) == 4"
+  ],
+  "solution": "from collections import defaultdict\n\ndef subarray_sum_count(nums, k):\n    seen = defaultdict(int)\n    seen[0] = 1\n    total = count = 0\n    for n in nums:\n        total += n\n        count += seen[total - k]\n        seen[total] += 1\n    return count\n",
+  "model": "```python\nfrom collections import defaultdict\n\ndef subarray_sum_count(nums, k):\n    seen = defaultdict(int)\n    seen[0] = 1\n    total = count = 0\n    for n in nums:\n        total += n\n        count += seen[total - k]\n        seen[total] += 1\n    return count\n```\n\nO(n). A sliding window doesn't work with negative numbers, which is the trap. `seen[0] = 1` counts subarrays that start at index 0.",
+  "tags": [
+   "dsa",
+   "prefix-sum",
+   "hashing"
+  ]
+ },
+ {
+  "id": "py-182",
+  "topic": "Python",
+  "difficulty": "core",
+  "kind": "python_code",
+  "question": "Write product_except_self(nums) that returns a list where each element is the product of all other elements. Don't use division.",
+  "what_tested": "Prefix and suffix products",
+  "hint": "Left-to-right pass for products before i, right-to-left for products after i.",
+  "examples": [
+   {
+    "input": "product_except_self([1, 2, 3, 4])",
+    "output": "[24, 12, 8, 6]"
+   },
+   {
+    "input": "product_except_self([2, 0, 3])",
+    "output": "[0, 6, 0]"
+   }
+  ],
+  "starter_code": "def product_except_self(nums):\n    pass\n",
+  "tests": [
+   "assert product_except_self([1, 2, 3, 4]) == [24, 12, 8, 6]",
+   "assert product_except_self([2, 0, 3]) == [0, 6, 0]",
+   "assert product_except_self([5, 5]) == [5, 5]",
+   "assert product_except_self([0, 0]) == [0, 0]"
+  ],
+  "solution": "def product_except_self(nums):\n    n = len(nums)\n    out = [1] * n\n    left = 1\n    for i in range(n):\n        out[i] = left\n        left *= nums[i]\n    right = 1\n    for i in range(n - 1, -1, -1):\n        out[i] *= right\n        right *= nums[i]\n    return out\n",
+  "model": "```python\ndef product_except_self(nums):\n    n = len(nums)\n    out = [1] * n\n    left = 1\n    for i in range(n):\n        out[i] = left\n        left *= nums[i]\n    right = 1\n    for i in range(n - 1, -1, -1):\n        out[i] *= right\n        right *= nums[i]\n    return out\n```\n\nO(n) time, O(1) extra space besides the output. The 'no division' rule exists because of zeros in the input.",
+  "tags": [
+   "dsa",
+   "arrays"
+  ]
+ },
+ {
+  "id": "py-183",
+  "topic": "Python",
+  "difficulty": "core",
+  "kind": "python_code",
+  "question": "Write kth_largest(nums, k) that returns the k-th largest element (1-based). Use a heap rather than sorting the whole list.",
+  "what_tested": "heapq",
+  "hint": "Keep a min-heap of size k; its root is the answer.",
+  "examples": [
+   {
+    "input": "kth_largest([3, 2, 1, 5, 6, 4], 2)",
+    "output": "5"
+   },
+   {
+    "input": "kth_largest([3, 2, 3, 1, 2, 4, 5, 5, 6], 4)",
+    "output": "4"
+   }
+  ],
+  "starter_code": "import heapq\n\ndef kth_largest(nums, k):\n    pass\n",
+  "tests": [
+   "assert kth_largest([3, 2, 1, 5, 6, 4], 2) == 5",
+   "assert kth_largest([3, 2, 3, 1, 2, 4, 5, 5, 6], 4) == 4",
+   "assert kth_largest([7], 1) == 7",
+   "assert kth_largest([-1, -5, -3], 3) == -5"
+  ],
+  "solution": "import heapq\n\ndef kth_largest(nums, k):\n    heap = []\n    for n in nums:\n        heapq.heappush(heap, n)\n        if len(heap) > k:\n            heapq.heappop(heap)\n    return heap[0]\n",
+  "model": "```python\nimport heapq\n\ndef kth_largest(nums, k):\n    heap = []\n    for n in nums:\n        heapq.heappush(heap, n)\n        if len(heap) > k:\n            heapq.heappop(heap)\n    return heap[0]\n```\n\nO(n log k). `heapq` is a min-heap; keeping only k items leaves the k-th largest at `heap[0]`. One-liner: `heapq.nlargest(k, nums)[-1]`.",
+  "tags": [
+   "dsa",
+   "heap"
+  ]
+ },
+ {
+  "id": "py-184",
+  "topic": "Python",
+  "difficulty": "core",
+  "kind": "python_code",
+  "question": "Write rotate_matrix(matrix) that returns a new n x n matrix rotated 90 degrees clockwise.",
+  "what_tested": "2D indexing",
+  "hint": "Transpose, then reverse each row; or zip(*matrix[::-1]).",
+  "examples": [
+   {
+    "input": "rotate_matrix([[1, 2], [3, 4]])",
+    "output": "[[3, 1], [4, 2]]"
+   },
+   {
+    "input": "rotate_matrix([[1, 2, 3], [4, 5, 6], [7, 8, 9]])",
+    "output": "[[7, 4, 1], [8, 5, 2], [9, 6, 3]]"
+   }
+  ],
+  "starter_code": "def rotate_matrix(matrix):\n    pass\n",
+  "tests": [
+   "assert rotate_matrix([[1, 2], [3, 4]]) == [[3, 1], [4, 2]]",
+   "assert rotate_matrix([[1, 2, 3], [4, 5, 6], [7, 8, 9]]) == [[7, 4, 1], [8, 5, 2], [9, 6, 3]]",
+   "assert rotate_matrix([]) == []",
+   "assert rotate_matrix([[5]]) == [[5]]"
+  ],
+  "solution": "def rotate_matrix(matrix):\n    return [list(row) for row in zip(*matrix[::-1])]\n",
+  "model": "```python\ndef rotate_matrix(matrix):\n    return [list(row) for row in zip(*matrix[::-1])]\n```\n\nReverse the rows, then zip (transpose). Explain it with the index mapping: new[i][j] = old[n-1-j][i]. In-place rotation (layer by layer) is a common follow-up.",
+  "tags": [
+   "dsa",
+   "matrix"
+  ]
+ },
+ {
+  "id": "py-185",
+  "topic": "Python",
+  "difficulty": "deep",
+  "kind": "python_code",
+  "question": "Write spiral_order(matrix) that returns the elements of a rectangular matrix in clockwise spiral order.",
+  "what_tested": "Boundary tracking",
+  "hint": "Keep top, bottom, left and right bounds and shrink them after each side.",
+  "examples": [
+   {
+    "input": "spiral_order([[1, 2, 3], [4, 5, 6], [7, 8, 9]])",
+    "output": "[1, 2, 3, 6, 9, 8, 7, 4, 5]"
+   },
+   {
+    "input": "spiral_order([[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12]])",
+    "output": "[1, 2, 3, 4, 8, 12, 11, 10, 9, 5, 6, 7]"
+   }
+  ],
+  "starter_code": "def spiral_order(matrix):\n    pass\n",
+  "tests": [
+   "assert spiral_order([[1, 2, 3], [4, 5, 6], [7, 8, 9]]) == [1, 2, 3, 6, 9, 8, 7, 4, 5]",
+   "assert spiral_order([[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12]]) == [1, 2, 3, 4, 8, 12, 11, 10, 9, 5, 6, 7]",
+   "assert spiral_order([]) == []",
+   "assert spiral_order([[1], [2], [3]]) == [1, 2, 3]"
+  ],
+  "solution": "def spiral_order(matrix):\n    out = []\n    if not matrix:\n        return out\n    top, bottom, left, right = 0, len(matrix) - 1, 0, len(matrix[0]) - 1\n    while top <= bottom and left <= right:\n        for c in range(left, right + 1):\n            out.append(matrix[top][c])\n        top += 1\n        for r in range(top, bottom + 1):\n            out.append(matrix[r][right])\n        right -= 1\n        if top <= bottom:\n            for c in range(right, left - 1, -1):\n                out.append(matrix[bottom][c])\n            bottom -= 1\n        if left <= right:\n            for r in range(bottom, top - 1, -1):\n                out.append(matrix[r][left])\n            left += 1\n    return out\n",
+  "model": "```python\ndef spiral_order(matrix):\n    out = []\n    if not matrix:\n        return out\n    top, bottom, left, right = 0, len(matrix) - 1, 0, len(matrix[0]) - 1\n    while top <= bottom and left <= right:\n        for c in range(left, right + 1):\n            out.append(matrix[top][c])\n        top += 1\n        for r in range(top, bottom + 1):\n            out.append(matrix[r][right])\n        right -= 1\n        if top <= bottom:\n            for c in range(right, left - 1, -1):\n                out.append(matrix[bottom][c])\n            bottom -= 1\n        if left <= right:\n            for r in range(bottom, top - 1, -1):\n                out.append(matrix[r][left])\n            left += 1\n    return out\n```\n\nThe two `if` checks stop single rows/columns being read twice; that's where most attempts fail.",
+  "tags": [
+   "dsa",
+   "matrix"
+  ]
+ },
+ {
+  "id": "py-186",
+  "topic": "Python",
+  "difficulty": "core",
+  "kind": "python_code",
+  "question": "Write count_islands(grid) that counts groups of '1' cells connected up/down/left/right in a grid of '0' and '1' strings.",
+  "what_tested": "Graph traversal (DFS/BFS) on a grid",
+  "hint": "For each unvisited '1', flood-fill its island and add one.",
+  "examples": [
+   {
+    "input": "count_islands([['1', '1', '0'], ['0', '1', '0'], ['0', '0', '1']])",
+    "output": "2"
+   },
+   {
+    "input": "count_islands([['0', '0'], ['0', '0']])",
+    "output": "0"
+   }
+  ],
+  "starter_code": "def count_islands(grid):\n    pass\n",
+  "tests": [
+   "assert count_islands([['1', '1', '0'], ['0', '1', '0'], ['0', '0', '1']]) == 2",
+   "assert count_islands([['0', '0'], ['0', '0']]) == 0",
+   "assert count_islands([]) == 0",
+   "assert count_islands([['1', '0', '1', '0', '1']]) == 3",
+   "assert count_islands([['1', '1'], ['1', '1']]) == 1"
+  ],
+  "solution": "def count_islands(grid):\n    if not grid:\n        return 0\n    rows, cols = len(grid), len(grid[0])\n    seen = set()\n    islands = 0\n    for r in range(rows):\n        for c in range(cols):\n            if grid[r][c] == \"1\" and (r, c) not in seen:\n                islands += 1\n                stack = [(r, c)]\n                seen.add((r, c))\n                while stack:\n                    y, x = stack.pop()\n                    for ny, nx in ((y + 1, x), (y - 1, x), (y, x + 1), (y, x - 1)):\n                        if 0 <= ny < rows and 0 <= nx < cols and grid[ny][nx] == \"1\" and (ny, nx) not in seen:\n                            seen.add((ny, nx))\n                            stack.append((ny, nx))\n    return islands\n",
+  "model": "```python\ndef count_islands(grid):\n    if not grid:\n        return 0\n    rows, cols = len(grid), len(grid[0])\n    seen = set()\n    islands = 0\n    for r in range(rows):\n        for c in range(cols):\n            if grid[r][c] == \"1\" and (r, c) not in seen:\n                islands += 1\n                stack = [(r, c)]\n                seen.add((r, c))\n                while stack:\n                    y, x = stack.pop()\n                    for ny, nx in ((y + 1, x), (y - 1, x), (y, x + 1), (y, x - 1)):\n                        if 0 <= ny < rows and 0 <= nx < cols and grid[ny][nx] == \"1\" and (ny, nx) not in seen:\n                            seen.add((ny, nx))\n                            stack.append((ny, nx))\n    return islands\n```\n\nAn explicit stack avoids Python's recursion limit on big grids. O(rows × cols). The same pattern counts connected components in any graph.",
+  "tags": [
+   "dsa",
+   "graphs"
+  ]
+ },
+ {
+  "id": "py-187",
+  "topic": "Python",
+  "difficulty": "deep",
+  "kind": "python_code",
+  "question": "Write shortest_path(grid, start, end) for a grid of '.' (open) and '#' (wall). Return the fewest up/down/left/right steps from start to end as (row, col) tuples, or -1 if unreachable.",
+  "what_tested": "Breadth-first search",
+  "hint": "BFS from start; the first time you reach end is the shortest distance.",
+  "examples": [
+   {
+    "input": "shortest_path(['..', '..'], (0, 0), (1, 1))",
+    "output": "2"
+   },
+   {
+    "input": "shortest_path(['.#.', '.#.', '...'], (0, 0), (0, 2))",
+    "output": "6"
+   }
+  ],
+  "starter_code": "from collections import deque\n\ndef shortest_path(grid, start, end):\n    pass\n",
+  "tests": [
+   "assert shortest_path(['..', '..'], (0, 0), (1, 1)) == 2",
+   "assert shortest_path(['.#.', '.#.', '...'], (0, 0), (0, 2)) == 6",
+   "assert shortest_path(['.#', '#.'], (0, 0), (1, 1)) == -1",
+   "assert shortest_path(['.'], (0, 0), (0, 0)) == 0"
+  ],
+  "solution": "from collections import deque\n\ndef shortest_path(grid, start, end):\n    rows, cols = len(grid), len(grid[0])\n    queue = deque([(start, 0)])\n    seen = {start}\n    while queue:\n        (r, c), dist = queue.popleft()\n        if (r, c) == end:\n            return dist\n        for nr, nc in ((r + 1, c), (r - 1, c), (r, c + 1), (r, c - 1)):\n            if 0 <= nr < rows and 0 <= nc < cols and grid[nr][nc] == \".\" and (nr, nc) not in seen:\n                seen.add((nr, nc))\n                queue.append(((nr, nc), dist + 1))\n    return -1\n",
+  "model": "```python\nfrom collections import deque\n\ndef shortest_path(grid, start, end):\n    rows, cols = len(grid), len(grid[0])\n    queue = deque([(start, 0)])\n    seen = {start}\n    while queue:\n        (r, c), dist = queue.popleft()\n        if (r, c) == end:\n            return dist\n        for nr, nc in ((r + 1, c), (r - 1, c), (r, c + 1), (r, c - 1)):\n            if 0 <= nr < rows and 0 <= nc < cols and grid[nr][nc] == \".\" and (nr, nc) not in seen:\n                seen.add((nr, nc))\n                queue.append(((nr, nc), dist + 1))\n    return -1\n```\n\nBFS (a queue) finds shortest paths in unweighted graphs; DFS (a stack) doesn't. Use `collections.deque` because `list.pop(0)` is O(n).",
+  "tags": [
+   "dsa",
+   "graphs",
+   "bfs"
+  ]
+ },
+ {
+  "id": "py-188",
+  "topic": "Python",
+  "difficulty": "core",
+  "kind": "python_code",
+  "question": "Write climb_stairs(n) that returns how many distinct ways there are to climb n steps taking 1 or 2 steps at a time. It must handle n = 80 instantly.",
+  "what_tested": "Dynamic programming",
+  "hint": "ways(n) = ways(n-1) + ways(n-2), computed bottom-up.",
+  "examples": [
+   {
+    "input": "climb_stairs(1)",
+    "output": "1"
+   },
+   {
+    "input": "climb_stairs(2)",
+    "output": "2"
+   }
+  ],
+  "starter_code": "def climb_stairs(n):\n    pass\n",
+  "tests": [
+   "assert climb_stairs(1) == 1",
+   "assert climb_stairs(2) == 2",
+   "assert climb_stairs(5) == 8",
+   "assert climb_stairs(0) == 1",
+   "assert climb_stairs(80) == 37889062373143906"
+  ],
+  "solution": "def climb_stairs(n):\n    a, b = 1, 1          # ways to reach step 0 and step 1\n    for _ in range(n):\n        a, b = b, a + b\n    return a\n",
+  "model": "```python\ndef climb_stairs(n):\n    a, b = 1, 1          # ways to reach step 0 and step 1\n    for _ in range(n):\n        a, b = b, a + b\n    return a\n```\n\nNaive recursion is O(2ⁿ) and times out at n=80; memoisation (`@functools.lru_cache`) or the bottom-up loop is O(n). Recognising Fibonacci is the point.",
+  "tags": [
+   "dsa",
+   "dp"
+  ]
+ },
+ {
+  "id": "py-189",
+  "topic": "Python",
+  "difficulty": "deep",
+  "kind": "python_code",
+  "question": "Write min_coins(coins, amount) that returns the fewest coins needed to make amount (unlimited coins of each value), or -1 if it can't be made.",
+  "what_tested": "Dynamic programming (unbounded knapsack)",
+  "hint": "best[a] = min(best[a - coin] + 1) over all coins.",
+  "examples": [
+   {
+    "input": "min_coins([1, 2, 5], 11)",
+    "output": "3"
+   },
+   {
+    "input": "min_coins([2], 3)",
+    "output": "-1"
+   }
+  ],
+  "starter_code": "def min_coins(coins, amount):\n    pass\n",
+  "tests": [
+   "assert min_coins([1, 2, 5], 11) == 3",
+   "assert min_coins([2], 3) == -1",
+   "assert min_coins([1], 0) == 0",
+   "assert min_coins([1, 3, 4], 6) == 2",
+   "assert min_coins([186, 419, 83, 408], 6249) == 20"
+  ],
+  "solution": "def min_coins(coins, amount):\n    INF = float(\"inf\")\n    best = [0] + [INF] * amount\n    for a in range(1, amount + 1):\n        for coin in coins:\n            if coin <= a and best[a - coin] + 1 < best[a]:\n                best[a] = best[a - coin] + 1\n    return best[amount] if best[amount] != INF else -1\n",
+  "model": "```python\ndef min_coins(coins, amount):\n    INF = float(\"inf\")\n    best = [0] + [INF] * amount\n    for a in range(1, amount + 1):\n        for coin in coins:\n            if coin <= a and best[a - coin] + 1 < best[a]:\n                best[a] = best[a - coin] + 1\n    return best[amount] if best[amount] != INF else -1\n```\n\nGreedy (always take the biggest coin) fails for [1, 3, 4] → 6 (greedy gives 4+1+1, optimal 3+3). O(amount × len(coins)).",
+  "tags": [
+   "dsa",
+   "dp"
+  ]
+ },
+ {
+  "id": "py-190",
+  "topic": "Python",
+  "difficulty": "deep",
+  "kind": "python_code",
+  "question": "Write test_order(deps) that returns an order to run tests so each test runs after the tests it depends on. deps maps test → list of prerequisites. Among tests that are ready at the same time, pick alphabetically. Raise ValueError if there's a cycle.",
+  "what_tested": "Topological sort (Kahn's algorithm)",
+  "hint": "Count unmet prerequisites; repeatedly run a ready test (use a heap for alphabetical order).",
+  "examples": [
+   {
+    "input": "test_order({'test_checkout': ['test_login', 'test_cart'], 'test_cart': ['test_login'], 'test_login': []})",
+    "output": "['test_login', 'test_cart', 'test_checkout']"
+   },
+   {
+    "input": "test_order({'a': ['b'], 'b': ['a']})",
+    "output": "ValueError (cycle)"
+   }
+  ],
+  "starter_code": "def test_order(deps):\n    \"\"\"deps: {\"test_checkout\": [\"test_login\", \"test_cart\"], \"test_cart\": [\"test_login\"], \"test_login\": []}\"\"\"\n    pass\n",
+  "tests": [
+   "assert test_order({'test_checkout': ['test_login', 'test_cart'], 'test_cart': ['test_login'], 'test_login': []}) == ['test_login', 'test_cart', 'test_checkout']",
+   "assert test_order({'b': [], 'a': [], 'c': ['a']}) == ['a', 'b', 'c']",
+   "assert test_order({}) == []",
+   "assert test_order({'x': ['y']}) == ['y', 'x']",
+   "try:\n    test_order({'a': ['b'], 'b': ['a']})\n    raise AssertionError('expected ValueError for a cycle')\nexcept ValueError:\n    pass"
+  ],
+  "solution": "import heapq\n\ndef test_order(deps):\n    nodes = set(deps) | {p for pre in deps.values() for p in pre}\n    waiting = {n: set(deps.get(n, [])) for n in nodes}\n    dependents = {n: [] for n in nodes}\n    for n, pre in deps.items():\n        for p in pre:\n            dependents[p].append(n)\n    ready = [n for n in nodes if not waiting[n]]\n    heapq.heapify(ready)\n    order = []\n    while ready:\n        n = heapq.heappop(ready)\n        order.append(n)\n        for d in dependents[n]:\n            waiting[d].discard(n)\n            if not waiting[d]:\n                heapq.heappush(ready, d)\n    if len(order) != len(nodes):\n        raise ValueError(\"dependency cycle\")\n    return order\n",
+  "model": "```python\nimport heapq\n\ndef test_order(deps):\n    nodes = set(deps) | {p for pre in deps.values() for p in pre}\n    waiting = {n: set(deps.get(n, [])) for n in nodes}\n    dependents = {n: [] for n in nodes}\n    for n, pre in deps.items():\n        for p in pre:\n            dependents[p].append(n)\n    ready = [n for n in nodes if not waiting[n]]\n    heapq.heapify(ready)\n    order = []\n    while ready:\n        n = heapq.heappop(ready)\n        order.append(n)\n        for d in dependents[n]:\n            waiting[d].discard(n)\n            if not waiting[d]:\n                heapq.heappush(ready, d)\n    if len(order) != len(nodes):\n        raise ValueError(\"dependency cycle\")\n    return order\n```\n\nKahn's algorithm: start with nodes that have no prerequisites, release dependents as their prerequisites finish. If some nodes never become ready, there's a cycle. Good tests shouldn't depend on each other, but setup pipelines, migration steps and build graphs do.",
+  "tags": [
+   "dsa",
+   "graphs",
+   "topological-sort"
+  ]
+ },
+ {
+  "id": "py-191",
+  "topic": "Python",
+  "difficulty": "core",
+  "kind": "python_code",
+  "question": "A singly linked list uses `class Node: value, next`. Write reverse_list(head) that reverses the list in place and returns the new head.",
+  "what_tested": "Pointer manipulation",
+  "hint": "Walk the list keeping prev, current and next; flip each pointer.",
+  "examples": [
+   {
+    "input": "reverse_list(1 → 2 → 3 → 4)",
+    "output": "4 → 3 → 2 → 1"
+   },
+   {
+    "input": "reverse_list(None)",
+    "output": "None"
+   }
+  ],
+  "starter_code": "class Node:\n    def __init__(self, value, next=None):\n        self.value = value\n        self.next = next\n\ndef reverse_list(head):\n    pass\n",
+  "tests": [
+   "def build(vals):\n    head = None\n    for v in reversed(vals):\n        head = Node(v, head)\n    return head\ndef to_list(h):\n    out = []\n    while h:\n        out.append(h.value); h = h.next\n    return out\nassert to_list(reverse_list(build([1, 2, 3, 4]))) == [4, 3, 2, 1]",
+   "assert reverse_list(None) is None",
+   "one = Node(7)\nassert reverse_list(one) is one and one.next is None"
+  ],
+  "solution": "class Node:\n    def __init__(self, value, next=None):\n        self.value = value\n        self.next = next\n\ndef reverse_list(head):\n    prev = None\n    while head:\n        head.next, prev, head = prev, head, head.next\n    return prev\n",
+  "model": "```python\nclass Node:\n    def __init__(self, value, next=None):\n        self.value = value\n        self.next = next\n\ndef reverse_list(head):\n    prev = None\n    while head:\n        head.next, prev, head = prev, head, head.next\n    return prev\n```\n\nO(n) time, O(1) space. Spell out the three-pointer version in an interview (nxt = head.next; head.next = prev; prev = head; head = nxt) if the tuple swap feels too clever.",
+  "tags": [
+   "dsa",
+   "linked-list",
+   "oop"
+  ]
+ },
+ {
+  "id": "py-192",
+  "topic": "Python",
+  "difficulty": "deep",
+  "kind": "python_code",
+  "question": "Binary tree nodes are `class TreeNode: value, left, right`. Write level_order(root) that returns the values level by level as a list of lists.",
+  "what_tested": "BFS on a tree",
+  "hint": "Process the queue one level at a time using its current length.",
+  "examples": [
+   {
+    "input": "level_order(3 → (9), (20 → 15, 7))",
+    "output": "[[3], [9, 20], [15, 7]]"
+   },
+   {
+    "input": "level_order(None)",
+    "output": "[]"
+   }
+  ],
+  "starter_code": "from collections import deque\n\nclass TreeNode:\n    def __init__(self, value, left=None, right=None):\n        self.value, self.left, self.right = value, left, right\n\ndef level_order(root):\n    pass\n",
+  "tests": [
+   "assert level_order(TreeNode(3, TreeNode(9), TreeNode(20, TreeNode(15), TreeNode(7)))) == [[3], [9, 20], [15, 7]]",
+   "assert level_order(None) == []",
+   "assert level_order(TreeNode(1)) == [[1]]",
+   "assert level_order(TreeNode(1, TreeNode(2, TreeNode(4)))) == [[1], [2], [4]]"
+  ],
+  "solution": "from collections import deque\n\nclass TreeNode:\n    def __init__(self, value, left=None, right=None):\n        self.value, self.left, self.right = value, left, right\n\ndef level_order(root):\n    if root is None:\n        return []\n    levels, queue = [], deque([root])\n    while queue:\n        level = []\n        for _ in range(len(queue)):\n            node = queue.popleft()\n            level.append(node.value)\n            if node.left:\n                queue.append(node.left)\n            if node.right:\n                queue.append(node.right)\n        levels.append(level)\n    return levels\n",
+  "model": "```python\nfrom collections import deque\n\nclass TreeNode:\n    def __init__(self, value, left=None, right=None):\n        self.value, self.left, self.right = value, left, right\n\ndef level_order(root):\n    if root is None:\n        return []\n    levels, queue = [], deque([root])\n    while queue:\n        level = []\n        for _ in range(len(queue)):\n            node = queue.popleft()\n            level.append(node.value)\n            if node.left:\n                queue.append(node.left)\n            if node.right:\n                queue.append(node.right)\n        levels.append(level)\n    return levels\n```\n\nSnapshotting `len(queue)` at the start of each loop separates the levels. The same BFS shape is used to walk a DOM or a menu tree level by level.",
+  "tags": [
+   "dsa",
+   "trees",
+   "bfs"
+  ]
+ },
+ {
+  "id": "py-193",
+  "topic": "Python",
+  "difficulty": "core",
+  "kind": "python_code",
+  "question": "Complete BasePage and LoginPage. BasePage(base_url) has `path = '/'` and `url()` returning base_url + path. LoginPage overrides `path` to '/login' and overrides `describe()` to return the parent's description plus ' [auth]' using super().",
+  "what_tested": "Inheritance, overriding, super()",
+  "hint": "Override the class attribute; call super().describe() inside the override.",
+  "examples": [
+   {
+    "input": "BasePage('https://app.test/').url()",
+    "output": "'https://app.test/'"
+   },
+   {
+    "input": "LoginPage('https://app.test').url()",
+    "output": "'https://app.test/login'"
+   }
+  ],
+  "starter_code": "class BasePage:\n    path = \"/\"\n\n    def __init__(self, base_url):\n        self.base_url = base_url.rstrip(\"/\")\n\n    def url(self):\n        pass\n\n    def describe(self):\n        return f\"{type(self).__name__} at {self.url()}\"\n\n\nclass LoginPage(BasePage):\n    pass\n",
+  "tests": [
+   "assert BasePage('https://app.test/').url() == 'https://app.test/'",
+   "assert LoginPage('https://app.test').url() == 'https://app.test/login'",
+   "assert LoginPage('https://app.test').describe() == 'LoginPage at https://app.test/login [auth]'",
+   "assert BasePage('https://app.test').describe() == 'BasePage at https://app.test/'",
+   "assert isinstance(LoginPage('x'), BasePage)"
+  ],
+  "solution": "class BasePage:\n    path = \"/\"\n\n    def __init__(self, base_url):\n        self.base_url = base_url.rstrip(\"/\")\n\n    def url(self):\n        return self.base_url + self.path\n\n    def describe(self):\n        return f\"{type(self).__name__} at {self.url()}\"\n\n\nclass LoginPage(BasePage):\n    path = \"/login\"\n\n    def describe(self):\n        return super().describe() + \" [auth]\"\n",
+  "model": "```python\nclass BasePage:\n    path = \"/\"\n\n    def __init__(self, base_url):\n        self.base_url = base_url.rstrip(\"/\")\n\n    def url(self):\n        return self.base_url + self.path\n\n    def describe(self):\n        return f\"{type(self).__name__} at {self.url()}\"\n\n\nclass LoginPage(BasePage):\n    path = \"/login\"\n\n    def describe(self):\n        return super().describe() + \" [auth]\"\n```\n\n`self.path` looks up the instance first, then the class, then the MRO, so overriding the class attribute is enough. `super().describe()` reuses the parent logic instead of copy-pasting it. `type(self).__name__` makes the parent method report the subclass name.",
+  "tags": [
+   "oop",
+   "inheritance",
+   "overriding"
+  ]
+ },
+ {
+  "id": "py-194",
+  "topic": "Python",
+  "difficulty": "core",
+  "kind": "python_code",
+  "question": "Implement Money(amount, currency) with operator overloading: `+` adds amounts of the same currency (raise ValueError for different currencies), `==` compares amount and currency, `sum([...])` works, and repr is like Money('12.50', 'INR'). Store amount as a Decimal.",
+  "what_tested": "Operator overloading, __radd__, Decimal",
+  "hint": "__add__, __radd__ (sum starts at 0), __eq__, __repr__.",
+  "examples": [
+   {
+    "input": "Money('10.10') + Money('2.40')",
+    "output": "Money('12.50', 'INR')"
+   },
+   {
+    "input": "sum([Money('1.10'), Money('2.20')])",
+    "output": "Money('3.30', 'INR')"
+   }
+  ],
+  "starter_code": "from decimal import Decimal\n\nclass Money:\n    def __init__(self, amount, currency=\"INR\"):\n        self.amount = Decimal(str(amount))\n        self.currency = currency\n",
+  "tests": [
+   "assert Money('10.10') + Money('2.40') == Money('12.50')",
+   "assert repr(Money('12.5', 'USD')) == \"Money('12.5', 'USD')\"",
+   "assert sum([Money('1.10'), Money('2.20'), Money('3.30')]) == Money('6.60')",
+   "assert Money('1', 'USD') != Money('1', 'INR')",
+   "try:\n    Money('1', 'USD') + Money('1', 'INR')\n    raise AssertionError('expected ValueError')\nexcept ValueError:\n    pass"
+  ],
+  "solution": "from decimal import Decimal\n\nclass Money:\n    def __init__(self, amount, currency=\"INR\"):\n        self.amount = Decimal(str(amount))\n        self.currency = currency\n\n    def __add__(self, other):\n        if not isinstance(other, Money):\n            return NotImplemented\n        if other.currency != self.currency:\n            raise ValueError(f\"can't add {self.currency} and {other.currency}\")\n        return Money(self.amount + other.amount, self.currency)\n\n    def __radd__(self, other):\n        if other == 0:          # sum() starts with 0\n            return self\n        return self.__add__(other)\n\n    def __eq__(self, other):\n        if not isinstance(other, Money):\n            return NotImplemented\n        return (self.amount, self.currency) == (other.amount, other.currency)\n\n    def __hash__(self):\n        return hash((self.amount, self.currency))\n\n    def __repr__(self):\n        return f\"Money('{self.amount}', '{self.currency}')\"\n",
+  "model": "```python\nfrom decimal import Decimal\n\nclass Money:\n    def __init__(self, amount, currency=\"INR\"):\n        self.amount = Decimal(str(amount))\n        self.currency = currency\n\n    def __add__(self, other):\n        if not isinstance(other, Money):\n            return NotImplemented\n        if other.currency != self.currency:\n            raise ValueError(f\"can't add {self.currency} and {other.currency}\")\n        return Money(self.amount + other.amount, self.currency)\n\n    def __radd__(self, other):\n        if other == 0:          # sum() starts with 0\n            return self\n        return self.__add__(other)\n\n    def __eq__(self, other):\n        if not isinstance(other, Money):\n            return NotImplemented\n        return (self.amount, self.currency) == (other.amount, other.currency)\n\n    def __hash__(self):\n        return hash((self.amount, self.currency))\n\n    def __repr__(self):\n        return f\"Money('{self.amount}', '{self.currency}')\"\n```\n\nDecimal avoids float errors in money. `__radd__` is what makes `sum()` work, because sum computes `0 + first`. Defining `__eq__` sets `__hash__` to None, so add `__hash__` if instances go into sets. Note Decimal('12.50') == Decimal('12.5'), so equality is by value.",
+  "tags": [
+   "oop",
+   "dunder",
+   "overloading",
+   "finance"
+  ]
+ },
+ {
+  "id": "py-195",
+  "topic": "Python",
+  "difficulty": "deep",
+  "kind": "python_code",
+  "question": "Python has no signature overloading. Use functools.singledispatch to write to_report(value): None → '-', bool → 'yes'/'no', float → 2 decimal places, list → items joined with ', ' (each converted with to_report), dict → 'k=v' pairs joined with '; ', anything else → str(value).",
+  "what_tested": "Type-based dispatch as overloading",
+  "hint": "@singledispatch for the fallback, then @to_report.register for each type. Note bool is a subclass of int.",
+  "examples": [
+   {
+    "input": "to_report(None)",
+    "output": "'-'"
+   },
+   {
+    "input": "to_report(True)",
+    "output": "'yes'"
+   }
+  ],
+  "starter_code": "from functools import singledispatch\n\ndef to_report(value):\n    pass\n",
+  "tests": [
+   "assert to_report(None) == '-'",
+   "assert to_report(True) == 'yes'",
+   "assert to_report(3.14159) == '3.14'",
+   "assert to_report([1, False, None]) == '1, no, -'",
+   "assert to_report({'env': 'qa', 'retries': 2}) == 'env=qa; retries=2'",
+   "assert to_report(42) == '42'"
+  ],
+  "solution": "from functools import singledispatch\n\n@singledispatch\ndef to_report(value):\n    return str(value)\n\n@to_report.register(type(None))\ndef _(value):\n    return \"-\"\n\n@to_report.register\ndef _(value: bool):\n    return \"yes\" if value else \"no\"\n\n@to_report.register\ndef _(value: float):\n    return f\"{value:.2f}\"\n\n@to_report.register\ndef _(value: list):\n    return \", \".join(to_report(v) for v in value)\n\n@to_report.register\ndef _(value: dict):\n    return \"; \".join(f\"{k}={to_report(v)}\" for k, v in value.items())\n",
+  "model": "```python\nfrom functools import singledispatch\n\n@singledispatch\ndef to_report(value):\n    return str(value)\n\n@to_report.register(type(None))\ndef _(value):\n    return \"-\"\n\n@to_report.register\ndef _(value: bool):\n    return \"yes\" if value else \"no\"\n\n@to_report.register\ndef _(value: float):\n    return f\"{value:.2f}\"\n\n@to_report.register\ndef _(value: list):\n    return \", \".join(to_report(v) for v in value)\n\n@to_report.register\ndef _(value: dict):\n    return \"; \".join(f\"{k}={to_report(v)}\" for k, v in value.items())\n```\n\nsingledispatch picks the implementation by the runtime type of the first argument and respects inheritance, choosing the most specific match: bool → its own handler, not int's. That's the idiomatic answer to 'how do you overload in Python?'.",
+  "tags": [
+   "oop",
+   "overloading",
+   "functions"
+  ]
+ },
+ {
+  "id": "py-196",
+  "topic": "Python",
+  "difficulty": "core",
+  "kind": "python_code",
+  "question": "Using abc, make Report an abstract class with an abstract method render(results) and a concrete save(results) that returns 'saved: ' + render(results). Implement TextReport (render → 'passed=2 failed=1' style, keys sorted) and JsonReport (render → json.dumps(counts, sort_keys=True)). results is a list of statuses.",
+  "what_tested": "Abstraction, polymorphism",
+  "hint": "Inherit from ABC, mark render with @abstractmethod; both subclasses count statuses.",
+  "examples": [
+   {
+    "input": "TextReport().render(['passed', 'failed', 'passed'])",
+    "output": "'failed=1 passed=2'"
+   },
+   {
+    "input": "JsonReport().render(['passed'])",
+    "output": "'{\"passed\": 1}'"
+   }
+  ],
+  "starter_code": "import json\nfrom abc import ABC, abstractmethod\nfrom collections import Counter\n\nclass Report:\n    def save(self, results):\n        pass\n\nclass TextReport(Report):\n    pass\n\nclass JsonReport(Report):\n    pass\n",
+  "tests": [
+   "assert TextReport().render(['passed', 'failed', 'passed']) == 'failed=1 passed=2'",
+   "assert JsonReport().render(['passed']) == '{\"passed\": 1}'",
+   "assert TextReport().save(['skipped']) == 'saved: skipped=1'",
+   "try:\n    Report()\n    raise AssertionError('Report should be abstract')\nexcept TypeError:\n    pass"
+  ],
+  "solution": "import json\nfrom abc import ABC, abstractmethod\nfrom collections import Counter\n\nclass Report(ABC):\n    @abstractmethod\n    def render(self, results):\n        ...\n\n    def save(self, results):\n        return \"saved: \" + self.render(results)\n\nclass TextReport(Report):\n    def render(self, results):\n        counts = Counter(results)\n        return \" \".join(f\"{k}={counts[k]}\" for k in sorted(counts))\n\nclass JsonReport(Report):\n    def render(self, results):\n        return json.dumps(Counter(results), sort_keys=True)\n",
+  "model": "```python\nimport json\nfrom abc import ABC, abstractmethod\nfrom collections import Counter\n\nclass Report(ABC):\n    @abstractmethod\n    def render(self, results):\n        ...\n\n    def save(self, results):\n        return \"saved: \" + self.render(results)\n\nclass TextReport(Report):\n    def render(self, results):\n        counts = Counter(results)\n        return \" \".join(f\"{k}={counts[k]}\" for k in sorted(counts))\n\nclass JsonReport(Report):\n    def render(self, results):\n        return json.dumps(Counter(results), sort_keys=True)\n```\n\nThis is the template-method pattern: the base class owns the workflow (`save`), subclasses fill in the step (`render`). ABC makes forgetting `render` fail at construction time, not mid-run.",
+  "tags": [
+   "oop",
+   "abstraction",
+   "polymorphism"
+  ]
+ },
+ {
+  "id": "py-197",
+  "topic": "Python",
+  "difficulty": "core",
+  "kind": "python_code",
+  "question": "Write an iterator class Retries(times) so `for attempt in Retries(3)` yields 1, 2, 3. Implement __iter__ and __next__ yourself (no generators) so the same object can only be iterated once.",
+  "what_tested": "Iterator protocol",
+  "hint": "__iter__ returns self; __next__ raises StopIteration when done.",
+  "examples": [
+   {
+    "input": "list(Retries(3))",
+    "output": "[1, 2, 3]"
+   },
+   {
+    "input": "list(Retries(0))",
+    "output": "[]"
+   }
+  ],
+  "starter_code": "class Retries:\n    def __init__(self, times):\n        self.times = times\n",
+  "tests": [
+   "assert list(Retries(3)) == [1, 2, 3]",
+   "assert list(Retries(0)) == []",
+   "r = Retries(2)\nassert list(r) == [1, 2]\nassert list(r) == []",
+   "r = Retries(2)\nassert next(r) == 1 and next(r) == 2"
+  ],
+  "solution": "class Retries:\n    def __init__(self, times):\n        self.times = times\n        self.current = 0\n\n    def __iter__(self):\n        return self\n\n    def __next__(self):\n        if self.current >= self.times:\n            raise StopIteration\n        self.current += 1\n        return self.current\n",
+  "model": "```python\nclass Retries:\n    def __init__(self, times):\n        self.times = times\n        self.current = 0\n\n    def __iter__(self):\n        return self\n\n    def __next__(self):\n        if self.current >= self.times:\n            raise StopIteration\n        self.current += 1\n        return self.current\n```\n\nAn iterator is exhausted after one pass, which is why the second `list(r)` is empty. If you want re-iterable objects, make `__iter__` return a fresh iterator (or be a generator function) instead of `self`.",
+  "tags": [
+   "oop",
+   "dunder",
+   "iteration"
+  ]
+ },
+ {
+  "id": "py-198",
+  "topic": "Python",
+  "difficulty": "core",
+  "kind": "python_code",
+  "question": "Write a class TestUser with a `password` property: the setter raises ValueError if the password is shorter than 8 characters, and the getter returns it masked as '*' repeated to its length. Also add a read-only `email` property built from username + '@test.local'.",
+  "what_tested": "@property, validation, encapsulation",
+  "hint": "Store the real value in self._password; define @property and @password.setter.",
+  "examples": [
+   {
+    "input": "TestUser('ana', 'secret123').password",
+    "output": "'*********'"
+   },
+   {
+    "input": "TestUser('ana', 'secret123').email",
+    "output": "'ana@test.local'"
+   }
+  ],
+  "starter_code": "class TestUser:\n    def __init__(self, username, password):\n        self.username = username\n        self.password = password\n",
+  "tests": [
+   "assert TestUser('ana', 'secret123').password == '*********'",
+   "assert TestUser('ana', 'secret123').email == 'ana@test.local'",
+   "try:\n    TestUser('bob', 'short')\n    raise AssertionError('expected ValueError')\nexcept ValueError:\n    pass",
+   "u = TestUser('cy', 'longenough')\ntry:\n    u.email = 'x'\n    raise AssertionError('email should be read-only')\nexcept AttributeError:\n    pass"
+  ],
+  "solution": "class TestUser:\n    def __init__(self, username, password):\n        self.username = username\n        self.password = password          # goes through the setter\n\n    @property\n    def password(self):\n        return \"*\" * len(self._password)\n\n    @password.setter\n    def password(self, value):\n        if len(value) < 8:\n            raise ValueError(\"password must be at least 8 characters\")\n        self._password = value\n\n    @property\n    def email(self):\n        return f\"{self.username}@test.local\"\n",
+  "model": "```python\nclass TestUser:\n    def __init__(self, username, password):\n        self.username = username\n        self.password = password          # goes through the setter\n\n    @property\n    def password(self):\n        return \"*\" * len(self._password)\n\n    @password.setter\n    def password(self, value):\n        if len(value) < 8:\n            raise ValueError(\"password must be at least 8 characters\")\n        self._password = value\n\n    @property\n    def email(self):\n        return f\"{self.username}@test.local\"\n```\n\nAssigning in `__init__` via the property means validation can't be bypassed at construction. A property without a setter is read-only (AttributeError on assignment). Masking in the getter keeps secrets out of logs and reports.",
+  "tags": [
+   "oop",
+   "encapsulation",
+   "property"
+  ]
+ },
+ {
+  "id": "py-199",
+  "topic": "Python",
+  "difficulty": "deep",
+  "kind": "python_code",
+  "question": "Write a LogMixin with log(msg) that appends f'{ClassName}: {msg}' to self.logs (creating the list if needed). Then write ApiClient(base_url) and CheckoutPage(LogMixin, BasePageStub) so both get logging. CheckoutPage.pay(amount) logs 'pay {amount}'; ApiClient(LogMixin) .get(path) logs 'GET {base_url}{path}'.",
+  "what_tested": "Mixins and multiple inheritance",
+  "hint": "The mixin shouldn't need its own __init__; use getattr/setdefault-style lazy creation.",
+  "examples": [
+   {
+    "input": "CheckoutPage.__mro__[1].__name__",
+    "output": "'LogMixin'"
+   }
+  ],
+  "starter_code": "class BasePageStub:\n    def __init__(self, page=None):\n        self.page = page\n\nclass LogMixin:\n    def log(self, msg):\n        pass\n\nclass ApiClient:\n    def __init__(self, base_url):\n        self.base_url = base_url\n\nclass CheckoutPage(BasePageStub):\n    pass\n",
+  "tests": [
+   "c = ApiClient('https://api.test')\nc.get('/users')\nassert c.logs == ['ApiClient: GET https://api.test/users']",
+   "p = CheckoutPage()\np.pay(250)\np.pay(10)\nassert p.logs == ['CheckoutPage: pay 250', 'CheckoutPage: pay 10']",
+   "assert CheckoutPage.__mro__[1].__name__ == 'LogMixin'",
+   "assert issubclass(ApiClient, LogMixin)"
+  ],
+  "solution": "class BasePageStub:\n    def __init__(self, page=None):\n        self.page = page\n\nclass LogMixin:\n    def log(self, msg):\n        if not hasattr(self, \"logs\"):\n            self.logs = []\n        self.logs.append(f\"{type(self).__name__}: {msg}\")\n\nclass ApiClient(LogMixin):\n    def __init__(self, base_url):\n        self.base_url = base_url\n\n    def get(self, path):\n        self.log(f\"GET {self.base_url}{path}\")\n\nclass CheckoutPage(LogMixin, BasePageStub):\n    def pay(self, amount):\n        self.log(f\"pay {amount}\")\n",
+  "model": "```python\nclass BasePageStub:\n    def __init__(self, page=None):\n        self.page = page\n\nclass LogMixin:\n    def log(self, msg):\n        if not hasattr(self, \"logs\"):\n            self.logs = []\n        self.logs.append(f\"{type(self).__name__}: {msg}\")\n\nclass ApiClient(LogMixin):\n    def __init__(self, base_url):\n        self.base_url = base_url\n\n    def get(self, path):\n        self.log(f\"GET {self.base_url}{path}\")\n\nclass CheckoutPage(LogMixin, BasePageStub):\n    def pay(self, amount):\n        self.log(f\"pay {amount}\")\n```\n\nList the mixin first so its methods come before the base class in the MRO. Mixins without `__init__` avoid constructor-chaining problems; the lazy `logs` creation keeps them independent of the host class.",
+  "tags": [
+   "oop",
+   "inheritance",
+   "mixins"
+  ]
+ },
+ {
+  "id": "py-200",
+  "topic": "Python",
+  "difficulty": "core",
+  "kind": "python_code",
+  "question": "Write a dataclass-free Version class that supports comparison with <, <=, >, >=, == using functools.total_ordering, so sorted(['1.10.0', '1.2.0', '1.9.3'], key=Version) works. Compare numerically part by part; missing parts count as 0 ('1.2' == '1.2.0').",
+  "what_tested": "Rich comparison, total_ordering",
+  "hint": "Normalise to a tuple of ints with trailing zeros stripped, then compare tuples.",
+  "examples": [
+   {
+    "input": "Version('1.2')",
+    "output": "Version('1.2.0')"
+   },
+   {
+    "input": "sorted(['1.10.0', '1.2.0', '1.9.3'], key=Version)",
+    "output": "['1.2.0', '1.9.3', '1.10.0']"
+   }
+  ],
+  "starter_code": "from functools import total_ordering\n\nclass Version:\n    def __init__(self, text):\n        self.text = text\n",
+  "tests": [
+   "assert Version('1.10.0') > Version('1.9.3')",
+   "assert Version('1.2') == Version('1.2.0')",
+   "assert Version('2.0') >= Version('1.99.99')",
+   "assert Version('0.9') <= Version('0.10')",
+   "assert sorted(['1.10.0', '1.2.0', '1.9.3'], key=Version) == ['1.2.0', '1.9.3', '1.10.0']"
+  ],
+  "solution": "from functools import total_ordering\n\n@total_ordering\nclass Version:\n    def __init__(self, text):\n        self.text = text\n        parts = [int(p) for p in text.split(\".\")]\n        while parts and parts[-1] == 0:\n            parts.pop()\n        self.key = tuple(parts)\n\n    def __eq__(self, other):\n        return self.key == other.key\n\n    def __lt__(self, other):\n        return self.key < other.key\n\n    def __hash__(self):\n        return hash(self.key)\n",
+  "model": "```python\nfrom functools import total_ordering\n\n@total_ordering\nclass Version:\n    def __init__(self, text):\n        self.text = text\n        parts = [int(p) for p in text.split(\".\")]\n        while parts and parts[-1] == 0:\n            parts.pop()\n        self.key = tuple(parts)\n\n    def __eq__(self, other):\n        return self.key == other.key\n\n    def __lt__(self, other):\n        return self.key < other.key\n\n    def __hash__(self):\n        return hash(self.key)\n```\n\nString comparison says '1.10' < '1.9'; tuples of ints compare correctly. total_ordering derives <=, >, >= from __eq__ and __lt__. Stripping trailing zeros makes '1.2' and '1.2.0' equal (and hash the same).",
+  "tags": [
+   "oop",
+   "dunder",
+   "sorting"
+  ]
  }
 ]

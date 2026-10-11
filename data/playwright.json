@@ -2327,5 +2327,265 @@
    "scenario",
    "waits"
   ]
+ },
+ {
+  "id": "pw-121",
+  "topic": "Playwright",
+  "difficulty": "core",
+  "kind": "python_code",
+  "question": "Write a LoginPage page object. __init__(page) stores locators: email = get_by_label('Email'), password = get_by_label('Password'), submit = get_by_role('button', name='Sign in'). open() goes to '/login'. login(email, password) fills both fields and clicks Sign in.",
+  "what_tested": "Page Object Model, Playwright locators",
+  "hint": "Create locators once in __init__; actions are just fill/click on them.",
+  "examples": [
+   {
+    "input": "LoginPage(page).open(); .login('qa@shop.test', 's3cret!')",
+    "output": "goto /login → fill label=Email → fill label=Password → click role=button[name=\"Sign in\"]"
+   }
+  ],
+  "starter_code": "class LoginPage:\n    def __init__(self, page):\n        self.page = page\n\n    def open(self):\n        pass\n\n    def login(self, email, password):\n        pass\n",
+  "tests": [
+   "from fakepw import FakePage\npage = FakePage(base_url='https://shop.test')\nlp = LoginPage(page)\nlp.open()\nlp.login('qa@shop.test', 's3cret!')\nassert page.actions == [\n    ('goto', 'https://shop.test/login'),\n    ('fill', 'label=Email', 'qa@shop.test'),\n    ('fill', 'label=Password', 's3cret!'),\n    ('click', 'role=button[name=\"Sign in\"]'),\n]",
+   "from fakepw import FakePage\nlp = LoginPage(FakePage())\nassert repr(lp.submit) == '<Locator role=button[name=\"Sign in\"]>'",
+   "from fakepw import FakePage\npage = FakePage(base_url='https://shop.test')\nLoginPage(page).open()\nassert page.actions == [('goto', 'https://shop.test/login')]"
+  ],
+  "solution": "class LoginPage:\n    def __init__(self, page):\n        self.page = page\n        self.email = page.get_by_label(\"Email\")\n        self.password = page.get_by_label(\"Password\")\n        self.submit = page.get_by_role(\"button\", name=\"Sign in\")\n\n    def open(self):\n        self.page.goto(\"/login\")\n\n    def login(self, email, password):\n        self.email.fill(email)\n        self.password.fill(password)\n        self.submit.click()\n",
+  "model": "```python\nclass LoginPage:\n    def __init__(self, page):\n        self.page = page\n        self.email = page.get_by_label(\"Email\")\n        self.password = page.get_by_label(\"Password\")\n        self.submit = page.get_by_role(\"button\", name=\"Sign in\")\n\n    def open(self):\n        self.page.goto(\"/login\")\n\n    def login(self, email, password):\n        self.email.fill(email)\n        self.password.fill(password)\n        self.submit.click()\n```\n\nLocators are lazy in Playwright: creating them in `__init__` doesn't touch the page, and every action re-resolves them and auto-waits (visible, enabled, stable). That's why page objects can define locators up front without stale-element problems. `page.goto('/login')` uses the `base_url` configured in pytest-playwright (`--base-url` or `browser_context_args`).\n\nGraded with a recording stand-in for Playwright's Page (same method names as the sync API), so you can practise page-object code here without a browser.",
+  "tags": [
+   "pom",
+   "locators"
+  ]
+ },
+ {
+  "id": "pw-122",
+  "topic": "Playwright",
+  "difficulty": "core",
+  "kind": "python_code",
+  "question": "Build a small page hierarchy. BasePage(page) has a class attribute `path` and `open()` that goes to self.path, plus `heading()` returning the inner text of page.get_by_role('heading'). DashboardPage(BasePage) sets path '/dashboard' and adds open_settings() that clicks the 'Settings' link (role 'link'). Override open() in DashboardPage to call the parent's open() and then wait for load state 'networkidle'.",
+  "what_tested": "Inheritance and overriding in page objects",
+  "hint": "Use super().open() in the override.",
+  "examples": [
+   {
+    "input": "DashboardPage(page).open(); .open_settings()",
+    "output": "goto /dashboard → wait_for_load_state networkidle → click role=link[name=\"Settings\"]"
+   }
+  ],
+  "starter_code": "class BasePage:\n    path = \"/\"\n\n    def __init__(self, page):\n        self.page = page\n\n    def open(self):\n        pass\n\n    def heading(self):\n        pass\n\n\nclass DashboardPage(BasePage):\n    pass\n",
+  "tests": [
+   "from fakepw import FakePage\npage = FakePage(base_url='https://app.test')\npage.texts['role=heading'] = 'Welcome back'\nd = DashboardPage(page)\nd.open()\nd.open_settings()\nassert page.actions == [('goto', 'https://app.test/dashboard'), ('wait_for_load_state', 'networkidle'),\n                        ('click', 'role=link[name=\"Settings\"]')]\nassert d.heading() == 'Welcome back'",
+   "from fakepw import FakePage\npage = FakePage(base_url='https://app.test')\nBasePage(page).open()\nassert page.actions == [('goto', 'https://app.test/')]",
+   "from fakepw import FakePage\npage = FakePage()\npage.texts['role=heading'] = 'Settings'\nassert BasePage(page).heading() == 'Settings'\nassert DashboardPage.path == '/dashboard' and BasePage.path == '/'"
+  ],
+  "solution": "class BasePage:\n    path = \"/\"\n\n    def __init__(self, page):\n        self.page = page\n\n    def open(self):\n        self.page.goto(self.path)\n\n    def heading(self):\n        return self.page.get_by_role(\"heading\").inner_text()\n\n\nclass DashboardPage(BasePage):\n    path = \"/dashboard\"\n\n    def open(self):\n        super().open()\n        self.page.wait_for_load_state(\"networkidle\")\n\n    def open_settings(self):\n        self.page.get_by_role(\"link\", name=\"Settings\").click()\n",
+  "model": "```python\nclass BasePage:\n    path = \"/\"\n\n    def __init__(self, page):\n        self.page = page\n\n    def open(self):\n        self.page.goto(self.path)\n\n    def heading(self):\n        return self.page.get_by_role(\"heading\").inner_text()\n\n\nclass DashboardPage(BasePage):\n    path = \"/dashboard\"\n\n    def open(self):\n        super().open()\n        self.page.wait_for_load_state(\"networkidle\")\n\n    def open_settings(self):\n        self.page.get_by_role(\"link\", name=\"Settings\").click()\n```\n\nShared behaviour (navigation, common header/footer components) lives in BasePage; each page overrides only what differs. Extending with `super().open()` avoids duplicating navigation logic. In a real suite prefer waiting for something meaningful (`expect(heading).to_be_visible()`) over `networkidle`, which is discouraged for apps with polling or websockets.\n\nGraded with a recording stand-in for Playwright's Page (same method names as the sync API), so you can practise page-object code here without a browser.",
+  "tags": [
+   "pom",
+   "inheritance",
+   "overriding"
+  ]
+ },
+ {
+  "id": "pw-123",
+  "topic": "Playwright",
+  "difficulty": "core",
+  "kind": "python_code",
+  "question": "Write locator_for(page, spec) that turns a dict into the most robust Playwright locator, preferring in this order: 'test_id' → get_by_test_id, 'role' (+ optional 'name') → get_by_role, 'label' → get_by_label, 'placeholder' → get_by_placeholder, 'text' → get_by_text, 'css' → locator. Raise ValueError if none are present.",
+  "what_tested": "Locator strategy and priority",
+  "hint": "Check keys in priority order and return the first matching locator.",
+  "examples": [
+   {
+    "input": "locator_for(page, {'role': 'button', 'name': 'Pay', 'css': '#pay'})",
+    "output": "page.get_by_role('button', name='Pay')"
+   },
+   {
+    "input": "locator_for(page, {'css': 'div.price'})",
+    "output": "page.locator('div.price')"
+   }
+  ],
+  "starter_code": "def locator_for(page, spec):\n    pass\n",
+  "tests": [
+   "from fakepw import FakePage\nassert repr(locator_for(FakePage(), {'role': 'button', 'name': 'Pay', 'css': '#pay'})) == '<Locator role=button[name=\"Pay\"]>'",
+   "from fakepw import FakePage\nassert repr(locator_for(FakePage(), {'test_id': 'cart-total', 'text': 'Total'})) == '<Locator testid=cart-total>'",
+   "from fakepw import FakePage\nassert repr(locator_for(FakePage(), {'label': 'Email', 'text': 'Email'})) == '<Locator label=Email>'",
+   "from fakepw import FakePage\nassert repr(locator_for(FakePage(), {'placeholder': 'Search', 'css': 'input'})) == '<Locator placeholder=Search>'",
+   "from fakepw import FakePage\nassert repr(locator_for(FakePage(), {'role': 'checkbox'})) == '<Locator role=checkbox>'",
+   "from fakepw import FakePage\nassert repr(locator_for(FakePage(), {'css': 'div.price'})) == '<Locator div.price>'",
+   "from fakepw import FakePage\ntry:\n    locator_for(FakePage(), {'xpath': '//div'})\n    raise AssertionError('expected ValueError')\nexcept ValueError:\n    pass"
+  ],
+  "solution": "def locator_for(page, spec):\n    if \"test_id\" in spec:\n        return page.get_by_test_id(spec[\"test_id\"])\n    if \"role\" in spec:\n        return page.get_by_role(spec[\"role\"], name=spec.get(\"name\"))\n    if \"label\" in spec:\n        return page.get_by_label(spec[\"label\"])\n    if \"placeholder\" in spec:\n        return page.get_by_placeholder(spec[\"placeholder\"])\n    if \"text\" in spec:\n        return page.get_by_text(spec[\"text\"])\n    if \"css\" in spec:\n        return page.locator(spec[\"css\"])\n    raise ValueError(f\"no supported locator in {spec}\")\n",
+  "model": "```python\ndef locator_for(page, spec):\n    if \"test_id\" in spec:\n        return page.get_by_test_id(spec[\"test_id\"])\n    if \"role\" in spec:\n        return page.get_by_role(spec[\"role\"], name=spec.get(\"name\"))\n    if \"label\" in spec:\n        return page.get_by_label(spec[\"label\"])\n    if \"placeholder\" in spec:\n        return page.get_by_placeholder(spec[\"placeholder\"])\n    if \"text\" in spec:\n        return page.get_by_text(spec[\"text\"])\n    if \"css\" in spec:\n        return page.locator(spec[\"css\"])\n    raise ValueError(f\"no supported locator in {spec}\")\n```\n\nPlaywright's guidance: prefer user-facing locators (role + accessible name, label, placeholder, text) and explicit test ids, and use CSS/XPath only as a last resort, because they break on markup changes. Teams differ on whether test ids or roles come first; what matters is a consistent, documented order. `codegen` and the inspector suggest locators in this spirit.\n\nGraded with a recording stand-in for Playwright's Page (same method names as the sync API), so you can practise page-object code here without a browser.",
+  "tags": [
+   "locators",
+   "strategy"
+  ]
+ },
+ {
+  "id": "pw-124",
+  "topic": "Playwright",
+  "difficulty": "deep",
+  "kind": "python_code",
+  "question": "Write wait_until(condition, timeout, interval, clock, sleep) like Playwright's polling: call condition() until it returns a truthy value and return that value; if timeout seconds pass first, raise TimeoutError. clock() returns the current time in seconds and sleep(s) waits (both injected so the test can fake time). Check the condition one last time at the deadline.",
+  "what_tested": "Auto-waiting / polling, timeouts",
+  "hint": "Compute the deadline once; loop: check, then sleep min(interval, time left).",
+  "examples": [
+   {
+    "input": "wait_until(lambda: t >= 1.0, timeout=5, interval=0.25, ...)",
+    "output": "polls at 0, 0.25, 0.5, 0.75, 1.0 then returns True"
+   },
+   {
+    "input": "wait_until(lambda: False, timeout=1, interval=0.4, ...)",
+    "output": "TimeoutError after checks at 0, 0.4, 0.8, 1.0"
+   }
+  ],
+  "starter_code": "def wait_until(condition, timeout, interval, clock, sleep):\n    pass\n",
+  "tests": [
+   "t = [0.0]\nclock = lambda: t[0]\ndef sleep(s): t[0] += s\ncalls = []\ndef ready():\n    calls.append(t[0])\n    return 'ok' if t[0] >= 1.0 else None\nassert wait_until(ready, timeout=5, interval=0.25, clock=clock, sleep=sleep) == 'ok'\nassert calls == [0.0, 0.25, 0.5, 0.75, 1.0]",
+   "t = [0.0]\ndef sleep(s): t[0] += s\ntry:\n    wait_until(lambda: False, timeout=1, interval=0.4, clock=lambda: t[0], sleep=sleep)\n    raise AssertionError('expected TimeoutError')\nexcept TimeoutError:\n    assert abs(t[0] - 1.0) < 1e-9",
+   "t = [0.0]\nseen = []\ndef cond():\n    seen.append(t[0]); return t[0] >= 1.0\ndef sleep(s): t[0] += s\nassert wait_until(cond, timeout=1, interval=0.4, clock=lambda: t[0], sleep=sleep) is True\nassert [round(x, 2) for x in seen] == [0.0, 0.4, 0.8, 1.0]"
+  ],
+  "solution": "def wait_until(condition, timeout, interval, clock, sleep):\n    deadline = clock() + timeout\n    while True:\n        value = condition()\n        if value:\n            return value\n        remaining = deadline - clock()\n        if remaining <= 0:\n            raise TimeoutError(f\"condition not met within {timeout}s\")\n        sleep(min(interval, remaining))\n",
+  "model": "```python\ndef wait_until(condition, timeout, interval, clock, sleep):\n    deadline = clock() + timeout\n    while True:\n        value = condition()\n        if value:\n            return value\n        remaining = deadline - clock()\n        if remaining <= 0:\n            raise TimeoutError(f\"condition not met within {timeout}s\")\n        sleep(min(interval, remaining))\n```\n\nThis is the idea behind Playwright's auto-waiting and `expect(...)` retries: poll until the condition holds or the timeout expires, instead of a fixed `time.sleep(5)`. Defaults to remember: actions wait up to 30 s (`set_default_timeout`), `expect` assertions retry for 5 s (`expect.set_options(timeout=...)` or per call `timeout=`). Raising the timeout is fine for known slow operations (e.g. a 40 s report download, `click(timeout=60_000)` after confirming the slowness is expected), but not as a fix for flaky locators.\n\nInjecting `clock`/`sleep` makes timing code testable without real waiting.",
+  "tags": [
+   "waits",
+   "timeouts"
+  ]
+ },
+ {
+  "id": "pw-125",
+  "topic": "Playwright",
+  "difficulty": "core",
+  "kind": "python_code",
+  "question": "Write handle_route(route) for page.route('**/api/**', handle_route): for GET requests to a URL ending with '/api/users', fulfill with status 200 and json [{'id': 1, 'name': 'Test User'}]; for any request whose URL contains '/api/payments', abort it; let everything else continue.",
+  "what_tested": "Network mocking with page.route",
+  "hint": "Check route.request.method and route.request.url; call exactly one of fulfill / abort / continue_.",
+  "examples": [
+   {
+    "input": "GET https://shop.test/api/users",
+    "output": "route.fulfill(status=200, json=[{'id': 1, 'name': 'Test User'}])"
+   },
+   {
+    "input": "POST https://shop.test/api/payments/42",
+    "output": "route.abort()"
+   }
+  ],
+  "starter_code": "def handle_route(route):\n    pass\n",
+  "tests": [
+   "from fakepw import FakeRoute\nr = FakeRoute('https://shop.test/api/users')\nhandle_route(r)\nassert r.outcome['action'] == 'fulfill' and r.outcome['status'] == 200\nassert r.outcome['json'] == [{'id': 1, 'name': 'Test User'}]",
+   "from fakepw import FakeRoute\nr = FakeRoute('https://shop.test/api/payments/42', method='POST')\nhandle_route(r)\nassert r.outcome['action'] == 'abort'",
+   "from fakepw import FakeRoute\nfor url, method in [('https://shop.test/api/users', 'POST'), ('https://shop.test/api/orders', 'GET')]:\n    r = FakeRoute(url, method=method)\n    handle_route(r)\n    assert r.outcome['action'] == 'continue', (url, method)"
+  ],
+  "solution": "def handle_route(route):\n    url, method = route.request.url, route.request.method\n    if method == \"GET\" and url.endswith(\"/api/users\"):\n        route.fulfill(status=200, json=[{\"id\": 1, \"name\": \"Test User\"}])\n    elif \"/api/payments\" in url:\n        route.abort()\n    else:\n        route.continue_()\n",
+  "model": "```python\ndef handle_route(route):\n    url, method = route.request.url, route.request.method\n    if method == \"GET\" and url.endswith(\"/api/users\"):\n        route.fulfill(status=200, json=[{\"id\": 1, \"name\": \"Test User\"}])\n    elif \"/api/payments\" in url:\n        route.abort()\n    else:\n        route.continue_()\n```\n\n`page.route(pattern, handler)` intercepts matching requests; the handler must resolve each one exactly once with `fulfill` (fake response; `json=` sets the body and content type), `abort` (simulate network failure), `continue_` (send to the server, optionally modified) or `fallback` (let the next matching route decide). Typical uses: stable data for UI tests, testing error states (500s, timeouts) and blocking third-party calls. Register routes **before** the navigation that triggers the requests.\n\nGraded with a recording stand-in for Playwright's Page (same method names as the sync API), so you can practise page-object code here without a browser.",
+  "tags": [
+   "network",
+   "mocking"
+  ]
+ },
+ {
+  "id": "pw-126",
+  "topic": "Playwright",
+  "difficulty": "core",
+  "kind": "python_code",
+  "question": "Login state is saved with context.storage_state(path='auth.json'). Write session_is_valid(state, now) that returns True if the state has a cookie named 'session' for domain 'app.test' (a leading '.' also matches) whose 'expires' is -1 (session cookie) or more than 300 seconds after now.",
+  "what_tested": "Auth reuse with storage_state",
+  "hint": "Loop over state['cookies'] and check name, domain and expires.",
+  "examples": [
+   {
+    "input": "session_is_valid({'cookies': [{'name': 'session', 'domain': 'app.test', 'expires': 2000}], 'origins': []}, now=1000)",
+    "output": "True"
+   },
+   {
+    "input": "session_is_valid({'cookies': [{'name': 'session', 'domain': '.app.test', 'expires': -1}], 'origins': []}, now=1000)",
+    "output": "True"
+   }
+  ],
+  "starter_code": "def session_is_valid(state, now):\n    pass\n",
+  "tests": [
+   "assert session_is_valid({'cookies': [{'name': 'session', 'domain': 'app.test', 'expires': 2000}], 'origins': []}, now=1000) is True",
+   "assert session_is_valid({'cookies': [{'name': 'session', 'domain': '.app.test', 'expires': -1}], 'origins': []}, now=1000) is True",
+   "assert session_is_valid({'cookies': [{'name': 'session', 'domain': 'app.test', 'expires': 1200}], 'origins': []}, now=1000) is False",
+   "assert session_is_valid({'cookies': [{'name': 'theme', 'domain': 'app.test', 'expires': -1}], 'origins': []}, now=0) is False",
+   "assert session_is_valid({'cookies': [{'name': 'session', 'domain': 'other.test', 'expires': -1}], 'origins': []}, now=0) is False",
+   "assert session_is_valid({'cookies': [], 'origins': []}, now=0) is False"
+  ],
+  "solution": "def session_is_valid(state, now):\n    for cookie in state.get(\"cookies\", []):\n        if cookie.get(\"name\") != \"session\":\n            continue\n        if cookie.get(\"domain\", \"\").lstrip(\".\") != \"app.test\":\n            continue\n        expires = cookie.get(\"expires\", -1)\n        if expires == -1 or expires > now + 300:\n            return True\n    return False\n",
+  "model": "```python\ndef session_is_valid(state, now):\n    for cookie in state.get(\"cookies\", []):\n        if cookie.get(\"name\") != \"session\":\n            continue\n        if cookie.get(\"domain\", \"\").lstrip(\".\") != \"app.test\":\n            continue\n        expires = cookie.get(\"expires\", -1)\n        if expires == -1 or expires > now + 300:\n            return True\n    return False\n```\n\nLogging in through the UI before every test is slow and flaky. Instead, log in once (a setup test or session fixture), save `context.storage_state(path=\"auth.json\")`, and create contexts with `browser.new_context(storage_state=\"auth.json\")`. A validity check like this decides whether to reuse the file or log in again. Never commit auth.json; add it to .gitignore and generate it in CI.",
+  "tags": [
+   "auth",
+   "contexts"
+  ]
+ },
+ {
+  "id": "pw-127",
+  "topic": "Playwright",
+  "difficulty": "core",
+  "kind": "python_code",
+  "question": "Write read_table(page) for a results table. page.locator('table thead th').all_inner_texts() gives the headers and page.locator('table tbody tr').all_inner_texts() gives one string per row with cells separated by tabs. Return a list of dicts mapping header → cell, skipping blank rows and stripping whitespace.",
+  "what_tested": "Reading data from the page",
+  "hint": "zip(headers, row.split('\\t')).",
+  "examples": [
+   {
+    "input": "headers ['Test','Status'], rows ['login\\tpassed']",
+    "output": "[{'Test': 'login', 'Status': 'passed'}]"
+   }
+  ],
+  "starter_code": "def read_table(page):\n    pass\n",
+  "tests": [
+   "from fakepw import FakePage\npage = FakePage()\npage.lists['table thead th'] = ['Test', 'Status', 'Duration']\npage.lists['table tbody tr'] = ['login\\tpassed\\t1.2s', '  ', 'checkout \\t failed\\t3.4s']\nassert read_table(page) == [\n    {'Test': 'login', 'Status': 'passed', 'Duration': '1.2s'},\n    {'Test': 'checkout', 'Status': 'failed', 'Duration': '3.4s'},\n]",
+   "from fakepw import FakePage\npage = FakePage()\npage.lists['table thead th'] = ['A']\npage.lists['table tbody tr'] = []\nassert read_table(page) == []",
+   "from fakepw import FakePage\npage = FakePage()\npage.lists['table thead th'] = [' Name ', 'Qty ']\npage.lists['table tbody tr'] = ['Pen\t 2']\nassert read_table(page) == [{'Name': 'Pen', 'Qty': '2'}]"
+  ],
+  "solution": "def read_table(page):\n    headers = [h.strip() for h in page.locator(\"table thead th\").all_inner_texts()]\n    rows = []\n    for line in page.locator(\"table tbody tr\").all_inner_texts():\n        if not line.strip():\n            continue\n        cells = [c.strip() for c in line.split(\"\\t\")]\n        rows.append(dict(zip(headers, cells)))\n    return rows\n",
+  "model": "```python\ndef read_table(page):\n    headers = [h.strip() for h in page.locator(\"table thead th\").all_inner_texts()]\n    rows = []\n    for line in page.locator(\"table tbody tr\").all_inner_texts():\n        if not line.strip():\n            continue\n        cells = [c.strip() for c in line.split(\"\\t\")]\n        rows.append(dict(zip(headers, cells)))\n    return rows\n```\n\n`all_inner_texts()` reads every match in one round trip, much faster than looping `nth(i).inner_text()`. Note it does **not** auto-wait for elements, so first wait for the table, e.g. `expect(page.locator(\"table tbody tr\")).to_have_count(n)` or `.first.wait_for()`. For assertions on lists, `expect(locator).to_have_text([...])` retries until the texts match.\n\nGraded with a recording stand-in for Playwright's Page (same method names as the sync API), so you can practise page-object code here without a browser.",
+  "tags": [
+   "locators",
+   "data"
+  ]
+ },
+ {
+  "id": "pw-128",
+  "topic": "Playwright",
+  "difficulty": "core",
+  "kind": "python_code",
+  "question": "Write a TodoPage page object for a todo app. add(text) fills the input with placeholder 'What needs to be done?' and presses Enter. complete(text) checks the checkbox inside the list item: locator('li').filter(has_text=text).get_by_role('checkbox'). count() returns the number of locator('li') items.",
+  "what_tested": "Chaining and filtering locators",
+  "hint": "Narrow with filter(has_text=...) then get_by_role inside it.",
+  "examples": [
+   {
+    "input": "todo.add('Review PR'); todo.complete('Review PR')",
+    "output": "fill + press Enter on the placeholder input, then check the checkbox in the matching li"
+   }
+  ],
+  "starter_code": "class TodoPage:\n    def __init__(self, page):\n        self.page = page\n",
+  "tests": [
+   "from fakepw import FakePage\npage = FakePage()\ntodo = TodoPage(page)\ntodo.add('Write API tests')\ntodo.add('Review PR')\ntodo.complete('Review PR')\nassert page.actions == [\n    ('fill', 'placeholder=What needs to be done?', 'Write API tests'),\n    ('press', 'placeholder=What needs to be done?', 'Enter'),\n    ('fill', 'placeholder=What needs to be done?', 'Review PR'),\n    ('press', 'placeholder=What needs to be done?', 'Enter'),\n    ('check', 'li >> filter(has_text=Review PR) >> role=checkbox'),\n]",
+   "from fakepw import FakePage\npage = FakePage()\npage.lists['li'] = ['a', 'b', 'c']\nassert TodoPage(page).count() == 3",
+   "from fakepw import FakePage\npage = FakePage()\nTodoPage(page).add('Only one')\nassert page.actions[-1] == ('press', 'placeholder=What needs to be done?', 'Enter')\nassert page.values['placeholder=What needs to be done?'] == 'Only one'"
+  ],
+  "solution": "class TodoPage:\n    def __init__(self, page):\n        self.page = page\n        self.new_todo = page.get_by_placeholder(\"What needs to be done?\")\n        self.items = page.locator(\"li\")\n\n    def add(self, text):\n        self.new_todo.fill(text)\n        self.new_todo.press(\"Enter\")\n\n    def complete(self, text):\n        self.items.filter(has_text=text).get_by_role(\"checkbox\").check()\n\n    def count(self):\n        return self.items.count()\n",
+  "model": "```python\nclass TodoPage:\n    def __init__(self, page):\n        self.page = page\n        self.new_todo = page.get_by_placeholder(\"What needs to be done?\")\n        self.items = page.locator(\"li\")\n\n    def add(self, text):\n        self.new_todo.fill(text)\n        self.new_todo.press(\"Enter\")\n\n    def complete(self, text):\n        self.items.filter(has_text=text).get_by_role(\"checkbox\").check()\n\n    def count(self):\n        return self.items.count()\n```\n\n`filter(has_text=...)` scopes to the right row, then a role locator finds the control inside it. That's more robust than `nth(1)` or index-based XPath. In tests, assert with `expect(todo.items).to_have_count(2)` rather than `assert todo.count() == 2`, because `count()` doesn't wait.\n\nGraded with a recording stand-in for Playwright's Page (same method names as the sync API), so you can practise page-object code here without a browser.",
+  "tags": [
+   "pom",
+   "locators"
+  ]
+ },
+ {
+  "id": "pw-129",
+  "topic": "Playwright",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "Why does `assert todo.items.count() == 2` sometimes fail when `expect(todo.items).to_have_count(2)` passes?",
+  "what_tested": "Web-first assertions",
+  "options": [
+   "count() reads once; expect retries until it matches",
+   "count() also counts hidden elements, expect doesn't",
+   "expect resolves locators with a different engine",
+   "count() is async and returns a coroutine in pytest"
+  ],
+  "answer": 0,
+  "model": "Methods that just read state (`count()`, `is_visible()`, `inner_text()`, `all_inner_texts()`) return the current value with no retry. `expect(...)` assertions poll until the condition holds (5 s default). Use `expect` for anything that may change after an action; plain `assert` is fine for values that are already settled.",
+  "tags": [
+   "assertions",
+   "waits"
+  ]
  }
 ]

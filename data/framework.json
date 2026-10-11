@@ -2019,5 +2019,450 @@
    "ci",
    "environments"
   ]
+ },
+ {
+  "id": "fw-104",
+  "topic": "Pytest & framework design",
+  "difficulty": "core",
+  "kind": "python_code",
+  "question": "Write parse_pytest_ini(text) that reads pytest.ini content and returns {'addopts': [...], 'testpaths': [...], 'markers': {name: description}}. addopts and testpaths are whitespace-separated; each markers line is 'name: description'. Missing keys give empty values.",
+  "what_tested": "pytest.ini format, configparser",
+  "hint": "configparser reads [pytest]; multi-line values come back as one string with newlines.",
+  "examples": [
+   {
+    "input": "parse_pytest_ini('[pytest]\\naddopts = -ra --strict-markers\\ntestpaths = tests\\nmarkers =\\n    smoke: fast checks')",
+    "output": "{'addopts': ['-ra', '--strict-markers'], 'testpaths': ['tests'], 'markers': {'smoke': 'fast checks'}}"
+   }
+  ],
+  "starter_code": "import configparser\n\ndef parse_pytest_ini(text):\n    pass\n",
+  "tests": [
+   "ini = '''\n[pytest]\naddopts = -ra --strict-markers\n    --maxfail=2\ntestpaths = tests/ui tests/api\nmarkers =\n    smoke: quick checks run on every commit\n    slow: takes more than 30 seconds\n'''\ncfg = parse_pytest_ini(ini)\nassert cfg['addopts'] == ['-ra', '--strict-markers', '--maxfail=2']\nassert cfg['testpaths'] == ['tests/ui', 'tests/api']\nassert cfg['markers'] == {'smoke': 'quick checks run on every commit', 'slow': 'takes more than 30 seconds'}",
+   "assert parse_pytest_ini('[pytest]\\n') == {'addopts': [], 'testpaths': [], 'markers': {}}",
+   "assert parse_pytest_ini('[pytest]\\nmarkers = regression\\n')['markers'] == {'regression': ''}"
+  ],
+  "solution": "import configparser\n\ndef parse_pytest_ini(text):\n    parser = configparser.ConfigParser()\n    parser.read_string(text)\n    section = parser[\"pytest\"] if parser.has_section(\"pytest\") else {}\n    markers = {}\n    for line in section.get(\"markers\", \"\").splitlines():\n        line = line.strip()\n        if not line:\n            continue\n        name, _, desc = line.partition(\":\")\n        markers[name.strip()] = desc.strip()\n    return {\n        \"addopts\": section.get(\"addopts\", \"\").split(),\n        \"testpaths\": section.get(\"testpaths\", \"\").split(),\n        \"markers\": markers,\n    }\n",
+  "model": "```python\nimport configparser\n\ndef parse_pytest_ini(text):\n    parser = configparser.ConfigParser()\n    parser.read_string(text)\n    section = parser[\"pytest\"] if parser.has_section(\"pytest\") else {}\n    markers = {}\n    for line in section.get(\"markers\", \"\").splitlines():\n        line = line.strip()\n        if not line:\n            continue\n        name, _, desc = line.partition(\":\")\n        markers[name.strip()] = desc.strip()\n    return {\n        \"addopts\": section.get(\"addopts\", \"\").split(),\n        \"testpaths\": section.get(\"testpaths\", \"\").split(),\n        \"markers\": markers,\n    }\n```\n\npytest.ini (or `[tool.pytest.ini_options]` in pyproject.toml) is where the team-wide defaults live:\n- `addopts`: flags added to every run (`-ra --strict-markers`)\n- `testpaths`: where to collect when no path is given\n- `markers`: registered marker names (with `--strict-markers`, typos like `@pytest.mark.smok` fail collection)\n- also common: `log_cli`, `log_cli_level`, `filterwarnings`, `xfail_strict`, `junit_family`.\npytest uses the first config file it finds walking up from the args (pytest.ini wins over pyproject.toml/tox.ini/setup.cfg in the same folder).",
+  "tags": [
+   "pytest",
+   "config",
+   "ini"
+  ]
+ },
+ {
+  "id": "fw-105",
+  "topic": "Pytest & framework design",
+  "difficulty": "deep",
+  "kind": "python_code",
+  "question": "Write select(tests, expr) that mimics `pytest -m`: tests is a list of (name, set_of_markers); expr uses marker names with and/or/not and parentheses, e.g. 'smoke and not slow'. Return the names of matching tests in order. An empty expr selects everything.",
+  "what_tested": "Marker expressions (-m)",
+  "hint": "Replace each marker name with True/False for that test and evaluate the boolean expression safely.",
+  "examples": [
+   {
+    "input": "select([('test_login', {'smoke'}), ('test_cart', {'smoke', 'slow'})], 'smoke and not slow')",
+    "output": "['test_login']"
+   }
+  ],
+  "starter_code": "import re\n\ndef select(tests, expr):\n    pass\n",
+  "tests": [
+   "TESTS = [('test_login', {'smoke'}), ('test_report', {'slow'}), ('test_cart', {'smoke', 'slow'}), ('test_misc', set())]\nassert select(TESTS, 'smoke') == ['test_login', 'test_cart']",
+   "TESTS = [('test_login', {'smoke'}), ('test_report', {'slow'}), ('test_cart', {'smoke', 'slow'}), ('test_misc', set())]\nassert select(TESTS, 'smoke and not slow') == ['test_login']",
+   "TESTS = [('test_login', {'smoke'}), ('test_report', {'slow'}), ('test_cart', {'smoke', 'slow'}), ('test_misc', set())]\nassert select(TESTS, 'not smoke') == ['test_report', 'test_misc']",
+   "TESTS = [('test_login', {'smoke'}), ('test_report', {'slow'}), ('test_cart', {'smoke', 'slow'}), ('test_misc', set())]\nassert select(TESTS, '(smoke or slow) and not (smoke and slow)') == ['test_login', 'test_report']",
+   "TESTS = [('test_login', {'smoke'}), ('test_report', {'slow'}), ('test_cart', {'smoke', 'slow'}), ('test_misc', set())]\nassert select(TESTS, '') == ['test_login', 'test_report', 'test_cart', 'test_misc']",
+   "assert select([('t', {'api'})], 'api_v2') == []"
+  ],
+  "solution": "import re\n\nKEYWORDS = {\"and\", \"or\", \"not\"}\n\ndef select(tests, expr):\n    if not expr.strip():\n        return [name for name, _ in tests]\n    out = []\n    for name, marks in tests:\n        py = re.sub(r\"[A-Za-z_][A-Za-z0-9_]*\",\n                    lambda m: m.group(0) if m.group(0) in KEYWORDS else str(m.group(0) in marks),\n                    expr)\n        if eval(py, {\"__builtins__\": {}}, {}):\n            out.append(name)\n    return out\n",
+  "model": "```python\nimport re\n\nKEYWORDS = {\"and\", \"or\", \"not\"}\n\ndef select(tests, expr):\n    if not expr.strip():\n        return [name for name, _ in tests]\n    out = []\n    for name, marks in tests:\n        py = re.sub(r\"[A-Za-z_][A-Za-z0-9_]*\",\n                    lambda m: m.group(0) if m.group(0) in KEYWORDS else str(m.group(0) in marks),\n                    expr)\n        if eval(py, {\"__builtins__\": {}}, {}):\n            out.append(name)\n    return out\n```\n\nThis is exactly what `pytest -m \"smoke and not slow\"` does: it matches marker **names** with boolean logic. `-k` does the same against test names/keywords (substring matches). Typical CI usage: `-m smoke` on every PR, `-m \"regression and not quarantine\"` nightly. Register every marker in pytest.ini and run with `--strict-markers` so a typo can't silently select nothing.\n\n(Eval is only safe here because every identifier has been replaced by True/False and builtins are removed; pytest has its own small expression parser.)",
+  "tags": [
+   "pytest",
+   "markers"
+  ]
+ },
+ {
+  "id": "fw-106",
+  "topic": "Pytest & framework design",
+  "difficulty": "deep",
+  "kind": "python_code",
+  "question": "Write run_with_fixture(fixture, test) to mimic how pytest drives a yield fixture: call fixture() to get a generator, take the yielded value, pass it to test(value), and always finish the generator so teardown runs, even if the test raises. Return the test's return value or re-raise its exception.",
+  "what_tested": "Yield fixtures: setup, teardown, failures",
+  "hint": "next(gen) for setup; in finally, call next(gen) again and expect StopIteration.",
+  "examples": [
+   {
+    "input": "run_with_fixture(browser, lambda b: b.upper())  # browser yields 'chromium'",
+    "output": "'CHROMIUM', and teardown after yield has run"
+   },
+   {
+    "input": "run_with_fixture(db, failing_test)",
+    "output": "re-raises the test's AssertionError after teardown"
+   }
+  ],
+  "starter_code": "def run_with_fixture(fixture, test):\n    pass\n",
+  "tests": [
+   "log = []\ndef browser():\n    log.append('launch')\n    yield 'chromium'\n    log.append('close')\nassert run_with_fixture(browser, lambda b: b.upper()) == 'CHROMIUM'\nassert log == ['launch', 'close']",
+   "log = []\ndef db():\n    log.append('connect')\n    yield 'conn'\n    log.append('disconnect')\ndef failing(conn):\n    raise AssertionError('balance mismatch')\ntry:\n    run_with_fixture(db, failing)\n    raise RuntimeError('should have raised')\nexcept AssertionError as e:\n    assert str(e) == 'balance mismatch'\nassert log == ['connect', 'disconnect']",
+   "assert run_with_fixture(lambda: (x for x in [21]), lambda v: v * 2) == 42"
+  ],
+  "solution": "def run_with_fixture(fixture, test):\n    gen = fixture()\n    value = next(gen)                 # setup: code before yield\n    try:\n        return test(value)\n    finally:\n        try:\n            next(gen)                 # teardown: code after yield\n        except StopIteration:\n            pass\n        else:\n            raise RuntimeError(\"fixture yielded more than once\")\n",
+  "model": "```python\ndef run_with_fixture(fixture, test):\n    gen = fixture()\n    value = next(gen)                 # setup: code before yield\n    try:\n        return test(value)\n    finally:\n        try:\n            next(gen)                 # teardown: code after yield\n        except StopIteration:\n            pass\n        else:\n            raise RuntimeError(\"fixture yielded more than once\")\n```\n\nThe `finally` is the whole point: pytest runs the code after `yield` whether the test passed or failed, which is why yield fixtures are the right place to close browsers, delete test data and stop mocks. If setup (code before `yield`) raises, the test is reported as an **error**, not a failure, and teardown doesn't run, so keep setup small or use `request.addfinalizer` for partial cleanup.",
+  "tags": [
+   "pytest",
+   "fixtures",
+   "generators"
+  ]
+ },
+ {
+  "id": "fw-107",
+  "topic": "Pytest & framework design",
+  "difficulty": "deep",
+  "kind": "python_code",
+  "question": "Write a FixtureManager that caches fixture values by scope like pytest. get(name, factory, scope, test_id, module) calls factory() at most once per session for scope='session', once per module for 'module', and once per test for 'function'. Track how many times each factory ran in self.calls[name].",
+  "what_tested": "Fixture scopes and caching",
+  "hint": "Build a cache key from the scope: session → (name,), module → (name, module), function → (name, test_id).",
+  "examples": [
+   {
+    "input": "3 tests in 2 modules requesting browser (session), db (module), page (function)",
+    "output": "calls == {'browser': 1, 'db': 2, 'page': 3}"
+   }
+  ],
+  "starter_code": "class FixtureManager:\n    def __init__(self):\n        self.cache = {}\n        self.calls = {}\n\n    def get(self, name, factory, scope, test_id, module):\n        pass\n",
+  "tests": [
+   "fm = FixtureManager()\nruns = [('t1', 'test_a.py'), ('t2', 'test_a.py'), ('t3', 'test_b.py')]\nfor test_id, module in runs:\n    fm.get('browser', lambda: object(), 'session', test_id, module)\n    fm.get('db', lambda: object(), 'module', test_id, module)\n    fm.get('page', lambda: object(), 'function', test_id, module)\nassert fm.calls == {'browser': 1, 'db': 2, 'page': 3}",
+   "fm = FixtureManager()\na = fm.get('cfg', lambda: {'env': 'qa'}, 'session', 't1', 'm')\nb = fm.get('cfg', lambda: {'env': 'other'}, 'session', 't2', 'm')\nassert a is b",
+   "fm = FixtureManager()\ntry:\n    fm.get('x', lambda: 1, 'package-ish', 't', 'm')\n    raise AssertionError('expected ValueError')\nexcept ValueError:\n    pass"
+  ],
+  "solution": "class FixtureManager:\n    def __init__(self):\n        self.cache = {}\n        self.calls = {}\n\n    def get(self, name, factory, scope, test_id, module):\n        if scope == \"session\":\n            key = (name,)\n        elif scope == \"module\":\n            key = (name, module)\n        elif scope == \"function\":\n            key = (name, test_id)\n        else:\n            raise ValueError(f\"unknown scope {scope!r}\")\n        if key not in self.cache:\n            self.cache[key] = factory()\n            self.calls[name] = self.calls.get(name, 0) + 1\n        return self.cache[key]\n",
+  "model": "```python\nclass FixtureManager:\n    def __init__(self):\n        self.cache = {}\n        self.calls = {}\n\n    def get(self, name, factory, scope, test_id, module):\n        if scope == \"session\":\n            key = (name,)\n        elif scope == \"module\":\n            key = (name, module)\n        elif scope == \"function\":\n            key = (name, test_id)\n        else:\n            raise ValueError(f\"unknown scope {scope!r}\")\n        if key not in self.cache:\n            self.cache[key] = factory()\n            self.calls[name] = self.calls.get(name, 0) + 1\n        return self.cache[key]\n```\n\nScopes are about **cost vs isolation**: a session-scoped browser is launched once (fast), a function-scoped page/context is fresh per test (isolated). pytest also has `class` and `package` scopes. Rules worth saying out loud: a fixture can only use fixtures of the same or **wider** scope (a session fixture can't request a function fixture → ScopeMismatch), and with pytest-xdist \"session\" means once **per worker**.",
+  "tags": [
+   "pytest",
+   "fixtures",
+   "scope"
+  ]
+ },
+ {
+  "id": "fw-108",
+  "topic": "Pytest & framework design",
+  "difficulty": "core",
+  "kind": "python_code",
+  "question": "conftest.py fixtures apply to tests in their directory and below, and the nearest conftest wins. Write resolve_fixture(conftests, test_path, name): conftests maps a directory ('' for the root) to the set of fixture names it defines. Return the directory whose conftest provides `name` for that test, or None.",
+  "what_tested": "conftest.py visibility and overriding",
+  "hint": "Walk from the test's folder up to the root and return the first directory that defines the fixture.",
+  "examples": [
+   {
+    "input": "resolve_fixture({'': {'base_url'}, 'tests/api': {'base_url'}}, 'tests/api/test_users.py', 'base_url')",
+    "output": "'tests/api'"
+   },
+   {
+    "input": "resolve_fixture({'': {'base_url'}, 'tests/api': {'base_url'}}, 'tests/ui/test_login.py', 'base_url')",
+    "output": "''"
+   }
+  ],
+  "starter_code": "def resolve_fixture(conftests, test_path, name):\n    pass\n",
+  "tests": [
+   "C = {'': {'browser', 'base_url'}, 'tests': {'page'}, 'tests/api': {'base_url', 'client'}}\nassert resolve_fixture(C, 'tests/api/test_users.py', 'base_url') == 'tests/api'",
+   "C = {'': {'browser', 'base_url'}, 'tests': {'page'}, 'tests/api': {'base_url', 'client'}}\nassert resolve_fixture(C, 'tests/ui/test_login.py', 'base_url') == ''",
+   "C = {'': {'browser', 'base_url'}, 'tests': {'page'}, 'tests/api': {'base_url', 'client'}}\nassert resolve_fixture(C, 'tests/ui/test_login.py', 'page') == 'tests'",
+   "C = {'': {'browser', 'base_url'}, 'tests': {'page'}, 'tests/api': {'base_url', 'client'}}\nassert resolve_fixture(C, 'tests/ui/test_login.py', 'client') is None",
+   "C = {'': {'browser', 'base_url'}, 'tests': {'page'}, 'tests/api': {'base_url', 'client'}}\nassert resolve_fixture(C, 'test_root.py', 'browser') == ''"
+  ],
+  "solution": "def resolve_fixture(conftests, test_path, name):\n    parts = test_path.split(\"/\")[:-1]          # drop the file name\n    for i in range(len(parts), -1, -1):\n        directory = \"/\".join(parts[:i])\n        if name in conftests.get(directory, set()):\n            return directory\n    return None\n",
+  "model": "```python\ndef resolve_fixture(conftests, test_path, name):\n    parts = test_path.split(\"/\")[:-1]          # drop the file name\n    for i in range(len(parts), -1, -1):\n        directory = \"/\".join(parts[:i])\n        if name in conftests.get(directory, set()):\n            return directory\n    return None\n```\n\n- A conftest.py is a per-directory plugin: its fixtures and hooks apply to that folder and its subfolders, with no import needed.\n- A fixture with the same name in a deeper conftest **overrides** the outer one for those tests (e.g. `tests/api/conftest.py` overrides `base_url` with the API host).\n- Sibling folders can't see each other's conftest fixtures (`client` above isn't visible to UI tests).\n- Put shared fixtures in the root conftest, area-specific ones lower down; never import from conftest.py, move shared helpers into a normal module.",
+  "tags": [
+   "pytest",
+   "conftest",
+   "fixtures"
+  ]
+ },
+ {
+  "id": "fw-109",
+  "topic": "Pytest & framework design",
+  "difficulty": "core",
+  "kind": "python_code",
+  "question": "Write expand_parametrize(argnames, argvalues) that returns what @pytest.mark.parametrize generates: a list of (test_id, params_dict). argnames is a comma-separated string. Build ids like pytest: values joined with '-', using the value itself for str/int/float/bool/None and argname + index (e.g. 'user0') for anything else.",
+  "what_tested": "parametrize mechanics and test ids",
+  "hint": "Split argnames; for single argnames wrap each value in a tuple.",
+  "examples": [
+   {
+    "input": "expand_parametrize('a,b', [(1, 2), (3, 4)])",
+    "output": "[('1-2', {'a': 1, 'b': 2}), ('3-4', {'a': 3, 'b': 4})]"
+   }
+  ],
+  "starter_code": "def expand_parametrize(argnames, argvalues):\n    pass\n",
+  "tests": [
+   "assert expand_parametrize('a,b', [(1, 2), (3, 4)]) == [('1-2', {'a': 1, 'b': 2}), ('3-4', {'a': 3, 'b': 4})]",
+   "assert expand_parametrize('browser', ['chromium', 'firefox']) == [('chromium', {'browser': 'chromium'}), ('firefox', {'browser': 'firefox'})]",
+   "assert expand_parametrize('user, ok', [({'n': 1}, True)]) == [('user0-True', {'user': {'n': 1}, 'ok': True})]",
+   "assert expand_parametrize('x', []) == []"
+  ],
+  "solution": "def expand_parametrize(argnames, argvalues):\n    names = [n.strip() for n in argnames.split(\",\")]\n    out = []\n    for i, values in enumerate(argvalues):\n        if len(names) == 1:\n            values = (values,)\n        parts = []\n        for name, v in zip(names, values):\n            if v is None or isinstance(v, (str, int, float, bool)):\n                parts.append(str(v))\n            else:\n                parts.append(f\"{name}{i}\")\n        out.append((\"-\".join(parts), dict(zip(names, values))))\n    return out\n",
+  "model": "```python\ndef expand_parametrize(argnames, argvalues):\n    names = [n.strip() for n in argnames.split(\",\")]\n    out = []\n    for i, values in enumerate(argvalues):\n        if len(names) == 1:\n            values = (values,)\n        parts = []\n        for name, v in zip(names, values):\n            if v is None or isinstance(v, (str, int, float, bool)):\n                parts.append(str(v))\n            else:\n                parts.append(f\"{name}{i}\")\n        out.append((\"-\".join(parts), dict(zip(names, values))))\n    return out\n```\n\nThat's why `test_login[chromium]` and `test_math[1-2]` appear in reports, and why dict/object params show up as `user0`. Make ids readable with `ids=[...]`, an `ids=callable`, or `pytest.param(..., id=\"admin\")`. Stacking two parametrize decorators gives the Cartesian product (2 browsers × 3 users = 6 tests).",
+  "tags": [
+   "pytest",
+   "parametrize"
+  ]
+ },
+ {
+  "id": "fw-110",
+  "topic": "Pytest & framework design",
+  "difficulty": "core",
+  "kind": "python_code",
+  "question": "Write check_markers(used, registered, strict) to mimic --strict-markers. used maps test name → list of marker names; registered is the set from pytest.ini. Built-in markers (skip, skipif, xfail, parametrize, usefixtures, filterwarnings) are always allowed. If strict, raise ValueError naming the first unknown marker (tests in order); otherwise return a sorted list of warnings like \"test_x: unknown marker 'smok'\".",
+  "what_tested": "Marker registration, --strict-markers",
+  "hint": "Collect unknown markers per test in order; behave differently when strict.",
+  "examples": [
+   {
+    "input": "check_markers({'test_b': ['smok']}, {'smoke'}, strict=False)",
+    "output": "[\"test_b: unknown marker 'smok'\"]"
+   },
+   {
+    "input": "check_markers({'test_b': ['smok']}, {'smoke'}, strict=True)",
+    "output": "ValueError mentioning 'smok'"
+   }
+  ],
+  "starter_code": "BUILTIN = {\"skip\", \"skipif\", \"xfail\", \"parametrize\", \"usefixtures\", \"filterwarnings\"}\n\ndef check_markers(used, registered, strict):\n    pass\n",
+  "tests": [
+   "assert check_markers({'test_a': ['smoke', 'xfail']}, {'smoke'}, strict=True) == []",
+   "assert check_markers({'test_b': ['smok'], 'test_a': ['slow']}, {'smoke'}, strict=False) == [\"test_a: unknown marker 'slow'\", \"test_b: unknown marker 'smok'\"]",
+   "try:\n    check_markers({'test_a': ['smoke'], 'test_b': ['smok']}, {'smoke'}, strict=True)\n    raise AssertionError('expected ValueError')\nexcept ValueError as e:\n    assert 'smok' in str(e)"
+  ],
+  "solution": "BUILTIN = {\"skip\", \"skipif\", \"xfail\", \"parametrize\", \"usefixtures\", \"filterwarnings\"}\n\ndef check_markers(used, registered, strict):\n    warnings = []\n    for test, markers in used.items():\n        for m in markers:\n            if m not in registered and m not in BUILTIN:\n                if strict:\n                    raise ValueError(f\"'{m}' not found in `markers` configuration option\")\n                warnings.append(f\"{test}: unknown marker '{m}'\")\n    return sorted(warnings)\n",
+  "model": "```python\nBUILTIN = {\"skip\", \"skipif\", \"xfail\", \"parametrize\", \"usefixtures\", \"filterwarnings\"}\n\ndef check_markers(used, registered, strict):\n    warnings = []\n    for test, markers in used.items():\n        for m in markers:\n            if m not in registered and m not in BUILTIN:\n                if strict:\n                    raise ValueError(f\"'{m}' not found in `markers` configuration option\")\n                warnings.append(f\"{test}: unknown marker '{m}'\")\n    return sorted(warnings)\n```\n\nWithout `--strict-markers`, `@pytest.mark.smok` only produces PytestUnknownMarkWarning, and `-m smoke` silently skips that test. With it (put it in `addopts`), the typo fails collection immediately. Register markers in pytest.ini `markers =` or in a plugin via `config.addinivalue_line(\"markers\", \"smoke: ...\")` inside `pytest_configure`.",
+  "tags": [
+   "pytest",
+   "markers",
+   "config"
+  ]
+ },
+ {
+  "id": "fw-111",
+  "topic": "Pytest & framework design",
+  "difficulty": "core",
+  "kind": "python_code",
+  "question": "Write load_config(env, files) for a multi-environment framework. files maps 'base', 'qa', 'staging'... to dicts. Return base deep-merged with the env file (env values win; nested dicts merge key by key). Raise ValueError for an unknown env. Don't modify the input dicts.",
+  "what_tested": "Environment config design, deep merge",
+  "hint": "Recursive merge into a deep copy of base.",
+  "examples": [
+   {
+    "input": "load_config('staging', {'base': {'timeout': 30, 'api': {'url': 'dev', 'retries': 2}}, 'staging': {'api': {'url': 'stg'}}})",
+    "output": "{'timeout': 30, 'api': {'url': 'stg', 'retries': 2}}"
+   }
+  ],
+  "starter_code": "import copy\n\ndef load_config(env, files):\n    pass\n",
+  "tests": [
+   "files = {\n    'base': {'timeout': 30, 'api': {'url': 'https://api.dev', 'retries': 2}, 'browser': 'chromium'},\n    'staging': {'api': {'url': 'https://api.staging'}, 'timeout': 60},\n}\ncfg = load_config('staging', files)\nassert cfg == {'timeout': 60, 'api': {'url': 'https://api.staging', 'retries': 2}, 'browser': 'chromium'}\nassert files['base']['api']['url'] == 'https://api.dev'",
+   "try:\n    load_config('prod', {'base': {}})\n    raise AssertionError('expected ValueError')\nexcept ValueError:\n    pass",
+   "assert load_config('base', {'base': {'a': 1}}) == {'a': 1}"
+  ],
+  "solution": "import copy\n\ndef _merge(into, extra):\n    for key, value in extra.items():\n        if isinstance(value, dict) and isinstance(into.get(key), dict):\n            _merge(into[key], value)\n        else:\n            into[key] = copy.deepcopy(value)\n    return into\n\ndef load_config(env, files):\n    if env not in files:\n        raise ValueError(f\"unknown environment {env!r}; choose from {sorted(files)}\")\n    return _merge(copy.deepcopy(files[\"base\"]), files[env] if env != \"base\" else {})\n",
+  "model": "```python\nimport copy\n\ndef _merge(into, extra):\n    for key, value in extra.items():\n        if isinstance(value, dict) and isinstance(into.get(key), dict):\n            _merge(into[key], value)\n        else:\n            into[key] = copy.deepcopy(value)\n    return into\n\ndef load_config(env, files):\n    if env not in files:\n        raise ValueError(f\"unknown environment {env!r}; choose from {sorted(files)}\")\n    return _merge(copy.deepcopy(files[\"base\"]), files[env] if env != \"base\" else {})\n```\n\nTypical framework layout: `config/base.yaml` + `config/qa.yaml`, `config/staging.yaml`, chosen by a `--env` command-line option (registered in `pytest_addoption` in the root conftest) or an `ENV` variable, exposed as a session-scoped `config` fixture. Secrets don't live in these files; they come from environment variables / the CI secret store and are merged last.",
+  "tags": [
+   "config",
+   "design",
+   "fixtures"
+  ]
+ },
+ {
+  "id": "fw-112",
+  "topic": "Pytest & framework design",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "tests/conftest.py defines `base_url` returning the UI host. tests/api/conftest.py defines `base_url` returning the API host. Which one does tests/api/test_users.py get?",
+  "what_tested": "Fixture overriding by conftest level",
+  "options": [
+   "The UI host, because the root conftest loads first",
+   "An error, since the fixture name is defined twice",
+   "The API host: the nearer conftest overrides",
+   "Whichever conftest file was modified most recently"
+  ],
+  "answer": 2,
+  "model": "Fixtures are looked up from the test outward: test module → nearest conftest.py → parent conftests → plugins. A same-named fixture lower in the tree overrides the outer one for those tests, and can even request the outer version by using the same name as a parameter. This is how you specialise `base_url`, `page` or test data per area without `if` statements.",
+  "tags": [
+   "pytest",
+   "conftest",
+   "fixtures"
+  ]
+ },
+ {
+  "id": "fw-113",
+  "topic": "Pytest & framework design",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How does a test in tests/ui/test_login.py get a fixture defined in tests/conftest.py?",
+  "what_tested": "conftest discovery",
+  "options": [
+   "Name it as a test argument; no import needed",
+   "Add from conftest import page to the test file",
+   "List it in pytest.ini under a fixtures = key",
+   "Only possible when it's marked autouse=True"
+  ],
+  "answer": 0,
+  "model": "conftest.py files are collected automatically for their directory tree, so their fixtures are available by name with no import. Importing from conftest is an anti-pattern (it can load the module twice and breaks with some import modes). Shared non-fixture helpers belong in a normal package, e.g. `framework/utils.py`.",
+  "tags": [
+   "pytest",
+   "conftest"
+  ]
+ },
+ {
+  "id": "fw-114",
+  "topic": "Pytest & framework design",
+  "difficulty": "deep",
+  "kind": "concept",
+  "question": "In what order does pytest set up fixtures for a test that requests `page` (function scope, depends on `browser`) and `config` (session scope), with an autouse `log_test` (function scope)?",
+  "what_tested": "Fixture instantiation order",
+  "options": [
+   "Wider scopes first, then autouse, then the others by dependency",
+   "Strictly in the order the arguments appear in the signature",
+   "Alphabetically by fixture name, regardless of scope or usage",
+   "Function-scoped fixtures first, then session-scoped ones last"
+  ],
+  "answer": 0,
+  "model": "pytest orders by: **scope** (session → package → module → class → function), then **dependencies** (a fixture's own fixtures first), then **autouse** fixtures before explicitly requested ones within the same scope. Argument order only breaks remaining ties. Teardown runs in exactly the reverse order. `pytest --setup-show` prints the real order.",
+  "tags": [
+   "pytest",
+   "fixtures"
+  ]
+ },
+ {
+  "id": "fw-115",
+  "topic": "Pytest & framework design",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "When is `request.addfinalizer(fn)` better than a yield fixture?",
+  "what_tested": "addfinalizer vs yield",
+  "options": [
+   "Never: addfinalizer was removed from pytest in version 7.0",
+   "When the fixture has to return a value rather than yield one",
+   "When several resources each need cleanup even if setup fails midway",
+   "Only for session-scoped fixtures; others must use yield"
+  ],
+  "answer": 2,
+  "model": "With `yield`, if setup raises before reaching `yield`, nothing after it runs, so resources created earlier leak. Registering a finalizer right after creating each resource guarantees its cleanup:\n```python\n@pytest.fixture\ndef accounts(request, api):\n    a = api.create_account(); request.addfinalizer(lambda: api.delete(a))\n    b = api.create_account(); request.addfinalizer(lambda: api.delete(b))\n    return a, b\n```\nFinalizers run in reverse registration order.",
+  "tags": [
+   "pytest",
+   "fixtures"
+  ]
+ },
+ {
+  "id": "fw-116",
+  "topic": "Pytest & framework design",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "A project has both pytest.ini and pyproject.toml with [tool.pytest.ini_options] in the same folder. Which does pytest use?",
+  "what_tested": "Config file precedence",
+  "options": [
+   "Both, merged with pyproject.toml winning",
+   "pytest.ini, even if it's empty",
+   "Neither; pytest reports ambiguous config",
+   "pyproject.toml, as the modern standard"
+  ],
+  "answer": 1,
+  "model": "pytest picks **one** config file: pytest.ini (and .pytest.ini) first, then pyproject.toml (only if it has `[tool.pytest.ini_options]`), tox.ini, setup.cfg. The folder of that file becomes the rootdir. Keeping a stray empty pytest.ini around is a classic \"why are my markers not registered?\" bug. `pytest --version`/the header shows `configfile:`.",
+  "tags": [
+   "pytest",
+   "config",
+   "ini"
+  ]
+ },
+ {
+  "id": "fw-117",
+  "topic": "Pytest & framework design",
+  "difficulty": "warm-up",
+  "kind": "concept",
+  "question": "What does `addopts = -ra --strict-markers -p no:cacheprovider` in pytest.ini do?",
+  "what_tested": "addopts",
+  "options": [
+   "Adds the flags to every run, as if typed",
+   "Sets defaults that only apply when run in CI",
+   "Lists the plugins that must be installed first",
+   "Defines options only for tests marked addopts"
+  ],
+  "answer": 0,
+  "model": "`addopts` is prepended to the command-line arguments on every run. `-ra` summarises all non-passing outcomes, `--strict-markers` fails on unregistered markers, `-p no:cacheprovider` disables the .pytest_cache plugin. Keep addopts to team-wide defaults; CI-only flags (`--junitxml`, `-n auto`, `--reruns`) usually go in the pipeline command.",
+  "tags": [
+   "pytest",
+   "config",
+   "ini"
+  ]
+ },
+ {
+  "id": "fw-118",
+  "topic": "Pytest & framework design",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "Two stacked decorators `@pytest.mark.parametrize('browser', ['chromium', 'firefox'])` and `@pytest.mark.parametrize('user', ['admin', 'viewer', 'guest'])` on one test produce how many test cases?",
+  "what_tested": "Stacked parametrize",
+  "options": [
+   "5, one per value across both lists",
+   "3, because the inner decorator wins",
+   "6, the Cartesian product of both lists",
+   "2, because the outer decorator wins"
+  ],
+  "answer": 2,
+  "model": "Stacking multiplies: 2 × 3 = 6 ids like `test_x[admin-chromium]`. To pair values instead, use one decorator with tuples: `@pytest.mark.parametrize('browser,user', [('chromium','admin'), ('firefox','viewer')])`. Watch suite growth: combinatorial explosion is a common reason for slow pipelines.",
+  "tags": [
+   "pytest",
+   "parametrize"
+  ]
+ },
+ {
+  "id": "fw-119",
+  "topic": "Pytest & framework design",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "Which is a sensible folder structure for a Python Playwright + API framework?",
+  "what_tested": "Framework structure",
+  "options": [
+   "A separate repository per page object, versioned independently",
+   "Everything in one tests.py file so it's simple to find things",
+   "tests/, pages/, api_clients/, config/, data/, root conftest.py",
+   "Page objects inside each test file, with config hard-coded"
+  ],
+  "answer": 2,
+  "model": "```\nproject/\n  pytest.ini            # markers, addopts, testpaths\n  conftest.py           # global fixtures: config, browser/context, api client\n  config/               # base.yaml, qa.yaml, staging.yaml\n  pages/                # page objects (BasePage + one class per page/component)\n  api_clients/          # thin wrappers around requests / APIRequestContext\n  data/                 # test data, factories, JSON schemas\n  utils/                # helpers: waits, logging, reporting\n  tests/\n    ui/  conftest.py    # ui-only fixtures (logged_in_page)\n    api/ conftest.py    # api-only fixtures (token, client)\n```\nTests contain intent + assertions; pages/clients contain *how*. Fixtures wire them together.",
+  "tags": [
+   "design",
+   "architecture",
+   "pom"
+  ]
+ },
+ {
+  "id": "fw-120",
+  "topic": "Pytest & framework design",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "What's `pytest --lf` and `--ff` for?",
+  "what_tested": "Rerun failures locally",
+  "options": [
+   "--lf lists fixtures; --ff lists the failing fixtures",
+   "Both rerun failing tests automatically until they pass",
+   "--lf runs only last failures; --ff runs them first",
+   "--lf is last-file order, --ff is first-file collection"
+  ],
+  "answer": 2,
+  "model": "Both use the cache in `.pytest_cache`. Great for the fix-rerun loop locally. In CI the cache is usually not persisted, so use reruns plugins or explicit test ids instead.",
+  "tags": [
+   "pytest",
+   "cli"
+  ]
+ },
+ {
+  "id": "fw-121",
+  "topic": "Pytest & framework design",
+  "difficulty": "deep",
+  "kind": "concept",
+  "question": "Where do you implement \"take a screenshot when a UI test fails\" so it works for every test?",
+  "what_tested": "Hooks for failure artifacts",
+  "options": [
+   "A try/except block wrapped around every test function",
+   "A custom marker on every test that needs screenshots",
+   "A screenshot_on_failure = true setting in pytest.ini",
+   "A makereport hook in the root conftest plus the page fixture"
+  ],
+  "answer": 3,
+  "model": "```python\n@pytest.hookimpl(hookwrapper=True)\ndef pytest_runtest_makereport(item, call):\n    outcome = yield\n    rep = outcome.get_result()\n    setattr(item, f\"rep_{rep.when}\", rep)      # rep_setup / rep_call / rep_teardown\n\n@pytest.fixture\ndef page(context, request):\n    page = context.new_page()\n    yield page\n    if getattr(request.node, \"rep_call\", None) and request.node.rep_call.failed:\n        page.screenshot(path=f\"artifacts/{request.node.name}.png\", full_page=True)\n```\npytest-playwright already offers `--screenshot only-on-failure`, `--video retain-on-failure` and `--tracing retain-on-failure`.",
+  "tags": [
+   "pytest",
+   "hooks",
+   "reporting"
+  ]
  }
 ]

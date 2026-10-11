@@ -1996,5 +1996,371 @@
    "cicd",
    "security"
   ]
+ },
+ {
+  "id": "ci-103",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "python_code",
+  "question": "Write summarize_junit(xml_text) that parses a JUnit XML report (what pytest --junitxml writes) and returns {'total', 'passed', 'failed', 'errors', 'skipped', 'time'}. Count from the <testcase> elements (a failure, error or skipped child decides the outcome), and round time to 2 decimals.",
+  "what_tested": "Reading JUnit XML reports",
+  "hint": "xml.etree.ElementTree; iterate root.iter('testcase') and look for child tags.",
+  "examples": [
+   {
+    "input": "summarize_junit(junit_xml_with_5_testcases)",
+    "output": "{'total': 5, 'passed': 2, 'failed': 1, 'errors': 1, 'skipped': 1, 'time': 4.65}"
+   }
+  ],
+  "starter_code": "import xml.etree.ElementTree as ET\n\ndef summarize_junit(xml_text):\n    pass\n",
+  "tests": [
+   "JUNIT = '''<testsuites>\n  <testsuite name=\"pytest\" tests=\"5\" failures=\"1\" errors=\"1\" skipped=\"1\">\n    <testcase classname=\"tests.test_login\" name=\"test_valid\" time=\"1.20\"/>\n    <testcase classname=\"tests.test_login\" name=\"test_locked\" time=\"0.80\">\n      <failure message=\"AssertionError: expected 403\">assert 200 == 403</failure>\n    </testcase>\n    <testcase classname=\"tests.test_cart\" name=\"test_add\" time=\"2.50\"/>\n    <testcase classname=\"tests.test_cart\" name=\"test_remove\" time=\"0.10\">\n      <skipped message=\"flaky on staging\"/>\n    </testcase>\n    <testcase classname=\"tests.test_pay\" name=\"test_card\" time=\"0.05\">\n      <error message=\"fixture 'card' not found\"/>\n    </testcase>\n  </testsuite>\n</testsuites>'''\nassert summarize_junit(JUNIT) == {'total': 5, 'passed': 2, 'failed': 1, 'errors': 1, 'skipped': 1, 'time': 4.65}",
+   "assert summarize_junit('<testsuite/>') == {'total': 0, 'passed': 0, 'failed': 0, 'errors': 0, 'skipped': 0, 'time': 0}",
+   "assert summarize_junit('<testsuite><testcase classname=\"a\" name=\"t\" time=\"0.333\"/><testcase classname=\"a\" name=\"u\" time=\"0.333\"><skipped/></testcase></testsuite>') == {'total': 2, 'passed': 1, 'failed': 0, 'errors': 0, 'skipped': 1, 'time': 0.67}"
+  ],
+  "solution": "import xml.etree.ElementTree as ET\n\ndef summarize_junit(xml_text):\n    root = ET.fromstring(xml_text)\n    out = {\"total\": 0, \"passed\": 0, \"failed\": 0, \"errors\": 0, \"skipped\": 0, \"time\": 0}\n    total_time = 0.0\n    for case in root.iter(\"testcase\"):\n        out[\"total\"] += 1\n        total_time += float(case.get(\"time\", 0))\n        if case.find(\"failure\") is not None:\n            out[\"failed\"] += 1\n        elif case.find(\"error\") is not None:\n            out[\"errors\"] += 1\n        elif case.find(\"skipped\") is not None:\n            out[\"skipped\"] += 1\n        else:\n            out[\"passed\"] += 1\n    out[\"time\"] = round(total_time, 2)\n    return out\n",
+  "model": "```python\nimport xml.etree.ElementTree as ET\n\ndef summarize_junit(xml_text):\n    root = ET.fromstring(xml_text)\n    out = {\"total\": 0, \"passed\": 0, \"failed\": 0, \"errors\": 0, \"skipped\": 0, \"time\": 0}\n    total_time = 0.0\n    for case in root.iter(\"testcase\"):\n        out[\"total\"] += 1\n        total_time += float(case.get(\"time\", 0))\n        if case.find(\"failure\") is not None:\n            out[\"failed\"] += 1\n        elif case.find(\"error\") is not None:\n            out[\"errors\"] += 1\n        elif case.find(\"skipped\") is not None:\n            out[\"skipped\"] += 1\n        else:\n            out[\"passed\"] += 1\n    out[\"time\"] = round(total_time, 2)\n    return out\n```\n\nJUnit XML is the lingua franca of CI: Jenkins (junit step), GitLab (artifacts:reports:junit), Azure DevOps and GitHub Actions reporters all read it to show test tabs and trends. `pytest --junitxml=reports/junit.xml` writes it; Playwright's test runner and most tools can too. Errors (setup/fixture problems) and failures (assertion failed) are different signals: errors usually mean environment/framework issues, failures usually mean product or test bugs. `root.iter()` works whether the root is `<testsuites>` or a single `<testsuite>`.",
+  "tags": [
+   "reporting",
+   "junit"
+  ]
+ },
+ {
+  "id": "ci-104",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "python_code",
+  "question": "Write failing_tests(xml_text) that returns the failed and errored tests from a JUnit XML report as pytest node ids ('tests/test_login.py::test_locked'), sorted. The classname uses dots for folders and the module, e.g. 'tests.test_login'.",
+  "what_tested": "Turning reports into rerun commands",
+  "hint": "Replace dots with slashes in classname, add '.py', then '::' + name.",
+  "examples": [
+   {
+    "input": "failing_tests(junit_xml)",
+    "output": "['tests/test_login.py::test_locked', 'tests/test_pay.py::test_card']"
+   }
+  ],
+  "starter_code": "import xml.etree.ElementTree as ET\n\ndef failing_tests(xml_text):\n    pass\n",
+  "tests": [
+   "JUNIT = '''<testsuites>\n  <testsuite name=\"pytest\" tests=\"5\" failures=\"1\" errors=\"1\" skipped=\"1\">\n    <testcase classname=\"tests.test_login\" name=\"test_valid\" time=\"1.20\"/>\n    <testcase classname=\"tests.test_login\" name=\"test_locked\" time=\"0.80\">\n      <failure message=\"AssertionError: expected 403\">assert 200 == 403</failure>\n    </testcase>\n    <testcase classname=\"tests.test_cart\" name=\"test_add\" time=\"2.50\"/>\n    <testcase classname=\"tests.test_cart\" name=\"test_remove\" time=\"0.10\">\n      <skipped message=\"flaky on staging\"/>\n    </testcase>\n    <testcase classname=\"tests.test_pay\" name=\"test_card\" time=\"0.05\">\n      <error message=\"fixture 'card' not found\"/>\n    </testcase>\n  </testsuite>\n</testsuites>'''\nassert failing_tests(JUNIT) == ['tests/test_login.py::test_locked', 'tests/test_pay.py::test_card']",
+   "assert failing_tests('<testsuite><testcase classname=\"a.b\" name=\"t\"/></testsuite>') == []",
+   "assert failing_tests('<testsuite><testcase classname=\"tests.api.test_users\" name=\"test_get\"><error/></testcase></testsuite>') == ['tests/api/test_users.py::test_get']"
+  ],
+  "solution": "import xml.etree.ElementTree as ET\n\ndef failing_tests(xml_text):\n    out = []\n    for case in ET.fromstring(xml_text).iter(\"testcase\"):\n        if case.find(\"failure\") is not None or case.find(\"error\") is not None:\n            path = case.get(\"classname\").replace(\".\", \"/\") + \".py\"\n            out.append(f\"{path}::{case.get('name')}\")\n    return sorted(out)\n",
+  "model": "```python\nimport xml.etree.ElementTree as ET\n\ndef failing_tests(xml_text):\n    out = []\n    for case in ET.fromstring(xml_text).iter(\"testcase\"):\n        if case.find(\"failure\") is not None or case.find(\"error\") is not None:\n            path = case.get(\"classname\").replace(\".\", \"/\") + \".py\"\n            out.append(f\"{path}::{case.get('name')}\")\n    return sorted(out)\n```\n\nNode ids let you rerun exactly the failures: `pytest tests/test_login.py::test_locked tests/test_pay.py::test_card`. CI jobs often do this as a separate \"rerun failed\" step and post the list to the PR. (For tests inside classes, classname also contains the class name, so a real tool maps `tests.test_login.TestLogin` → `tests/test_login.py::TestLogin::test_x`.)",
+  "tags": [
+   "reporting",
+   "junit",
+   "debugging"
+  ]
+ },
+ {
+  "id": "ci-105",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "python_code",
+  "question": "Write find_flaky(runs) where runs is a list of {'commit', 'test', 'status'} records from many CI runs. A test is flaky if it both passed and failed on the same commit. Return the sorted list of flaky test names.",
+  "what_tested": "Detecting flaky tests from history",
+  "hint": "Group statuses by (commit, test); flaky if the set has both 'passed' and 'failed'.",
+  "examples": [
+   {
+    "input": "find_flaky(runs)  # test_login passed and failed on commit a1",
+    "output": "['test_login', 'test_pay']"
+   }
+  ],
+  "starter_code": "def find_flaky(runs):\n    pass\n",
+  "tests": [
+   "runs = [\n    {'commit': 'a1', 'test': 'test_login', 'status': 'passed'},\n    {'commit': 'a1', 'test': 'test_login', 'status': 'failed'},\n    {'commit': 'a1', 'test': 'test_cart', 'status': 'failed'},\n    {'commit': 'b2', 'test': 'test_cart', 'status': 'passed'},\n    {'commit': 'b2', 'test': 'test_pay', 'status': 'failed'},\n    {'commit': 'b2', 'test': 'test_pay', 'status': 'passed'},\n    {'commit': 'b2', 'test': 'test_pay', 'status': 'passed'},\n]\nassert find_flaky(runs) == ['test_login', 'test_pay']",
+   "assert find_flaky([]) == []",
+   "assert find_flaky([{'commit': 'c', 'test': 't', 'status': 'skipped'}, {'commit': 'c', 'test': 't', 'status': 'passed'}]) == []"
+  ],
+  "solution": "from collections import defaultdict\n\ndef find_flaky(runs):\n    seen = defaultdict(set)\n    for r in runs:\n        seen[(r[\"commit\"], r[\"test\"])].add(r[\"status\"])\n    return sorted({test for (commit, test), statuses in seen.items() if {\"passed\", \"failed\"} <= statuses})\n",
+  "model": "```python\nfrom collections import defaultdict\n\ndef find_flaky(runs):\n    seen = defaultdict(set)\n    for r in runs:\n        seen[(r[\"commit\"], r[\"test\"])].add(r[\"status\"])\n    return sorted({test for (commit, test), statuses in seen.items() if {\"passed\", \"failed\"} <= statuses})\n```\n\nSame code + different results = flaky (test_cart failing on a1 and passing on b2 is **not** flaky by this definition: the code changed). This is how tools like Buildkite Test Analytics, Datadog CI Visibility or a home-grown dashboard flag flakiness. Next steps for a flaky test: quarantine (marker excluded from the gating run), ticket with owner, fix root cause (waits, shared data, order dependence), then reinstate.",
+  "tags": [
+   "flakiness",
+   "metrics"
+  ]
+ },
+ {
+  "id": "ci-106",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "deep",
+  "kind": "python_code",
+  "question": "Write shard(durations, n) that splits tests across n CI machines so the slowest machine finishes as early as possible, using the greedy rule: take tests from slowest to fastest (ties by name) and give each to the machine with the smallest total so far (ties → lowest machine index). Return a list of n lists of test names, each in assignment order.",
+  "what_tested": "Test sharding / load balancing",
+  "hint": "Sort by (-duration, name); track totals; a heap of (total, index) works well.",
+  "examples": [
+   {
+    "input": "shard({'a': 5, 'b': 4, 'c': 3, 'd': 3, 'e': 1}, 2)",
+    "output": "[['a', 'd'], ['b', 'c', 'e']]  # 8s vs 8s"
+   }
+  ],
+  "starter_code": "def shard(durations, n):\n    \"\"\"durations: {test_name: seconds}\"\"\"\n    pass\n",
+  "tests": [
+   "assert shard({'a': 5, 'b': 4, 'c': 3, 'd': 3, 'e': 1}, 2) == [['a', 'd'], ['b', 'c', 'e']]",
+   "assert shard({'x': 10}, 3) == [['x'], [], []]",
+   "assert shard({}, 2) == [[], []]",
+   "assert shard({'t1': 2, 't2': 2, 't3': 2, 't4': 2}, 2) == [['t1', 't3'], ['t2', 't4']]"
+  ],
+  "solution": "import heapq\n\ndef shard(durations, n):\n    shards = [[] for _ in range(n)]\n    heap = [(0, i) for i in range(n)]\n    for name in sorted(durations, key=lambda t: (-durations[t], t)):\n        total, i = heapq.heappop(heap)\n        shards[i].append(name)\n        heapq.heappush(heap, (total + durations[name], i))\n    return shards\n",
+  "model": "```python\nimport heapq\n\ndef shard(durations, n):\n    shards = [[] for _ in range(n)]\n    heap = [(0, i) for i in range(n)]\n    for name in sorted(durations, key=lambda t: (-durations[t], t)):\n        total, i = heapq.heappop(heap)\n        shards[i].append(name)\n        heapq.heappush(heap, (total + durations[name], i))\n    return shards\n```\n\nSplitting by **count** (`--shard=1/4` by file order) leaves one machine with all the slow tests; splitting by **recorded duration** balances wall-clock time. This greedy \"longest first\" rule is what tools like pytest-split and Knapsack do. Keep durations from previous runs as a CI artifact and refresh them regularly. Within one machine, pytest-xdist (`-n auto --dist loadfile/loadscope`) parallelises further.",
+  "tags": [
+   "parallel",
+   "cicd",
+   "performance"
+  ]
+ },
+ {
+  "id": "ci-107",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "python_code",
+  "question": "Write build_matrix(matrix) that expands a GitHub Actions-style strategy.matrix into the list of job combinations. matrix has list-valued keys plus optional 'exclude' (list of partial combos to drop) and 'include' (combos appended at the end). Keep key order as given and the combination order like nested loops.",
+  "what_tested": "CI matrix builds",
+  "hint": "itertools.product over the list-valued keys; drop combos matching an exclude entry.",
+  "examples": [
+   {
+    "input": "build_matrix({'os': ['ubuntu', 'windows'], 'browser': ['chromium', 'firefox'], 'exclude': [{'os': 'windows', 'browser': 'firefox'}]})",
+    "output": "[{'os': 'ubuntu', 'browser': 'chromium'}, {'os': 'ubuntu', 'browser': 'firefox'}, {'os': 'windows', 'browser': 'chromium'}]"
+   }
+  ],
+  "starter_code": "import itertools\n\ndef build_matrix(matrix):\n    pass\n",
+  "tests": [
+   "m = {'os': ['ubuntu', 'windows'], 'browser': ['chromium', 'firefox'],\n     'exclude': [{'os': 'windows', 'browser': 'firefox'}],\n     'include': [{'os': 'macos', 'browser': 'webkit'}]}\nassert build_matrix(m) == [\n    {'os': 'ubuntu', 'browser': 'chromium'}, {'os': 'ubuntu', 'browser': 'firefox'},\n    {'os': 'windows', 'browser': 'chromium'}, {'os': 'macos', 'browser': 'webkit'}]",
+   "assert build_matrix({'python': ['3.11', '3.12']}) == [{'python': '3.11'}, {'python': '3.12'}]",
+   "assert len(build_matrix({'a': [1, 2, 3], 'b': [1, 2], 'exclude': [{'a': 2}]})) == 4"
+  ],
+  "solution": "import itertools\n\ndef build_matrix(matrix):\n    keys = [k for k in matrix if k not in (\"include\", \"exclude\")]\n    combos = [dict(zip(keys, values)) for values in itertools.product(*(matrix[k] for k in keys))]\n    for ex in matrix.get(\"exclude\", []):\n        combos = [c for c in combos if not all(c.get(k) == v for k, v in ex.items())]\n    return combos + [dict(i) for i in matrix.get(\"include\", [])]\n",
+  "model": "```python\nimport itertools\n\ndef build_matrix(matrix):\n    keys = [k for k in matrix if k not in (\"include\", \"exclude\")]\n    combos = [dict(zip(keys, values)) for values in itertools.product(*(matrix[k] for k in keys))]\n    for ex in matrix.get(\"exclude\", []):\n        combos = [c for c in combos if not all(c.get(k) == v for k, v in ex.items())]\n    return combos + [dict(i) for i in matrix.get(\"include\", [])]\n```\n\n```yaml\nstrategy:\n  fail-fast: false\n  matrix:\n    os: [ubuntu-latest, windows-latest]\n    browser: [chromium, firefox]\n    exclude:\n      - os: windows-latest\n        browser: firefox\nruns-on: ${{ matrix.os }}\nsteps:\n  - run: pytest --browser ${{ matrix.browser }}\n```\n`fail-fast: false` keeps other combinations running when one fails, so you see the full picture. (Real `include` entries can also extend matching combos with extra keys; this task keeps the simple append case.)",
+  "tags": [
+   "cicd",
+   "github-actions"
+  ]
+ },
+ {
+  "id": "ci-108",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "python_code",
+  "question": "Write pass_rate_trend(runs) that takes nightly results like [{'date': '2026-10-01', 'passed': 95, 'failed': 5, 'skipped': 3}] and returns [(date, pass_rate_percent)] sorted by date, where pass rate = passed / (passed + failed) * 100 rounded to 1 decimal (skipped don't count). A run with no executed tests gives None.",
+  "what_tested": "Quality metrics for reports",
+  "hint": "Sort by date; guard against division by zero.",
+  "examples": [
+   {
+    "input": "pass_rate_trend([{'date': '2026-10-02', 'passed': 9, 'failed': 1, 'skipped': 0}, {'date': '2026-10-01', 'passed': 95, 'failed': 5, 'skipped': 3}])",
+    "output": "[('2026-10-01', 95.0), ('2026-10-02', 90.0)]"
+   },
+   {
+    "input": "pass_rate_trend([{'date': '2026-10-03', 'passed': 2, 'failed': 1, 'skipped': 4}])",
+    "output": "[('2026-10-03', 66.7)]"
+   }
+  ],
+  "starter_code": "def pass_rate_trend(runs):\n    pass\n",
+  "tests": [
+   "assert pass_rate_trend([{'date': '2026-10-02', 'passed': 9, 'failed': 1, 'skipped': 0}, {'date': '2026-10-01', 'passed': 95, 'failed': 5, 'skipped': 3}]) == [('2026-10-01', 95.0), ('2026-10-02', 90.0)]",
+   "assert pass_rate_trend([{'date': '2026-10-03', 'passed': 2, 'failed': 1, 'skipped': 4}]) == [('2026-10-03', 66.7)]",
+   "assert pass_rate_trend([{'date': '2026-10-04', 'passed': 0, 'failed': 0, 'skipped': 7}]) == [('2026-10-04', None)]",
+   "assert pass_rate_trend([]) == []"
+  ],
+  "solution": "def pass_rate_trend(runs):\n    out = []\n    for r in sorted(runs, key=lambda r: r[\"date\"]):\n        executed = r[\"passed\"] + r[\"failed\"]\n        rate = round(r[\"passed\"] / executed * 100, 1) if executed else None\n        out.append((r[\"date\"], rate))\n    return out\n",
+  "model": "```python\ndef pass_rate_trend(runs):\n    out = []\n    for r in sorted(runs, key=lambda r: r[\"date\"]):\n        executed = r[\"passed\"] + r[\"failed\"]\n        rate = round(r[\"passed\"] / executed * 100, 1) if executed else None\n        out.append((r[\"date\"], rate))\n    return out\n```\n\nReport what managers can act on: pass rate trend, flaky rate, mean time to fix a red build, and run duration. Excluding skipped tests from the rate avoids the \"we skipped everything and got 100%\" trap, but report the skipped count next to it. ISO dates (YYYY-MM-DD) sort correctly as strings.",
+  "tags": [
+   "reporting",
+   "metrics"
+  ]
+ },
+ {
+  "id": "ci-109",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "warm-up",
+  "kind": "python_code",
+  "question": "Write exit_status(code) that explains a pytest exit code: 0 'all tests passed', 1 'some tests failed', 2 'interrupted', 3 'internal error', 4 'usage error', 5 'no tests collected'; anything else 'unknown exit code N'. Also write should_fail_build(code, allow_no_tests=False) returning True unless code is 0, or code is 5 and allow_no_tests is True.",
+  "what_tested": "pytest exit codes in CI",
+  "hint": "A dict lookup with a default; then a simple boolean rule.",
+  "examples": [
+   {
+    "input": "exit_status(0)",
+    "output": "'all tests passed'"
+   },
+   {
+    "input": "exit_status(5)",
+    "output": "'no tests collected'"
+   }
+  ],
+  "starter_code": "def exit_status(code):\n    pass\n\ndef should_fail_build(code, allow_no_tests=False):\n    pass\n",
+  "tests": [
+   "assert exit_status(0) == 'all tests passed'",
+   "assert exit_status(5) == 'no tests collected'",
+   "assert exit_status(42) == 'unknown exit code 42'",
+   "assert should_fail_build(0) is False",
+   "assert should_fail_build(1) is True",
+   "assert should_fail_build(5) is True",
+   "assert should_fail_build(5, allow_no_tests=True) is False"
+  ],
+  "solution": "MESSAGES = {\n    0: \"all tests passed\",\n    1: \"some tests failed\",\n    2: \"interrupted\",\n    3: \"internal error\",\n    4: \"usage error\",\n    5: \"no tests collected\",\n}\n\ndef exit_status(code):\n    return MESSAGES.get(code, f\"unknown exit code {code}\")\n\ndef should_fail_build(code, allow_no_tests=False):\n    if code == 0:\n        return False\n    if code == 5 and allow_no_tests:\n        return False\n    return True\n",
+  "model": "```python\nMESSAGES = {\n    0: \"all tests passed\",\n    1: \"some tests failed\",\n    2: \"interrupted\",\n    3: \"internal error\",\n    4: \"usage error\",\n    5: \"no tests collected\",\n}\n\ndef exit_status(code):\n    return MESSAGES.get(code, f\"unknown exit code {code}\")\n\ndef should_fail_build(code, allow_no_tests=False):\n    if code == 0:\n        return False\n    if code == 5 and allow_no_tests:\n        return False\n    return True\n```\n\nCI decides pass/fail purely from the exit code. Exit 5 is a classic silent problem: a typo in `-m smok` or a wrong path collects nothing, and if the pipeline ignores 5 it goes green while testing nothing. Treat 5 as a failure for gating jobs. Avoid `|| true` after the pytest command; use `continue-on-error` / `if: always()` for reporting steps instead.",
+  "tags": [
+   "cicd",
+   "pytest"
+  ]
+ },
+ {
+  "id": "ci-110",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "In GitHub Actions, how do you make sure the HTML report and Playwright traces are uploaded even when tests fail?",
+  "what_tested": "Uploading artifacts on failure",
+  "options": [
+   "Add `continue-on-error: true` to the upload step",
+   "Add `if: always()` to the upload step",
+   "Nothing: artifacts upload automatically on failure",
+   "Move the upload step so it runs before the tests"
+  ],
+  "answer": 1,
+  "model": "A failed step skips the following steps by default, so the upload would never run exactly when you need it.\n```yaml\n- run: pytest --junitxml=reports/junit.xml --tracing=retain-on-failure\n- uses: actions/upload-artifact@v4\n  if: always()\n  with:\n    name: test-results\n    path: |\n      reports/\n      test-results/\n```\nSet `retention-days` to keep storage costs down.",
+  "tags": [
+   "cicd",
+   "github-actions",
+   "reporting"
+  ]
+ },
+ {
+  "id": "ci-111",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "What is Allure's workflow with pytest?",
+  "what_tested": "Allure reports",
+  "options": [
+   "pytest writes a finished Allure HTML file with --allure-html",
+   "--alluredir raw results, then the Allure CLI builds the report",
+   "Allure only reads JUnit XML, so you must enable --junitxml",
+   "Allure runs the test suite itself, replacing the pytest runner"
+  ],
+  "answer": 1,
+  "model": "`pip install allure-pytest` → `pytest --alluredir=allure-results` → `allure generate allure-results -o allure-report` (or `allure serve allure-results` locally). Rich features: steps (`with allure.step(\"Login\"):`), attachments (screenshots, traces, API bodies), severity/feature labels and history trends (copy the previous report's `history` folder into the new results before generating).",
+  "tags": [
+   "reporting",
+   "allure"
+  ]
+ },
+ {
+  "id": "ci-112",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "warm-up",
+  "kind": "concept",
+  "question": "Which plugin gives you a single self-contained HTML report with `pytest --html=report.html --self-contained-html`?",
+  "what_tested": "pytest-html",
+  "options": [
+   "pytest-cov",
+   "pytest-xdist",
+   "pytest-reportlog",
+   "pytest-html"
+  ],
+  "answer": 3,
+  "model": "pytest-html is the lightweight option: one file, easy to attach as a CI artifact or email. Customise it with hooks such as `pytest_html_results_table_row` and attach screenshots via `extras`. Allure is richer (steps, history); JUnit XML is for CI dashboards; teams often produce JUnit + one human-readable report.",
+  "tags": [
+   "reporting"
+  ]
+ },
+ {
+  "id": "ci-113",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "What does `concurrency: { group: ${{ github.ref }}, cancel-in-progress: true }` do in a workflow?",
+  "what_tested": "Workflow concurrency",
+  "options": [
+   "Cancels the older run on the same branch",
+   "Runs every job in the workflow in parallel",
+   "Limits each job to a single CPU core only",
+   "Retries cancelled runs automatically later"
+  ],
+  "answer": 0,
+  "model": "It saves runner minutes and avoids stale results: only the latest commit on a PR branch keeps running. Don't use cancel-in-progress on main/deploy workflows where every run matters.",
+  "tags": [
+   "cicd",
+   "github-actions"
+  ]
+ },
+ {
+  "id": "ci-114",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do jobs in GitHub Actions run in sequence, e.g. API tests only after the build job succeeds?",
+  "what_tested": "Job dependencies",
+  "options": [
+   "List the jobs in that order in the YAML",
+   "Put both jobs inside one strategy matrix",
+   "Use `depends_on:` at the workflow level",
+   "Add `needs: build` to the API test job"
+  ],
+  "answer": 3,
+  "model": "Jobs run in parallel unless linked by `needs:`. A job with `needs: [build, lint]` waits for both and is skipped if either fails (unless it uses `if: always()`). Pass data between jobs with artifacts or `outputs:`, since each job gets a fresh runner.",
+  "tags": [
+   "cicd",
+   "github-actions"
+  ]
+ },
+ {
+  "id": "ci-115",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "Where should API keys and test-user passwords for CI live?",
+  "what_tested": "Secrets in CI",
+  "options": [
+   "The README, so the whole team can find them",
+   "The CI secret store, exposed as env vars",
+   "config/qa.yaml, committed with the tests",
+   "Base64-encoded values inside pytest.ini"
+  ],
+  "answer": 1,
+  "model": "```yaml\nenv:\n  API_TOKEN: ${{ secrets.QA_API_TOKEN }}\n```\nThe framework reads `os.environ[\"API_TOKEN\"]`. Secrets are masked in logs, scoped per environment, and rotatable without code changes. Never print them; mask them in reports (e.g. Authorization headers in Allure attachments).",
+  "tags": [
+   "cicd",
+   "security"
+  ]
+ },
+ {
+  "id": "ci-116",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "Your pip install step takes 3 minutes on every run. What's the standard fix in GitHub Actions?",
+  "what_tested": "Dependency caching",
+  "options": [
+   "Commit the virtualenv folder into the repo",
+   "Run pip install with --no-deps every time",
+   "Install dependencies once a day, on first run",
+   "Cache pip keyed on the requirements hash"
+  ],
+  "answer": 3,
+  "model": "```yaml\n- uses: actions/setup-python@v5\n  with:\n    python-version: \"3.12\"\n    cache: pip\n```\nThe cache key includes the hash of requirements files, so it refreshes when dependencies change. For Playwright, also cache `~/.cache/ms-playwright` keyed on the Playwright version, or use the official Playwright Docker image.",
+  "tags": [
+   "cicd",
+   "performance"
+  ]
+ },
+ {
+  "id": "ci-117",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "What's the best artifact to debug a UI test that only fails in CI?",
+  "what_tested": "Playwright trace in CI",
+  "options": [
+   "The console output of `pytest -q`",
+   "A screenshot of the runner's desktop",
+   "A Playwright trace kept on failure",
+   "Rerunning locally headed until it fails"
+  ],
+  "answer": 2,
+  "model": "A trace contains every action, DOM snapshots before/after, network requests, console logs and timing, so you can step through the failure as it happened in CI. With pytest-playwright: `--tracing retain-on-failure` (plus `--video retain-on-failure`, `--screenshot only-on-failure`), then upload `test-results/` as an artifact and open it at trace.playwright.dev or with `playwright show-trace trace.zip`.",
+  "tags": [
+   "debugging",
+   "tracing",
+   "playwright"
+  ]
  }
 ]

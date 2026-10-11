@@ -1,0 +1,303 @@
+{
+ "_note": "Preparation page layout. Each module's questions are grouped into the first subsection whose tags match one of the question's tags (order matters); anything left over goes to 'More questions'. Links open in a new tab and are checked against the official docs.",
+ "modules": [
+  {
+   "topic": "Python",
+   "intro": "Python depth for QA and SDET interviews: OOP, overloading and overriding, dunder methods, decorators, generators, DSA and the standard library you use in frameworks.",
+   "links": [
+    {"title": "The Python Tutorial", "url": "https://docs.python.org/3/tutorial/index.html"},
+    {"title": "Python Glossary", "url": "https://docs.python.org/3/glossary.html"}
+   ],
+   "subsections": [
+    {"title": "Overloading & overriding", "tags": ["overloading", "overriding"],
+     "links": [
+      {"title": "functools.singledispatch", "url": "https://docs.python.org/3/library/functools.html#functools.singledispatch"},
+      {"title": "typing.overload", "url": "https://docs.python.org/3/library/typing.html#typing.overload"},
+      {"title": "Classes: Inheritance (overriding methods)", "url": "https://docs.python.org/3/tutorial/classes.html#inheritance"}]},
+    {"title": "Inheritance, MRO & mixins", "tags": ["inheritance", "mro", "mixins"],
+     "links": [
+      {"title": "Classes: Multiple inheritance", "url": "https://docs.python.org/3/tutorial/classes.html#multiple-inheritance"},
+      {"title": "The Python method resolution order (C3)", "url": "https://docs.python.org/3/howto/mro.html"},
+      {"title": "Built-in super()", "url": "https://docs.python.org/3/library/functions.html#super"}]},
+    {"title": "Dunder methods & operator overloading", "tags": ["dunder"],
+     "links": [
+      {"title": "Data model: special method names", "url": "https://docs.python.org/3/reference/datamodel.html#special-method-names"},
+      {"title": "functools.total_ordering", "url": "https://docs.python.org/3/library/functools.html#functools.total_ordering"}]},
+    {"title": "OOP fundamentals", "tags": ["oop", "abstraction", "encapsulation", "polymorphism", "property", "dataclasses"],
+     "links": [
+      {"title": "The Python Tutorial: Classes", "url": "https://docs.python.org/3/tutorial/classes.html"},
+      {"title": "abc — Abstract base classes", "url": "https://docs.python.org/3/library/abc.html"},
+      {"title": "dataclasses", "url": "https://docs.python.org/3/library/dataclasses.html"},
+      {"title": "Descriptor guide (how @property works)", "url": "https://docs.python.org/3/howto/descriptor.html"}]},
+    {"title": "Decorators, closures & scope", "tags": ["decorators", "scope"],
+     "links": [
+      {"title": "Glossary: decorator", "url": "https://docs.python.org/3/glossary.html#term-decorator"},
+      {"title": "functools.wraps", "url": "https://docs.python.org/3/library/functools.html#functools.wraps"},
+      {"title": "PEP 318: Decorators for functions and methods", "url": "https://peps.python.org/pep-0318/"},
+      {"title": "Execution model: resolution of names (LEGB)", "url": "https://docs.python.org/3/reference/executionmodel.html#resolution-of-names"}]},
+    {"title": "Generators, iterators & context managers", "tags": ["generators", "iteration", "context-managers"],
+     "links": [
+      {"title": "Functional programming HOWTO: generators", "url": "https://docs.python.org/3/howto/functional.html#generators"},
+      {"title": "Iterator types", "url": "https://docs.python.org/3/library/stdtypes.html#iterator-types"},
+      {"title": "contextlib", "url": "https://docs.python.org/3/library/contextlib.html"},
+      {"title": "The with statement", "url": "https://docs.python.org/3/reference/compound_stmts.html#the-with-statement"}]},
+    {"title": "Functions & arguments", "tags": ["functions"],
+     "links": [
+      {"title": "More on defining functions", "url": "https://docs.python.org/3/tutorial/controlflow.html#more-on-defining-functions"}]},
+    {"title": "DSA: graphs, trees & dynamic programming", "tags": ["graphs", "trees", "bfs", "dp", "topological-sort", "linked-list"],
+     "links": [
+      {"title": "collections.deque (queues for BFS)", "url": "https://docs.python.org/3/library/collections.html#collections.deque"},
+      {"title": "functools.lru_cache (memoisation)", "url": "https://docs.python.org/3/library/functools.html#functools.lru_cache"},
+      {"title": "Time complexity of Python operations", "url": "https://wiki.python.org/moin/TimeComplexity"}]},
+    {"title": "DSA: arrays, hashing, searching & heaps", "tags": ["dsa", "hashing", "searching", "two-pointers", "prefix-sum", "heap", "matrix", "intervals", "arrays", "sliding-window", "algorithms", "stack", "data-structures", "recursion"],
+     "links": [
+      {"title": "heapq — Heap queue algorithm", "url": "https://docs.python.org/3/library/heapq.html"},
+      {"title": "bisect — Array bisection", "url": "https://docs.python.org/3/library/bisect.html"},
+      {"title": "collections.Counter and defaultdict", "url": "https://docs.python.org/3/library/collections.html"},
+      {"title": "Time complexity of Python operations", "url": "https://wiki.python.org/moin/TimeComplexity"}]},
+    {"title": "Strings & regex", "tags": ["strings", "regex"],
+     "links": [
+      {"title": "String methods", "url": "https://docs.python.org/3/library/stdtypes.html#string-methods"},
+      {"title": "re — Regular expressions", "url": "https://docs.python.org/3/library/re.html"}]},
+    {"title": "Lists, dicts, sets & sorting", "tags": ["lists", "dicts", "sets", "sorting"],
+     "links": [
+      {"title": "Data structures", "url": "https://docs.python.org/3/tutorial/datastructures.html"},
+      {"title": "Sorting techniques", "url": "https://docs.python.org/3/howto/sorting.html"}]},
+    {"title": "Exceptions & logging", "tags": ["exceptions", "logging"],
+     "links": [
+      {"title": "Errors and exceptions", "url": "https://docs.python.org/3/tutorial/errors.html"},
+      {"title": "Logging HOWTO", "url": "https://docs.python.org/3/howto/logging.html"}]},
+    {"title": "Internals, memory & gotchas", "tags": ["internals", "gotchas"],
+     "links": [
+      {"title": "Programming FAQ", "url": "https://docs.python.org/3/faq/programming.html"},
+      {"title": "copy — shallow and deep copy", "url": "https://docs.python.org/3/library/copy.html"}]},
+    {"title": "Concurrency", "tags": ["concurrency", "async"],
+     "links": [
+      {"title": "concurrent.futures", "url": "https://docs.python.org/3/library/concurrent.futures.html"},
+      {"title": "asyncio", "url": "https://docs.python.org/3/library/asyncio.html"}]},
+    {"title": "Standard library: files, JSON, dates & money", "tags": ["stdlib", "json", "parsing", "io", "dates", "decimal", "finance", "math"],
+     "links": [
+      {"title": "json", "url": "https://docs.python.org/3/library/json.html"},
+      {"title": "pathlib", "url": "https://docs.python.org/3/library/pathlib.html"},
+      {"title": "datetime", "url": "https://docs.python.org/3/library/datetime.html"},
+      {"title": "decimal", "url": "https://docs.python.org/3/library/decimal.html"}]},
+    {"title": "Python for test automation", "tags": ["testing", "automation", "mocking", "pytest", "api", "tooling", "modules", "typing", "caching", "performance", "design", "config", "validation"],
+     "links": [
+      {"title": "unittest.mock", "url": "https://docs.python.org/3/library/unittest.mock.html"},
+      {"title": "typing", "url": "https://docs.python.org/3/library/typing.html"},
+      {"title": "Modules and packages", "url": "https://docs.python.org/3/tutorial/modules.html"}]},
+    {"title": "Basics", "tags": ["basics"],
+     "links": [
+      {"title": "An informal introduction to Python", "url": "https://docs.python.org/3/tutorial/introduction.html"}]}
+   ]
+  },
+  {
+   "topic": "Playwright",
+   "intro": "Playwright for Python with pytest: locators, auto-waiting, assertions, contexts and auth, network mocking, page objects, debugging and CI.",
+   "links": [
+    {"title": "Playwright for Python: Installation", "url": "https://playwright.dev/python/docs/intro"},
+    {"title": "Writing tests", "url": "https://playwright.dev/python/docs/writing-tests"}
+   ],
+   "subsections": [
+    {"title": "Locators", "tags": ["locators"],
+     "links": [
+      {"title": "Locators", "url": "https://playwright.dev/python/docs/locators"},
+      {"title": "Other locators (CSS, XPath, chaining)", "url": "https://playwright.dev/python/docs/other-locators"}]},
+    {"title": "Auto-waiting & timeouts", "tags": ["waits", "timeouts"],
+     "links": [
+      {"title": "Auto-waiting (actionability checks)", "url": "https://playwright.dev/python/docs/actionability"},
+      {"title": "Assertions (retrying, timeouts)", "url": "https://playwright.dev/python/docs/test-assertions"}]},
+    {"title": "Assertions", "tags": ["assertions"],
+     "links": [
+      {"title": "Assertions", "url": "https://playwright.dev/python/docs/test-assertions"}]},
+    {"title": "Page objects & framework design", "tags": ["pom", "framework", "architecture", "design", "inheritance", "overriding", "pytest-playwright", "fixtures", "config", "setup", "data", "data-driven"],
+     "links": [
+      {"title": "Page object models", "url": "https://playwright.dev/python/docs/pom"},
+      {"title": "Pytest plugin reference", "url": "https://playwright.dev/python/docs/test-runners"},
+      {"title": "Running and debugging tests", "url": "https://playwright.dev/python/docs/running-tests"}]},
+    {"title": "Browser contexts & authentication", "tags": ["contexts", "auth"],
+     "links": [
+      {"title": "Isolation and browser contexts", "url": "https://playwright.dev/python/docs/browser-contexts"},
+      {"title": "Authentication (storage state)", "url": "https://playwright.dev/python/docs/auth"}]},
+    {"title": "Network, mocking & API", "tags": ["network", "mocking", "api"],
+     "links": [
+      {"title": "Network", "url": "https://playwright.dev/python/docs/network"},
+      {"title": "Mock APIs", "url": "https://playwright.dev/python/docs/mock"},
+      {"title": "API testing (APIRequestContext)", "url": "https://playwright.dev/python/docs/api-testing"}]},
+    {"title": "Actions, frames, dialogs & files", "tags": ["actions", "widgets", "files", "frames", "dialogs", "events", "pages"],
+     "links": [
+      {"title": "Actions (input)", "url": "https://playwright.dev/python/docs/input"},
+      {"title": "Frames", "url": "https://playwright.dev/python/docs/frames"},
+      {"title": "Dialogs", "url": "https://playwright.dev/python/docs/dialogs"},
+      {"title": "Downloads", "url": "https://playwright.dev/python/docs/downloads"},
+      {"title": "Pages and popups", "url": "https://playwright.dev/python/docs/pages"}]},
+    {"title": "Debugging & tracing", "tags": ["debugging", "tracing", "tooling"],
+     "links": [
+      {"title": "Debugging tests", "url": "https://playwright.dev/python/docs/debug"},
+      {"title": "Trace viewer", "url": "https://playwright.dev/python/docs/trace-viewer"},
+      {"title": "Test generator (codegen)", "url": "https://playwright.dev/python/docs/codegen"}]},
+    {"title": "CI, parallel runs & flakiness", "tags": ["ci", "parallel", "performance", "cross-browser", "flakiness"],
+     "links": [
+      {"title": "Continuous integration", "url": "https://playwright.dev/python/docs/ci"},
+      {"title": "Browsers", "url": "https://playwright.dev/python/docs/browsers"},
+      {"title": "Docker", "url": "https://playwright.dev/python/docs/docker"}]},
+    {"title": "Scenarios & advanced topics", "tags": ["scenario", "advanced", "strategy", "selenium", "mobile", "visual", "a11y", "ai", "regex", "finance", "fundamentals"],
+     "links": [
+      {"title": "Emulation (devices, locale, geolocation)", "url": "https://playwright.dev/python/docs/emulation"},
+      {"title": "Screenshots", "url": "https://playwright.dev/python/docs/screenshots"},
+      {"title": "Clock (controlling time)", "url": "https://playwright.dev/python/docs/clock"}]}
+   ]
+  },
+  {
+   "topic": "API testing",
+   "intro": "REST API testing with Python requests: HTTP methods and status codes, headers and auth, schema and contract checks, test design and resilience.",
+   "links": [
+    {"title": "requests: Quickstart", "url": "https://requests.readthedocs.io/en/latest/user/quickstart/"},
+    {"title": "An overview of HTTP (MDN)", "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Overview"}
+   ],
+   "subsections": [
+    {"title": "Writing tests with requests", "tags": ["httpbin", "python", "timeouts", "retries", "session", "assertions", "nested-json", "transform", "aggregation", "collections", "types"],
+     "links": [
+      {"title": "requests: Quickstart", "url": "https://requests.readthedocs.io/en/latest/user/quickstart/"},
+      {"title": "requests: Advanced usage (sessions, timeouts, retries)", "url": "https://requests.readthedocs.io/en/latest/user/advanced/"}]},
+    {"title": "HTTP methods, params & pagination", "tags": ["fundamentals", "methods", "get", "post", "put", "patch", "delete", "query-params", "query", "nested-routes", "pagination"],
+     "links": [
+      {"title": "HTTP request methods (MDN)", "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Methods"},
+      {"title": "PATCH (MDN)", "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Methods/PATCH"}]},
+    {"title": "Status codes, headers & errors", "tags": ["status-codes", "headers", "errors", "negative", "caching"],
+     "links": [
+      {"title": "HTTP response status codes (MDN)", "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status"},
+      {"title": "HTTP headers (MDN)", "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers"}]},
+    {"title": "Authentication & security", "tags": ["auth", "security", "compliance"],
+     "links": [
+      {"title": "HTTP authentication (MDN)", "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Authentication"},
+      {"title": "requests: Authentication", "url": "https://requests.readthedocs.io/en/latest/user/authentication/"},
+      {"title": "OWASP API Security Top 10 (2023)", "url": "https://owasp.org/API-Security/editions/2023/en/0x11-t10/"}]},
+    {"title": "Contracts, schemas & versioning", "tags": ["contracts", "validation", "schema", "openapi", "versioning", "graphql", "soap"],
+     "links": [
+      {"title": "JSON Schema: creating your first schema", "url": "https://json-schema.org/learn/getting-started-step-by-step"},
+      {"title": "OpenAPI Specification", "url": "https://swagger.io/specification/"},
+      {"title": "Pact (consumer-driven contract testing)", "url": "https://docs.pact.io/"}]},
+    {"title": "Test design & test data", "tags": ["test-design", "strategy", "test-data", "idempotency", "data-integrity", "scenario", "finance", "dates", "i18n", "files", "mocking", "integration", "playwright", "webhooks", "messaging", "framework", "tooling"],
+     "links": [
+      {"title": "The Practical Test Pyramid", "url": "https://martinfowler.com/articles/practical-test-pyramid.html"}]},
+    {"title": "Performance, resilience & async", "tags": ["performance", "non-functional", "resilience", "concurrency", "async", "observability", "operations", "ci", "flakiness", "debugging"],
+     "links": [
+      {"title": "requests: timeouts", "url": "https://requests.readthedocs.io/en/latest/user/advanced/#timeouts"},
+      {"title": "Eradicating non-determinism in tests", "url": "https://martinfowler.com/articles/nonDeterminism.html"}]}
+   ]
+  },
+  {
+   "topic": "Pytest & framework design",
+   "intro": "pytest in depth (fixtures, conftest.py, pytest.ini, markers, parametrize, hooks) and how to structure a maintainable automation framework.",
+   "links": [
+    {"title": "pytest documentation", "url": "https://docs.pytest.org/en/stable/"},
+    {"title": "Good integration practices", "url": "https://docs.pytest.org/en/stable/explanation/goodpractices.html"}
+   ],
+   "subsections": [
+    {"title": "conftest.py, hooks & plugins", "tags": ["conftest", "hooks", "plugins"],
+     "links": [
+      {"title": "Sharing fixtures across files (conftest.py)", "url": "https://docs.pytest.org/en/stable/reference/fixtures.html#conftest-py-sharing-fixtures-across-multiple-files"},
+      {"title": "Writing hook functions", "url": "https://docs.pytest.org/en/stable/how-to/writing_hook_functions.html"},
+      {"title": "Writing plugins", "url": "https://docs.pytest.org/en/stable/how-to/writing_plugins.html"}]},
+    {"title": "Fixtures & scopes", "tags": ["fixtures", "scope", "generators"],
+     "links": [
+      {"title": "How to use fixtures", "url": "https://docs.pytest.org/en/stable/how-to/fixtures.html"},
+      {"title": "Fixtures reference", "url": "https://docs.pytest.org/en/stable/reference/fixtures.html"},
+      {"title": "About fixtures", "url": "https://docs.pytest.org/en/stable/explanation/fixtures.html"}]},
+    {"title": "pytest.ini & configuration", "tags": ["ini", "config", "environments", "cli"],
+     "links": [
+      {"title": "Configuration (pytest.ini, pyproject.toml)", "url": "https://docs.pytest.org/en/stable/reference/customize.html"},
+      {"title": "Configuration options reference", "url": "https://docs.pytest.org/en/stable/reference/reference.html#ini-options-ref"},
+      {"title": "How to invoke pytest", "url": "https://docs.pytest.org/en/stable/how-to/usage.html"}]},
+    {"title": "Markers, skip & xfail", "tags": ["markers"],
+     "links": [
+      {"title": "How to mark test functions", "url": "https://docs.pytest.org/en/stable/how-to/mark.html"},
+      {"title": "Working with custom markers", "url": "https://docs.pytest.org/en/stable/example/markers.html"},
+      {"title": "Skip and xfail", "url": "https://docs.pytest.org/en/stable/how-to/skipping.html"}]},
+    {"title": "Parametrize & data-driven tests", "tags": ["parametrize", "data-driven", "test-data"],
+     "links": [
+      {"title": "How to parametrize fixtures and tests", "url": "https://docs.pytest.org/en/stable/how-to/parametrize.html"},
+      {"title": "Parametrizing tests (examples)", "url": "https://docs.pytest.org/en/stable/example/parametrize.html"}]},
+    {"title": "Framework structure & page objects", "tags": ["architecture", "design", "pom", "patterns", "scale", "maintenance", "onboarding", "documentation", "review", "bdd", "integrations", "communication", "ai", "a11y", "visual"],
+     "links": [
+      {"title": "Good integration practices (layout)", "url": "https://docs.pytest.org/en/stable/explanation/goodpractices.html"},
+      {"title": "Playwright: page object models", "url": "https://playwright.dev/python/docs/pom"}]},
+    {"title": "Reporting & logging", "tags": ["reporting", "logging", "metrics"],
+     "links": [
+      {"title": "Managing output (JUnit XML)", "url": "https://docs.pytest.org/en/stable/how-to/output.html"},
+      {"title": "How to manage logging", "url": "https://docs.pytest.org/en/stable/how-to/logging.html"},
+      {"title": "Allure Report for pytest", "url": "https://allurereport.org/docs/pytest/"},
+      {"title": "pytest-html user guide", "url": "https://pytest-html.readthedocs.io/en/latest/user_guide.html"}]},
+    {"title": "Parallel runs, CI & flakiness", "tags": ["parallel", "ci", "flakiness", "performance"],
+     "links": [
+      {"title": "pytest-xdist: running tests across CPUs", "url": "https://pytest-xdist.readthedocs.io/en/stable/distribution.html"},
+      {"title": "Flaky tests", "url": "https://docs.pytest.org/en/stable/explanation/flaky.html"},
+      {"title": "pytest in CI", "url": "https://docs.pytest.org/en/stable/explanation/ci.html"}]},
+    {"title": "Core pytest", "tags": ["pytest", "assertions", "mocking", "time", "quality", "tooling", "waits", "strategy"],
+     "links": [
+      {"title": "How to write and report assertions", "url": "https://docs.pytest.org/en/stable/how-to/assert.html"},
+      {"title": "monkeypatch", "url": "https://docs.pytest.org/en/stable/how-to/monkeypatch.html"},
+      {"title": "Warnings", "url": "https://docs.pytest.org/en/stable/how-to/capture-warnings.html"}]}
+   ]
+  },
+  {
+   "topic": "CI, debugging & flakiness",
+   "intro": "CI/CD for test suites (GitHub Actions, Jenkins), reports, debugging failures that only happen in CI, and managing flaky tests.",
+   "links": [
+    {"title": "GitHub Actions quickstart", "url": "https://docs.github.com/en/actions/get-started/quickstart"},
+    {"title": "Continuous Integration (Martin Fowler)", "url": "https://martinfowler.com/articles/continuousIntegration.html"}
+   ],
+   "subsections": [
+    {"title": "Pipelines & GitHub Actions", "tags": ["github-actions", "pipeline", "jenkins", "git"],
+     "links": [
+      {"title": "Workflow syntax", "url": "https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax"},
+      {"title": "Running variations of jobs (matrix)", "url": "https://docs.github.com/en/actions/how-tos/write-workflows/choose-what-workflows-do/run-job-variations"},
+      {"title": "Dependency caching", "url": "https://docs.github.com/en/actions/concepts/workflows-and-actions/dependency-caching"},
+      {"title": "Jenkins Pipeline", "url": "https://www.jenkins.io/doc/book/pipeline/"}]},
+    {"title": "Reports & test results", "tags": ["reporting", "junit", "allure", "metrics"],
+     "links": [
+      {"title": "pytest: JUnit XML output", "url": "https://docs.pytest.org/en/stable/how-to/output.html"},
+      {"title": "Workflow artifacts", "url": "https://docs.github.com/en/actions/concepts/workflows-and-actions/workflow-artifacts"},
+      {"title": "Allure Report for pytest", "url": "https://allurereport.org/docs/pytest/"}]},
+    {"title": "Flaky tests", "tags": ["flakiness"],
+     "links": [
+      {"title": "Eradicating non-determinism in tests", "url": "https://martinfowler.com/articles/nonDeterminism.html"},
+      {"title": "pytest: flaky tests", "url": "https://docs.pytest.org/en/stable/explanation/flaky.html"}]},
+    {"title": "Debugging CI failures", "tags": ["debugging", "tracing", "headless", "triage", "observability", "monitoring", "playwright"],
+     "links": [
+      {"title": "Playwright trace viewer", "url": "https://playwright.dev/python/docs/trace-viewer"},
+      {"title": "Playwright on CI", "url": "https://playwright.dev/python/docs/ci"}]},
+    {"title": "Parallelism & speed", "tags": ["parallel", "performance"],
+     "links": [
+      {"title": "pytest-xdist: running tests across CPUs", "url": "https://pytest-xdist.readthedocs.io/en/stable/distribution.html"},
+      {"title": "Running variations of jobs (matrix)", "url": "https://docs.github.com/en/actions/how-tos/write-workflows/choose-what-workflows-do/run-job-variations"}]},
+    {"title": "Environments, Docker & releases", "tags": ["environments", "docker", "kubernetes", "deployment", "release", "feature-flags", "production", "database", "test-data"],
+     "links": [
+      {"title": "Playwright Docker images", "url": "https://playwright.dev/python/docs/docker"},
+      {"title": "Continuous deployment", "url": "https://docs.github.com/en/actions/get-started/continuous-deployment"}]},
+    {"title": "Secrets & security", "tags": ["security"],
+     "links": [
+      {"title": "Secrets in GitHub Actions", "url": "https://docs.github.com/en/actions/concepts/security/secrets"}]},
+    {"title": "Process & strategy", "tags": ["cicd", "process", "strategy", "communication", "quality", "scenario", "fundamentals", "time", "tooling", "pytest", "async", "resilience", "git"],
+     "links": [
+      {"title": "About continuous integration", "url": "https://docs.github.com/en/actions/get-started/continuous-integration"},
+      {"title": "Continuous Integration (Martin Fowler)", "url": "https://martinfowler.com/articles/continuousIntegration.html"}]}
+   ]
+  },
+  {
+   "topic": "Behavioral",
+   "intro": "Behavioral and leadership questions for SDET, QA lead and QA manager roles. Answer with a structure (situation, task, action, result) and your own examples.",
+   "links": [
+    {"title": "The STAR interview method (The Muse)", "url": "https://www.themuse.com/advice/star-interview-method"}
+   ],
+   "subsections": [
+    {"title": "Leadership & people", "tags": ["leadership", "mentoring", "hiring", "morale", "wellbeing", "performance", "growth", "onboarding", "culture"], "links": []},
+    {"title": "Collaboration, conflict & stakeholders", "tags": ["collaboration", "stakeholders", "conflict", "influence", "communication", "managing-up", "feedback", "teamwork"], "links": []},
+    {"title": "Situational judgement", "tags": ["situational", "judgement", "integrity", "honesty", "ambiguity", "risk", "incident", "compliance", "security"], "links": []},
+    {"title": "Planning, delivery & quality strategy", "tags": ["prioritisation", "planning", "estimation", "delivery", "release", "project", "agile", "tech-debt", "strategy", "business-case", "metrics", "automation", "framework", "technical", "ai", "improvement", "impact"], "links": []},
+    {"title": "Career & motivation", "tags": ["career", "motivation", "learning", "achievement", "failure", "self-awareness", "attitude", "adaptability", "initiative", "ownership", "closing"], "links": []}
+   ]
+  }
+ ]
+}

@@ -47,6 +47,23 @@ async function fetchBytes(url) {
   return r.arrayBuffer();
 }
 
+let fakeReady = null;
+function ensureFakePlaywright(assetBase) {
+  // Stand-in Page/Locator/Route used by the Playwright coding tasks (pyharness/fakepw.py)
+  if (!fakeReady) {
+    fakeReady = (async () => {
+      const src = await (await fetch(`${assetBase}pyharness/fakepw.py`)).text();
+      py.FS.writeFile("/home/pyodide/fakepw.py", src);
+      py.runPython(`
+import sys
+if "/home/pyodide" not in sys.path:
+    sys.path.insert(0, "/home/pyodide")
+`);
+    })().catch(err => { fakeReady = null; throw err; });
+  }
+  return fakeReady;
+}
+
 function ensureRequests(assetBase) {
   if (!requestsReady) {
     requestsReady = (async () => {
@@ -85,6 +102,7 @@ self.onmessage = async (e) => {
 
     const needsRequests = !!api || /\b(import|from)\s+requests\b/.test(code || "");
     if (needsRequests) await ensureRequests(assetBase);
+    if (/\bfakepw\b/.test((code || "") + "\n" + (tests || []).join("\n"))) await ensureFakePlaywright(assetBase);
 
     const out = [];
     py.setStdout({ batched: s => out.push(s) });

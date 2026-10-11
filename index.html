@@ -78,6 +78,7 @@ header.top{display:flex;align-items:center;justify-content:space-between;gap:12p
 .field{display:grid;gap:8px}
 .label{font:600 11.5px var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
 .chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip:disabled{opacity:.45;cursor:not-allowed;text-decoration:line-through}
 .chip{border:1px solid var(--line);background:var(--bg);padding:7px 12px;border-radius:999px;cursor:pointer;font-size:13.5px;font-weight:500;display:inline-flex;gap:6px;align-items:center}
 .chip[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent);color:var(--fg)}
 .chip[aria-pressed="true"]::before{content:"✓";font-size:12px;color:var(--accent);font-weight:700}
@@ -85,7 +86,7 @@ header.top{display:flex;align-items:center;justify-content:space-between;gap:12p
 .seg button{border:0;background:var(--bg);padding:8px 14px;cursor:pointer;font-size:13.5px;font-weight:500;border-right:1px solid var(--line)}
 .seg button:last-child{border-right:0}
 .seg button[aria-pressed="true"]{background:var(--fg);color:var(--bg)}
-textarea,input[type=text]{width:100%;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px 12px;resize:vertical}
+textarea,input[type=text],input[type=search]{width:100%;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px 12px;resize:vertical}
 textarea:focus,input:focus{border-color:var(--accent);outline:none}
 .hint{font-size:12.5px;color:var(--muted)}
 .syllabus{display:grid;gap:10px;margin-top:22px}
@@ -262,6 +263,63 @@ body.ide-locked{overflow:hidden}
 .logrow .s{font:600 12.5px var(--f-mono);white-space:nowrap}
 .logrow .s.o-correct{color:var(--good-text)} .logrow .s.o-partial{color:var(--warn-text)} .logrow .s.o-incorrect{color:var(--crit)} .logrow .s.o-skipped{color:var(--muted)}
 .logrow{grid-template-columns:28px minmax(0,1fr) auto}
+/* top navigation */
+.topnav{display:flex;gap:6px;align-items:center;margin-left:auto}
+.topnav .btn[aria-current="page"]{background:var(--accent);color:var(--accent-fg);border-color:var(--accent)}
+.prepcta{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:18px;padding:14px 16px;border:1px dashed var(--line);border-radius:var(--r);background:var(--surface)}
+.prepcta p{margin:0;flex:1;min-width:200px;font-size:14px;color:var(--muted)}
+/* preparation page */
+.prep-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:18px}
+.prep-head h2{font-size:clamp(24px,3vw,30px)}
+.prep-head p{margin:6px 0 0;color:var(--muted);max-width:60ch}
+.prep-tools{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.prep-tools input[type=search]{width:min(320px,100%);background:var(--surface)}
+.prep{display:grid;grid-template-columns:250px minmax(0,1fr);gap:22px;align-items:start}
+.prep-nav{position:sticky;top:12px;max-height:calc(100vh - 24px);overflow:auto;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:8px}
+.prep-nav button.mod{display:flex;justify-content:space-between;width:100%;text-align:left;background:none;border:0;border-radius:7px;padding:8px 10px;font-weight:600;font-size:14px;cursor:pointer;color:var(--fg)}
+.prep-nav button.mod:hover{background:var(--sunken)}
+.prep-nav button.mod[aria-current="true"]{background:var(--accent-soft);color:var(--accent)}
+.prep-nav .n{font:500 11.5px var(--f-mono);color:var(--muted)}
+.prep-nav ul{list-style:none;margin:2px 0 8px;padding:0 0 0 10px;border-left:2px solid var(--line);margin-left:12px}
+.prep-nav li a{display:flex;justify-content:space-between;gap:8px;padding:5px 8px;font-size:13px;color:var(--muted);text-decoration:none;border-radius:6px}
+.prep-nav li a:hover{color:var(--fg);background:var(--sunken)}
+.prep-select{display:none}
+.prep-main{min-width:0}
+.modhead{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:20px 22px;margin-bottom:16px}
+.modhead h3{font-size:22px;margin-bottom:6px}
+.modhead p{margin:0 0 12px;color:var(--muted)}
+.refs{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.refs .rl{font:600 11px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-right:2px}
+a.ext{display:inline-flex;align-items:center;gap:4px;font-size:13px;padding:4px 9px;border-radius:999px;border:1px solid var(--line);background:var(--bg);color:var(--accent);text-decoration:none}
+a.ext:hover{border-color:var(--accent)}
+a.ext::after{content:"↗";font-size:11px}
+.sub{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px 18px;margin-bottom:14px;scroll-margin-top:12px}
+.subhead{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:8px}
+.subhead h4{margin:0;font-size:17px;font-family:var(--f-display)}
+.subhead .n{font:500 12px var(--f-mono);color:var(--muted)}
+.sub .refs{margin-bottom:10px}
+.qa{border-top:1px solid var(--line)}
+.qa>summary{list-style:none;cursor:pointer;display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:start;padding:11px 2px}
+.qa>summary::-webkit-details-marker{display:none}
+.qa>summary .qt{font-size:14.5px;line-height:1.45;min-width:0;overflow-wrap:anywhere}
+.subhead h4,.modhead h3,.correct{overflow-wrap:anywhere}
+.qa>summary .chev{color:var(--muted);transition:transform .15s}
+.qa[open]>summary .chev{transform:rotate(90deg)}
+.kb{font:600 10.5px var(--f-mono);letter-spacing:.05em;text-transform:uppercase;padding:3px 7px;border-radius:5px;white-space:nowrap;background:var(--sunken);color:var(--muted)}
+.kb.k-python_code,.kb.k-api_code{background:var(--accent-soft);color:var(--accent)}
+.qa .ans{padding:2px 2px 16px 2px;display:grid;gap:12px;min-width:0}
+.qa .ans>*{min-width:0}
+.qa .ans pre{max-width:100%}
+.correct{border-left:3px solid var(--good,#0ca30c);padding:8px 12px;background:var(--sunken);border-radius:0 8px 8px 0;font-size:14.5px}
+.correct b{display:block;font:600 11px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:2px}
+.prep-empty{padding:30px;text-align:center;color:var(--muted)}
+.prep-toolsrow{display:flex;gap:8px;justify-content:flex-end;margin:-4px 0 10px}
+mark{background:var(--accent-soft);color:inherit;border-radius:3px;padding:0 1px}
+@media (max-width:860px){
+  .prep{grid-template-columns:minmax(0,1fr)}
+  .prep-nav{display:none}
+  .prep-select{display:block;width:100%;margin-bottom:12px;padding:10px;border-radius:8px;border:1px solid var(--line);background:var(--surface);font-size:15px}
+}
 @media (max-width:520px){ .pie-wrap{grid-template-columns:minmax(0,1fr)} .pie{margin:0 auto} }
 @media (prefers-reduced-motion:reduce){ .pie .slice{transition:none} }
 
@@ -280,6 +338,10 @@ footer{margin-top:36px;color:var(--muted);font-size:12.5px}
       <div class="mark">py</div>
       <div><h1>SDET Interview Room</h1><small>Playwright · Python · API testing</small></div>
     </div>
+    <nav class="topnav" aria-label="Main">
+      <button class="btn sm ghost" type="button" id="navPractice" aria-current="page">Practice</button>
+      <button class="btn sm ghost" type="button" id="navPrep">📘 Preparation</button>
+    </nav>
     <div class="status"><span class="dot" id="aiDot"></span><span id="aiStatus">Connecting to interviewer…</span></div>
   </header>
 
@@ -295,6 +357,10 @@ footer{margin-top:36px;color:var(--muted);font-size:12.5px}
           <div class="syl"><b>API testing</b><span>Real-time coding with the requests library against live public APIs (JSONPlaceholder, httpbin), graded against deliberately broken responses, plus multiple-choice questions on REST, auth, contracts and resilience.</span></div>
           <div class="syl"><b>Framework</b><span>Pytest fixtures and scopes, parametrize, POM design, test data, parallel runs with xdist, reporting.</span></div>
           <div class="syl"><b>CI &amp; flakiness</b><span>Debugging CI-only failures, trace viewer, flake root causes, pipelines, sharding.</span></div>
+        </div>
+        <div class="prepcta">
+          <p><b style="color:var(--fg)">Want to study first?</b> The Preparation guide has the answer to every question, grouped by section and topic, with links to the official docs.</p>
+          <button class="btn primary" type="button" id="prepCta">📘 Open Preparation</button>
         </div>
       </div>
 
@@ -330,6 +396,15 @@ footer{margin-top:36px;color:var(--muted);font-size:12.5px}
             <button type="button" data-v="8" aria-pressed="false">8</button>
             <button type="button" data-v="10" aria-pressed="true">10</button>
           </div>
+        </div>
+        <div class="field">
+          <span class="label" id="fmtLabel">Question format</span>
+          <div class="seg" role="group" aria-labelledby="fmtLabel" id="fmtSeg">
+            <button type="button" data-v="mixed" aria-pressed="true">Mixed (default)</button>
+            <button type="button" data-v="mcq" aria-pressed="false">Only multiple choice</button>
+            <button type="button" data-v="coding" aria-pressed="false">Only coding</button>
+          </div>
+          <span class="hint" id="fmtHint"></span>
         </div>
         <div class="field">
           <span class="label">Question mix</span>
@@ -398,6 +473,29 @@ footer{margin-top:36px;color:var(--muted);font-size:12.5px}
     </div>
   </section>
 
+  <!-- PREPARATION -->
+  <section id="prepView" hidden>
+    <div class="prep-head">
+      <div>
+        <h2>Preparation</h2>
+        <p>Every question in the bank with its answer, grouped by section and topic. Reference links open the official docs in a new tab.</p>
+      </div>
+      <div class="prep-tools">
+        <input type="search" id="prepSearch" placeholder="Search questions and answers…" aria-label="Search questions and answers">
+        <div class="seg" role="group" aria-label="Question type" id="prepKind">
+          <button type="button" data-v="all" aria-pressed="true">All</button>
+          <button type="button" data-v="mcq" aria-pressed="false">Multiple choice</button>
+          <button type="button" data-v="coding" aria-pressed="false">Coding</button>
+        </div>
+      </div>
+    </div>
+    <select class="prep-select" id="prepSelect" aria-label="Section"></select>
+    <div class="prep">
+      <nav class="prep-nav" id="prepNav" aria-label="Sections"></nav>
+      <div class="prep-main" id="prepMain"><div class="prep-empty">Loading…</div></div>
+    </div>
+  </section>
+
   <footer>Multiple-choice and coding answers are scored automatically; partly correct coding answers count as half. Built for SDET interview practice. Python runs in your browser via Pyodide; API tasks call public test APIs (JSONPlaceholder, httpbin) straight from your browser.</footer>
 </div>
 
@@ -428,6 +526,8 @@ footer{margin-top:36px;color:var(--muted);font-size:12.5px}
   const bankP = Promise.all(DATA_FILES.map(f =>
       fetch(`data/${f}.json`).then(r => r.ok ? r.json() : []).catch(() => [])
     )).then(lists => { BANK = lists.flat(); setAI(lastAI); renderBankStats(); });
+  let PREP = null;
+  const prepP = fetch("data/prep.json").then(r => r.ok ? r.json() : null).catch(() => null).then(j => { PREP = j; });
   const SEEN_KEY = "sdet-room-seen-v1";
   function seenIds(){ try{ return new Set(JSON.parse(localStorage.getItem(SEEN_KEY) || "[]")); }catch(e){ return new Set(); } }
   function markSeen(id){ if (!id) return; try{ const s = seenIds(); s.add(id); localStorage.setItem(SEEN_KEY, JSON.stringify([...s])); }catch(e){} }
@@ -441,7 +541,7 @@ footer{margin-top:36px;color:var(--muted);font-size:12.5px}
 
   // ---------- State ----------
   let S = fresh();
-  function fresh(){ return {level:"Senior SDET", tracks:["Playwright","Python","API testing"], total:10, plan:[], jd:"", items:[], current:null, phase:"setup", summary:null, offline:false, startedAt:null}; }
+  function fresh(){ return {level:"Senior SDET", tracks:["Playwright","Python","API testing"], total:10, format:"mixed", plan:[], jd:"", items:[], current:null, phase:"setup", summary:null, offline:false, startedAt:null}; }
   function save(){ try{ localStorage.setItem(STORE, JSON.stringify(S)); }catch(e){} }
   function load(){ try{ const v = JSON.parse(localStorage.getItem(STORE)||"null"); return v && v.items ? v : null; }catch(e){ return null; } }
   function clear(){ try{ localStorage.removeItem(STORE); }catch(e){} }
@@ -458,6 +558,27 @@ footer{margin-top:36px;color:var(--muted);font-size:12.5px}
   }
   seg("#levelSeg", v => S.level = v);
   seg("#lenSeg", v => { S.total = +v; renderMix(); });
+  // Sections that have coding tasks in the bank (Behavioral is discussion only)
+  const CODING_TOPICS = new Set(["Python", "Playwright", "API testing", "Pytest & framework design", "CI, debugging & flakiness"]);
+  const FMT_HINT = {
+    mixed: "Theory as multiple choice plus live coding: Python ~60% coding, API ~2/3 requests tasks, Playwright/Framework/CI ~1/3 coding.",
+    mcq: "Every question is multiple choice, scored instantly.",
+    coding: "Every question is a runnable coding task with hidden tests. Behavioral has no coding questions, so it's turned off."
+  };
+  function applyFormat(){
+    const f = S.format || "mixed";
+    [...$("#fmtSeg").children].forEach(b => b.setAttribute("aria-pressed", b.dataset.v === f ? "true" : "false"));
+    [...$("#trackChips").children].forEach(b => {
+      const off = f === "coding" && !CODING_TOPICS.has(b.dataset.v);
+      b.disabled = off;
+      b.title = off ? "No coding questions in this section" : "";
+      if (off) b.setAttribute("aria-pressed", "false");
+    });
+    S.tracks = [...$("#trackChips").children].filter(x => x.getAttribute("aria-pressed")==="true").map(x => x.dataset.v);
+    $("#fmtHint").textContent = FMT_HINT[f];
+    renderMix();
+  }
+  seg("#fmtSeg", v => { S.format = v; applyFormat(); });
   $("#trackChips").addEventListener("click", e => {
     const b = e.target.closest(".chip"); if (!b) return;
     const on = b.getAttribute("aria-pressed") !== "true";
@@ -479,7 +600,7 @@ footer{margin-top:36px;color:var(--muted);font-size:12.5px}
     const out = {}; tracks.forEach((t,i) => { if (base[i]) out[t] = base[i]; }); return out;
   }
   function shuffle(a){ for (let i = a.length - 1; i > 0; i--){ const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
-  function buildPlan(tracks, total){
+  function buildPlan(tracks, total, format){
     const alloc = allocate(tracks, total), left = {...alloc}, plan = [];
     let last = null;
     for (let i = 0; i < total; i++){
@@ -491,15 +612,21 @@ footer{margin-top:36px;color:var(--muted);font-size:12.5px}
       for (let k = 0; k < opts.length; k++){ r -= weights[k]; if (r <= 0){ t = opts[k]; break; } }
       left[t]--; last = t; plan.push({topic: t});
     }
-    // Question types per section: Python ~60% live coding, API ~2/3 requests coding, the rest multiple choice.
-    const kinds = (n, coding, codeKind) => shuffle(Array.from({length: n}, (_, i) => i < coding ? codeKind : "concept"));
-    const py = plan.filter(x => x.topic === "Python");
-    const pyKinds = kinds(py.length, Math.round(py.length * 0.6), "python_code");
-    py.forEach((x, i) => { x.kind = pyKinds[i]; });
-    const api = plan.filter(x => x.topic === "API testing");
-    const apiKinds = kinds(api.length, Math.ceil(api.length * 2 / 3), "api_code");
-    api.forEach((x, i) => { x.kind = apiKinds[i]; });
-    plan.forEach(x => { if (!x.kind) x.kind = "concept"; });
+    // Question types per section depend on the chosen format.
+    //   mcq: all multiple choice · coding: every question a coding task (API → requests tasks)
+    //   mixed: Python ~60% coding, API ~2/3 requests coding, Playwright/Framework/CI ~1/3 coding, Behavioral MCQ.
+    const fmt = format || "mixed";
+    const codeKind = t => t === "API testing" ? "api_code" : "python_code";
+    const share = {"Python": n => Math.round(n * 0.6), "API testing": n => Math.ceil(n * 2 / 3),
+                   "Playwright": n => Math.round(n / 3), "Pytest & framework design": n => Math.round(n / 3),
+                   "CI, debugging & flakiness": n => Math.round(n / 3)};
+    const kinds = (n, coding, ck) => shuffle(Array.from({length: n}, (_, i) => i < coding ? ck : "concept"));
+    for (const t of new Set(plan.map(x => x.topic))){
+      const slots = plan.filter(x => x.topic === t);
+      const coding = fmt === "mcq" || !CODING_TOPICS.has(t) ? 0 : fmt === "coding" ? slots.length : (share[t] ? share[t](slots.length) : 0);
+      const ks = kinds(slots.length, coding, codeKind(t));
+      slots.forEach((x, i) => { x.kind = ks[i]; });
+    }
     return plan;
   }
   function mixText(alloc){ return Object.entries(alloc).sort((x,y)=>y[1]-x[1]).map(([t,n]) => `${n} ${SHORT[t]||t}`).join(" · "); }
@@ -549,7 +676,9 @@ ${S.jd ? "Target role / job description (tailor questions to it):\n"+S.jd.slice(
   function slotRule(slot){
     if (!slot) return "";
     let r = `It MUST be a "${slot.topic}" question (set "topic" to exactly "${slot.topic}").`;
-    if (slot.kind === "python_code") r += ` It MUST be kind "python_code" (a runnable live-coding task with examples, starter_code and tests).`;
+    if (slot.kind === "python_code") r += slot.topic === "Python"
+      ? ` It MUST be kind "python_code" (a runnable live-coding task with examples, starter_code and tests).`
+      : ` It MUST be kind "python_code": a runnable pure-Python coding task about ${slot.topic} (no browser or network; e.g. a page object driven by a fake page, parsing a JUnit report, a fixture or config helper) with examples, starter_code and tests.`;
     if (slot.kind === "api_code") r += ` It MUST be kind "api_code" (a requests-based task against JSONPlaceholder or httpbin with tests, entry and mutants).`;
     if (slot.kind === "concept") r += ` It MUST be kind "concept" (multiple choice with 4 options).`;
     return r;
@@ -640,6 +769,9 @@ ${S.jd ? "Target role / job description (tailor questions to it):\n"+S.jd.slice(
     $("#setupView").hidden = view!=="setup";
     $("#sessionView").hidden = view!=="session";
     $("#summaryView").hidden = view!=="summary";
+    $("#prepView").hidden = view!=="prep";
+    $("#navPrep").setAttribute("aria-current", view === "prep" ? "page" : "false");
+    $("#navPractice").setAttribute("aria-current", view === "prep" ? "false" : "page");
     window.scrollTo({top:0});
   }
 
@@ -653,7 +785,8 @@ ${S.jd ? "Target role / job description (tailor questions to it):\n"+S.jd.slice(
     }
     const n = Math.min(S.items.length, S.total);
     const mix = S.plan?.length ? " · " + mixText(allocate(S.tracks, S.total)) : "";
-    h += `<span class="count">Question ${n} of ${S.total} · ${esc(S.level)}${mix}</span>`;
+    const fmtTxt = S.format === "mcq" ? " · multiple choice only" : S.format === "coding" ? " · coding only" : "";
+    h += `<span class="count">Question ${n} of ${S.total} · ${esc(S.level)}${mix}${fmtTxt}</span>`;
     $("#progress").innerHTML = h;
   }
 
@@ -742,6 +875,7 @@ ${S.jd ? "Target role / job description (tailor questions to it):\n"+S.jd.slice(
         : `Graded by running ${q.tests.length} check${q.tests.length === 1 ? "" : "s"} against the API.`;
     } else if (q.kind === "python_code"){
       how = `${q.tests?.length || 0} hidden tests check your solution.`;
+      if ((q.tests || []).some(t => /fakepw/.test(t))) how += ` They drive your code with a recording stand-in for Playwright's page (same method names as the sync API). To try it yourself with Run code: <code>from fakepw import FakePage; page = FakePage(base_url="https://app.test")</code>, then print <code>page.actions</code>.`;
     }
     if (how) h += `<p class="hint" style="margin:0 0 12px">${how}</p>`;
     return h;
@@ -1097,10 +1231,13 @@ ${S.jd ? "Target role / job description (tailor questions to it):\n"+S.jd.slice(
       let exact = fits.filter(b => (b.kind || "concept") === slot.kind);
       const fresh = exact.filter(b => !seen.has(b.id));
       if (fresh.length) exact = fresh;
-      const pick = exact.length ? rnd(exact) : fits.length ? rnd(fits) : null;
+      const strict = S.format === "mcq" || S.format === "coding";
+      const pick = exact.length ? rnd(exact) : (fits.length && !strict) ? rnd(fits) : null;
       if (pick) return pick;
     }
-    let pool = BANK.filter(b => S.tracks.includes(b.topic) && !used.has(b.question));
+    const wantCode = S.format === "coding", wantMcq = S.format === "mcq";
+    const fmtOk = b => wantCode ? (b.kind === "python_code" || b.kind === "api_code") : wantMcq ? (b.kind || "concept") === "concept" : true;
+    let pool = BANK.filter(b => S.tracks.includes(b.topic) && !used.has(b.question) && fmtOk(b));
     if (!pool.length) pool = BANK.filter(b => !used.has(b.question));
     return pool.length ? rnd(pool) : BANK[0];
   }
@@ -1112,9 +1249,9 @@ ${S.jd ? "Target role / job description (tailor questions to it):\n"+S.jd.slice(
     $("#startBtn").disabled = true;
     await Promise.all([aiP, bankP]);
     $("#startBtn").disabled = false;
-    const keep = {level:S.level, tracks:S.tracks, total:S.total};
+    const keep = {level:S.level, tracks:S.tracks, total:S.total, format:S.format || "mixed"};
     S = Object.assign(fresh(), keep, {jd: $("#jd").value.trim(), phase:"session", offline: !aiReady, startedAt: Date.now()});
-    S.plan = buildPlan(S.tracks, S.total);
+    S.plan = buildPlan(S.tracks, S.total, S.format);
     show("session");
     renderProgress();
     $("#fBody").innerHTML = "";
@@ -1282,7 +1419,7 @@ ${S.jd ? "Target role / job description (tailor questions to it):\n"+S.jd.slice(
 
   $("#setupForm").addEventListener("submit", start);
   $("#endBtn").onclick = finish;
-  $("#againBtn").onclick = () => { clear(); S = Object.assign(fresh(), {level:S.level, tracks:S.tracks, total:S.total}); show("setup"); checkResume(); };
+  $("#againBtn").onclick = () => { clear(); S = Object.assign(fresh(), {level:S.level, tracks:S.tracks, total:S.total, format:S.format || "mixed"}); show("setup"); applyFormat(); checkResume(); };
   $("#copyBtn").onclick = async () => {
     try{ await navigator.clipboard.writeText(summaryText()); $("#copyNote").textContent = "Copied."; }
     catch(e){ $("#copyNote").textContent = "Copy isn't allowed here. Select the log above to copy it."; }
@@ -1304,8 +1441,170 @@ ${S.jd ? "Target role / job description (tailor questions to it):\n"+S.jd.slice(
   }
 
   // ---------- Boot ----------
-  renderMix();
+  // ---------- Preparation guide ----------
+  const MOD_SLUG = {"Python":"python","Playwright":"playwright","API testing":"api","Pytest & framework design":"framework","CI, debugging & flakiness":"ci","Behavioral":"behavioral"};
+  const SLUG_MOD = Object.fromEntries(Object.entries(MOD_SLUG).map(([k, v]) => [v, k]));
+  const P = {mod: "python", q: "", kind: "all", groups: null};
+  const linkHTML = l => `<a class="ext" href="${esc(l.url)}" target="_blank" rel="noopener noreferrer">${esc(l.title)}</a>`;
+  const subId = (slug, i) => `sub-${slug}-${i}`;
+
+  function prepGroups(){
+    if (P.groups) return P.groups;
+    const out = {};
+    for (const m of (PREP?.modules || [])){
+      const subs = m.subsections.map(s => ({...s, items: []}));
+      const more = {title: "More questions", tags: [], links: [], items: []};
+      for (const q of BANK.filter(b => b.topic === m.topic)){
+        const tags = q.tags || [];
+        const hit = subs.find(s => s.tags.some(t => tags.includes(t)));
+        (hit || more).items.push(q);
+      }
+      if (more.items.length) subs.push(more);
+      out[MOD_SLUG[m.topic]] = {meta: m, subs: subs.filter(s => s.items.length)};
+    }
+    return (P.groups = out);
+  }
+  function kindOk(q){
+    return P.kind === "all" ? true : P.kind === "mcq" ? (q.kind || "concept") === "concept" : q.kind === "python_code" || q.kind === "api_code";
+  }
+  function matchQ(q, needle){
+    if (!needle) return true;
+    const hay = [q.question, q.what_tested, q.model, ...(q.options || []), ...(q.tags || [])].join(" ").toLowerCase();
+    return needle.split(/\s+/).every(w => hay.includes(w));
+  }
+  function hl(text, needle){
+    const t = esc(text);
+    if (!needle) return t;
+    const words = needle.split(/\s+/).filter(w => w.length > 1).map(w => w.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
+    return words.length ? t.replace(new RegExp(`(${words.join("|")})`, "gi"), "<mark>$1</mark>") : t;
+  }
+  const codeTicks = h => h.replace(/`([^`]+)`/g, "<code>$1</code>");
+  const KB = {concept: "MCQ", python_code: "Coding", api_code: "API coding"};
+  function qaHTML(q, needle){
+    return `<details class="qa" data-id="${esc(q.id)}"><summary><span class="kb k-${q.kind || "concept"}">${KB[q.kind] || "MCQ"}</span><span class="qt">${codeTicks(hl(q.question, needle))}</span><span class="chev" aria-hidden="true">›</span></summary><div class="ans"></div></details>`;
+  }
+  function answerHTML(q){
+    let h = "";
+    if (q.options && Number.isInteger(q.answer)){
+      h += `<div class="correct"><b>Answer</b>${esc(q.options[q.answer])}</div>`;
+    }
+    if (q.endpoint) h += `<div class="endpoint"><span class="label">Endpoint</span><code>${esc(q.endpoint)}</code></div>`;
+    if (q.examples?.length){
+      h += `<div class="examples">` + q.examples.map((ex, i) => `<div class="ex"><div class="exh">Example ${i + 1}</div>
+        <div class="exrow"><span class="exk">Input</span><pre>${esc(ex.input)}</pre></div>
+        <div class="exrow"><span class="exk">Output</span><pre>${esc(ex.output)}</pre></div></div>`).join("") + `</div>`;
+    }
+    const label = q.kind === "python_code" || q.kind === "api_code" ? "Solution and explanation" : "Explanation";
+    h += `<div><h4 class="label" style="margin:0 0 6px">${label}</h4><div class="model rich">${rich(q.model || "")}</div></div>`;
+    if (q.what_tested) h += `<p class="hint" style="margin:0">Assesses: ${esc(q.what_tested)}</p>`;
+    return h;
+  }
+  function wirePrepMain(){
+    $("#prepMain").querySelectorAll("details.qa").forEach(d => d.addEventListener("toggle", () => {
+      const box = d.querySelector(".ans");
+      if (d.open && !box.dataset.done){
+        const q = BANK.find(b => b.id === d.dataset.id);
+        box.innerHTML = q ? answerHTML(q) : "";
+        box.dataset.done = "1";
+      }
+    }));
+    $("#prepMain").querySelectorAll("[data-practise]").forEach(b => b.onclick = () => {
+      const topic = b.dataset.practise;
+      S.tracks = [topic];
+      [...$("#trackChips").children].forEach(c => c.setAttribute("aria-pressed", c.dataset.v === topic ? "true" : "false"));
+      if (S.format === "coding" && !CODING_TOPICS.has(topic)){ S.format = "mixed"; }
+      applyFormat();
+      location.hash = "";
+      show(S.phase === "session" && S.items?.length ? "session" : "setup");
+    });
+    $("#prepMain").querySelectorAll("[data-expand]").forEach(b => b.onclick = () => {
+      const open = b.dataset.expand === "1";
+      b.closest(".sub").querySelectorAll("details.qa").forEach(d => { d.open = open; });
+    });
+  }
+  function renderPrepNav(){
+    const G = prepGroups();
+    const count = slug => (G[slug]?.subs || []).reduce((n, s) => n + s.items.filter(kindOk).length, 0);
+    $("#prepNav").innerHTML = Object.keys(G).map(slug => {
+      const cur = slug === P.mod && !P.q;
+      const subs = cur ? `<ul>${G[slug].subs.map((s, i) => { const n = s.items.filter(kindOk).length; return n ? `<li><a href="#prep/${slug}/${i}" data-sub="${subId(slug, i)}"><span>${esc(s.title)}</span><span class="n">${n}</span></a></li>` : ""; }).join("")}</ul>` : "";
+      return `<button type="button" class="mod" data-mod="${slug}" aria-current="${cur}"><span>${esc(G[slug].meta.topic)}</span><span class="n">${count(slug)}</span></button>${subs}`;
+    }).join("");
+    $("#prepSelect").innerHTML = Object.keys(G).map(slug => `<option value="${slug}" ${slug === P.mod ? "selected" : ""}>${esc(G[slug].meta.topic)} (${count(slug)})</option>`).join("");
+    $("#prepNav").querySelectorAll("button.mod").forEach(b => b.onclick = () => { P.q = ""; $("#prepSearch").value = ""; location.hash = `prep/${b.dataset.mod}`; });
+    $("#prepNav").querySelectorAll("a[data-sub]").forEach(a => a.onclick = e => { e.preventDefault(); document.getElementById(a.dataset.sub)?.scrollIntoView({behavior: "smooth", block: "start"}); });
+  }
+  function renderPrep(){
+    const G = prepGroups();
+    if (!Object.keys(G).length){ $("#prepMain").innerHTML = `<div class="prep-empty">The preparation guide couldn't load here.</div>`; return; }
+    if (!G[P.mod]) P.mod = Object.keys(G)[0];
+    renderPrepNav();
+    const needle = P.q.trim().toLowerCase();
+    let h = "";
+    if (needle){
+      let total = 0;
+      for (const slug of Object.keys(G)){
+        for (const [i, s] of G[slug].subs.entries()){
+          const items = s.items.filter(q => kindOk(q) && matchQ(q, needle));
+          if (!items.length) continue;
+          total += items.length;
+          h += `<section class="sub"><div class="subhead"><h4>${esc(G[slug].meta.topic)} · ${esc(s.title)}</h4><span class="n">${items.length}</span></div>
+            ${s.links.length ? `<div class="refs"><span class="rl">References</span>${s.links.map(linkHTML).join("")}</div>` : ""}
+            ${items.slice(0, 60).map(q => qaHTML(q, needle)).join("")}</section>`;
+        }
+      }
+      h = `<p class="hint" style="margin:0 0 12px">${total} result${total === 1 ? "" : "s"} for “${esc(P.q.trim())}”</p>` + (h || `<div class="prep-empty">Nothing matches. Try fewer or different words.</div>`);
+    } else {
+      const g = G[P.mod], m = g.meta;
+      const total = g.subs.reduce((n, s) => n + s.items.filter(kindOk).length, 0);
+      h += `<div class="modhead"><h3>${esc(m.topic)}</h3><p>${esc(m.intro || "")}</p>
+        <div class="refs">${m.links.length ? `<span class="rl">References</span>${m.links.map(linkHTML).join("")}` : ""}</div>
+        <div class="actions" style="margin-top:14px"><button class="btn primary sm" type="button" data-practise="${esc(m.topic)}">Practise ${esc(m.topic)}</button><span class="hint">${total} questions with answers · ${g.subs.length} topics</span></div></div>`;
+      g.subs.forEach((s, i) => {
+        const items = s.items.filter(kindOk);
+        if (!items.length) return;
+        h += `<section class="sub" id="${subId(P.mod, i)}"><div class="subhead"><h4>${esc(s.title)}</h4><span class="n">${items.length} question${items.length === 1 ? "" : "s"}</span></div>
+          ${s.links.length ? `<div class="refs"><span class="rl">References</span>${s.links.map(linkHTML).join("")}</div>` : ""}
+          <div class="prep-toolsrow"><button class="btn ghost sm" type="button" data-expand="1">Expand all</button><button class="btn ghost sm" type="button" data-expand="0">Collapse all</button></div>
+          ${items.map(q => qaHTML(q, "")).join("")}</section>`;
+      });
+    }
+    $("#prepMain").innerHTML = h;
+    wirePrepMain();
+  }
+  async function openPrep(slug, subIndex){
+    show("prep");
+    await Promise.all([bankP, prepP]);
+    if (slug && G_ok(slug)) P.mod = slug;
+    renderPrep();
+    if (subIndex != null) document.getElementById(subId(P.mod, subIndex))?.scrollIntoView({block: "start"});
+  }
+  function G_ok(slug){ return !!prepGroups()[slug]; }
+  function route(){
+    const h = location.hash.replace(/^#/, "");
+    if (h.startsWith("prep")){
+      const [, slug, sub] = h.split("/");
+      openPrep(slug, sub != null && sub !== "" ? +sub : null);
+    } else if (!$("#prepView").hidden){
+      show(S.phase === "session" && S.items?.length ? "session" : S.phase === "summary" ? "summary" : "setup");
+    }
+  }
+  window.addEventListener("hashchange", route);
+  $("#navPrep").onclick = () => { location.hash = `prep/${P.mod}`; };
+  $("#prepCta").onclick = () => { location.hash = `prep/${P.mod}`; };
+  $("#navPractice").onclick = () => { if (location.hash) location.hash = ""; else route(); if (!$("#prepView").hidden) show("setup"); };
+  $("#prepSelect").onchange = e => { P.q = ""; $("#prepSearch").value = ""; location.hash = `prep/${e.target.value}`; };
+  let prepT = null;
+  $("#prepSearch").addEventListener("input", e => { clearTimeout(prepT); prepT = setTimeout(() => { P.q = e.target.value; renderPrep(); }, 150); });
+  $("#prepKind").addEventListener("click", e => {
+    const b = e.target.closest("button"); if (!b) return;
+    [...$("#prepKind").children].forEach(x => x.setAttribute("aria-pressed", x === b ? "true" : "false"));
+    P.kind = b.dataset.v; renderPrep();
+  });
+
+  applyFormat();
   checkResume();
+  if (location.hash.startsWith("#prep")) route();
   setAI("pending");
   aiP = (async () => {
     try{ sample = window.claude ? await window.claude.use("sample") : null; }catch(e){ sample = null; }

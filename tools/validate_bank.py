@@ -51,6 +51,8 @@ def main():
     ids, questions = set(), set()
     total = coding = api = mcq = 0
     for path in sorted(DATA.glob("*.json")):
+        if path.name == "prep.json":
+            continue
         for q in json.loads(path.read_text(encoding="utf-8")):
             total += 1
             where = f"{path.name}:{q.get('id', '?')}"
