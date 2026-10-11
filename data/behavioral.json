@@ -2,19 +2,1260 @@
  {
   "id": "beh-001",
   "topic": "Behavioral",
-  "difficulty": "core",
+  "difficulty": "warm-up",
   "kind": "concept",
-  "question": "Tell me about a time automation missed a bug that reached production.",
-  "what_tested": "Ownership and systemic fixes",
-  "model": "Use STAR. Give the situation and task in two sentences, then what you personally did: confirmed the gap (no coverage, wrong test layer, mocked away), added a regression test at the right layer, and fixed the systemic cause, such as adding contract tests or a review checklist item. Finish with a measurable result, like no repeat issues in that area over the following releases."
+  "question": "Tell me about yourself.",
+  "what_tested": "Concise professional narrative",
+  "model": "Keep it to about 90 seconds: present, then past, then why you're here. Present: your role, scope and what you're known for ('QA lead running a 20-person automation team on a finance platform, building Playwright and Python frameworks and AI-assisted test generation'). Past: two or three career steps that built toward it, each with one concrete result. Why here: a specific link between the role and what you want next. Avoid reciting your CV line by line or personal life history; end with something that invites a relevant follow-up.",
+  "tags": [
+   "career"
+  ]
  },
  {
   "id": "beh-002",
   "topic": "Behavioral",
+  "difficulty": "warm-up",
+  "kind": "concept",
+  "question": "Why are you looking to leave your current role?",
+  "what_tested": "Positive motivation",
+  "model": "Frame it as moving toward something, not running from something: more scope, a product you care about, a technical direction (e.g. building a framework from scratch, AI in testing), or a leadership step. Be honest but brief, and never criticise your current employer, manager or team, even if things are difficult; interviewers assume you'll talk about them the same way. Tie the answer to what this role offers specifically.",
+  "tags": [
+   "career"
+  ]
+ },
+ {
+  "id": "beh-003",
+  "topic": "Behavioral",
+  "difficulty": "warm-up",
+  "kind": "concept",
+  "question": "Why do you want to work here?",
+  "what_tested": "Research and fit",
+  "model": "Show you've done homework: the product and its users, the engineering culture (blogs, talks, open source), the tech stack in the job description, and recent news. Connect two or three specifics to your experience and goals ('you're moving to Playwright and contract testing; I've led exactly that migration and want to do it at a larger scale'). Generic answers ('great company, good culture') signal low interest.",
+  "tags": [
+   "career"
+  ]
+ },
+ {
+  "id": "beh-004",
+  "topic": "Behavioral",
+  "difficulty": "warm-up",
+  "kind": "concept",
+  "question": "What are your greatest strengths?",
+  "what_tested": "Self-awareness with evidence",
+  "model": "Pick two or three strengths relevant to the role and prove each with a short example and a result. For an SDET or lead: designing maintainable frameworks (cut suite runtime from 90 to 20 minutes), turning flaky suites into trusted ones (flake rate from 8% to under 1%), and influencing developers toward testability. Evidence beats adjectives; 'I'm a hard worker' without proof adds nothing.",
+  "tags": [
+   "career"
+  ]
+ },
+ {
+  "id": "beh-005",
+  "topic": "Behavioral",
   "difficulty": "core",
   "kind": "concept",
-  "question": "A developer says your UI tests slow down their pull requests. How do you respond?",
-  "what_tested": "Collaboration under pressure",
-  "model": "Acknowledge the cost and bring data: suite duration, flake rate, and bugs the suite caught. Then propose changes: a fast smoke tier on PRs, parallelism and sharding, moving the full regression to post-merge or nightly, and fixing the slowest tests. Agree a shared time budget with the developers so it's a team target, not an argument."
+  "question": "What is your biggest weakness?",
+  "what_tested": "Honest self-improvement",
+  "model": "Choose a real but non-critical weakness, show awareness of its impact, and describe what you're actively doing about it, with progress. For example: 'I used to take on too much myself instead of delegating, which made me a bottleneck as a lead; now I delegate whole areas with clear outcomes and check in weekly, and two engineers on my team now own framework modules.' Avoid fake weaknesses ('I'm a perfectionist') and anything core to the job.",
+  "tags": [
+   "career"
+  ]
+ },
+ {
+  "id": "beh-006",
+  "topic": "Behavioral",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "Where do you see yourself in five years?",
+  "what_tested": "Career direction",
+  "model": "Show ambition that fits the role's path: deeper technical leadership (quality architect, principal SDET), people leadership (QA manager or head of quality), or a blend. Mention the skills you want to grow (test strategy at organisation scale, AI-assisted quality engineering) and how this role helps. Avoid sounding like you'll leave in a year, or naming a completely unrelated goal.",
+  "tags": [
+   "career"
+  ]
+ },
+ {
+  "id": "beh-007",
+  "topic": "Behavioral",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "Tell me about the achievement you're most proud of.",
+  "what_tested": "Impact storytelling",
+  "model": "Use STAR (Situation, Task, Action, Result) with real numbers. Choose something with clear business impact and your personal contribution, e.g. building a framework that let the team move from a 3-day manual regression to a 40-minute automated one, enabling weekly releases. Spend most of the time on your actions and decisions (why you chose that approach, the trade-offs) and end with the measurable result and what you learned.",
+  "tags": [
+   "achievement"
+  ]
+ },
+ {
+  "id": "beh-008",
+  "topic": "Behavioral",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "Why did you choose a career in quality engineering?",
+  "what_tested": "Motivation",
+  "model": "Give a genuine reason with a story: you enjoy finding how systems break, building tools that make teams faster, or protecting users and the business from costly mistakes. Show how the field has kept you engaged (moving from manual to automation to framework design and AI-assisted testing). Avoid implying QA was a fallback; interviewers look for people who see quality engineering as a craft.",
+  "tags": [
+   "motivation"
+  ]
+ },
+ {
+  "id": "beh-009",
+  "topic": "Behavioral",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "Describe a failure or a project that didn't go well. What did you learn?",
+  "what_tested": "Ownership and learning",
+  "model": "Pick a real failure where you owned part of the outcome. Briefly set the context, explain what went wrong and your role in it, what you did to recover, and what you changed afterwards, ideally a lasting process or habit. For example, an automation rollout where you built too much before getting team buy-in, so adoption stalled; you then piloted with one squad and expanded once they saw value. Avoid blaming others or choosing a disguised success.",
+  "tags": [
+   "failure"
+  ]
+ },
+ {
+  "id": "beh-010",
+  "topic": "Behavioral",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "What motivates you at work?",
+  "what_tested": "Values alignment",
+  "model": "Be specific and connect it to the role: seeing a team ship confidently because the test signal is trusted, solving hard technical problems like flaky distributed systems, growing engineers on your team, or measurable impact on users. Give a short example of a time that motivation showed up in your work. Avoid answers centred only on compensation or perks.",
+  "tags": [
+   "motivation"
+  ]
+ },
+ {
+  "id": "beh-011",
+  "topic": "Behavioral",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "Tell me about a time you disagreed with a developer about a bug's severity.",
+  "what_tested": "Conflict with evidence",
+  "model": "Show you used data and user impact rather than opinion. Situation: you raised a defect as high severity and the developer saw it as an edge case. Actions: you reproduced it reliably, quantified impact (how many users or transactions, financial or compliance risk), listened to their constraints, and involved the product owner to decide priority. Result: the agreed outcome, e.g. fixed before release or shipped with a documented workaround, and a relationship that stayed constructive.",
+  "tags": [
+   "conflict"
+  ]
+ },
+ {
+  "id": "beh-012",
+  "topic": "Behavioral",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you handle a developer who says 'it works on my machine' or 'not reproducible'?",
+  "what_tested": "Collaborative debugging",
+  "model": "Stay factual and helpful: provide exact steps, environment details, the build, test data, screenshots or traces, logs and correlation ids, and check whether the difference is environmental (configuration, data, browser, time zone). Offer to pair and reproduce it together. If it's intermittent, share frequency data. The goal is to solve it together, not win the argument; often the investigation reveals an environment or configuration issue worth fixing too.",
+  "tags": [
+   "collaboration"
+  ]
+ },
+ {
+  "id": "beh-013",
+  "topic": "Behavioral",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "Tell me about a time you had to push back on an unrealistic deadline.",
+  "what_tested": "Managing expectations",
+  "model": "Show you pushed back with data and options, not refusal. Explain the risk in business terms (what wouldn't be tested, and the likely impact), then offer alternatives: reduce scope, phase the release, risk-based testing of critical paths first, extra help, or moving the date. Example result: the release went ahead on time with a reduced scope and a follow-up release, or the date moved by three days with stakeholder agreement. Decisions should be explicit and owned by the right people.",
+  "tags": [
+   "conflict",
+   "planning"
+  ]
+ },
+ {
+  "id": "beh-014",
+  "topic": "Behavioral",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "A product owner wants to skip testing to hit a launch date. What do you do?",
+  "what_tested": "Risk communication",
+  "model": "Don't just say no, and don't silently comply. Clarify what's at stake, then propose a risk-based plan: which critical flows must be tested (payments, auth, data integrity), what can be tested lightly or after launch, and the residual risks in plain language. Get the decision and the accepted risks documented and agreed by the right owner. Then do the best possible testing within that scope, and plan monitoring and a quick rollback for launch.",
+  "tags": [
+   "conflict",
+   "risk"
+  ]
+ },
+ {
+  "id": "beh-015",
+  "topic": "Behavioral",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "Tell me about a conflict within your team and how you resolved it.",
+  "what_tested": "Team conflict resolution",
+  "model": "Choose a real professional conflict, e.g. two engineers disagreeing on framework design. Show you listened to both sides privately, focused on goals and facts rather than personalities, brought them together to agree on decision criteria (maintainability, speed, team skills), maybe ran a short spike to compare approaches, and made or facilitated a decision. Result: a decision both could commit to, and an improved working relationship. Mention what you'd do earlier next time.",
+  "tags": [
+   "conflict",
+   "leadership"
+  ]
+ },
+ {
+  "id": "beh-016",
+  "topic": "Behavioral",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "Describe a time you worked with a difficult stakeholder.",
+  "what_tested": "Stakeholder management",
+  "model": "Show empathy and structure: you tried to understand what drove their behaviour (pressure from above, past bad experiences with releases), adapted your communication (shorter updates, clear risk summaries, data), set expectations early, and built trust through reliable delivery. Give a concrete turning point and outcome, such as them asking for your risk assessment before each release. Avoid portraying them as the villain.",
+  "tags": [
+   "stakeholders"
+  ]
+ },
+ {
+  "id": "beh-017",
+  "topic": "Behavioral",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you influence people when you have no authority over them?",
+  "what_tested": "Influence",
+  "model": "Build credibility and make the right thing easy: understand their goals and pain points, show data (escaped defects, flake rates, time saved), run small pilots that prove value, make adoption low effort (fixtures, templates, pairing sessions), and give credit generously. Example: getting developers to add test ids and write unit tests by showing how it cut their PR feedback time, rather than mandating it. Mention patience: influence builds over several interactions.",
+  "tags": [
+   "influence"
+  ]
+ },
+ {
+  "id": "beh-018",
+  "topic": "Behavioral",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you work with teams in other locations and time zones?",
+  "what_tested": "Distributed collaboration",
+  "model": "Mention concrete practices: async-first communication (clear written updates, decisions recorded in tickets or docs), overlapping hours used for real discussions, recorded demos, explicit handover notes for test runs and failures, shared dashboards so status doesn't depend on meetings, and cultural awareness in feedback. Give an example where good handovers turned the time-zone difference into near round-the-clock progress.",
+  "tags": [
+   "collaboration"
+  ]
+ },
+ {
+  "id": "beh-019",
+  "topic": "Behavioral",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "Tell me about a time you had to depend on another team that wasn't delivering.",
+  "what_tested": "Cross-team dependencies",
+  "model": "Show proactive problem-solving: you identified the risk early, understood the other team's constraints and priorities, agreed on interfaces and dates, unblocked yourself where possible (mocks, contract tests, service virtualisation), escalated respectfully with data when the impact grew, and kept stakeholders informed. Result: your testing proceeded in parallel, and integration risk was reduced by contract tests when their service arrived.",
+  "tags": [
+   "collaboration"
+  ]
+ },
+ {
+  "id": "beh-020",
+  "topic": "Behavioral",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you give feedback to a developer whose code is consistently buggy?",
+  "what_tested": "Constructive feedback",
+  "model": "Focus on patterns and solutions, not blame: gather specifics (types of defects, where they cluster), have a private, supportive conversation, and frame it around shared goals (fewer late surprises for both of you). Offer concrete help: pairing on test cases before coding, shared acceptance criteria, unit-testing tips, earlier demos. If needed, involve their lead constructively. Follow up and acknowledge improvement.",
+  "tags": [
+   "feedback",
+   "collaboration"
+  ]
+ },
+ {
+  "id": "beh-021",
+  "topic": "Behavioral",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "Tell me about a time a bug you should have caught reached production.",
+  "what_tested": "Accountability",
+  "model": "Own it without self-flagellation: describe the bug and its impact, how it was found, and your immediate actions (reproduce, help with the fix, verify, communicate). Then the root-cause analysis: why your testing missed it (wrong layer, a missing scenario, mocked away, environment difference). Finally, the systemic improvements you made (new regression tests, contract tests, a checklist change, monitoring) and evidence they worked. Interviewers want accountability plus learning.",
+  "tags": [
+   "ownership"
+  ]
+ },
+ {
+  "id": "beh-022",
+  "topic": "Behavioral",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "Describe a time you improved a process significantly.",
+  "what_tested": "Process improvement",
+  "model": "Pick something measurable: regression time, flake rate, release frequency, defect escape rate, or onboarding time. Explain the pain (with numbers), how you diagnosed the cause, the change you drove (e.g. moving setup to APIs and adding sharding, introducing risk-based test selection, or a triage rotation for nightly failures), how you got buy-in, and the result. Include one thing that didn't work at first and how you adjusted.",
+  "tags": [
+   "improvement"
+  ]
+ },
+ {
+  "id": "beh-023",
+  "topic": "Behavioral",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "Have you introduced test automation from scratch? Walk me through it.",
+  "what_tested": "Automation leadership",
+  "model": "Cover the arc: assessing the current state and goals; choosing tools with criteria (stack, skills, CI, cost), e.g. Playwright with pytest; building a thin vertical slice first (config, auth, one API test, one UI test, CI and reporting); defining conventions; training the team; prioritising what to automate by risk and repetition; and measuring outcomes (regression time, defects caught, flake rate). Mention change management: early wins, involving developers, and not promising 100% automation.",
+  "tags": [
+   "automation",
+   "leadership"
+  ]
+ },
+ {
+  "id": "beh-024",
+  "topic": "Behavioral",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How did you convince management to invest in automation or quality work?",
+  "what_tested": "Business case",
+  "model": "Speak their language: cost of manual regression (hours per release times frequency), cost of escaped defects (incidents, customer impact, rework), and release speed as a competitive factor. Propose a phased plan with milestones and measurable outcomes rather than a big-bang request, and deliver an early pilot result. Example: 'a 6-week pilot cut regression for one product from 3 days to 4 hours; we then got funding for two more engineers'.",
+  "tags": [
+   "business-case"
+  ]
+ },
+ {
+  "id": "beh-025",
+  "topic": "Behavioral",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "Tell me about a time you dealt with significant technical debt in a test suite.",
+  "what_tested": "Managing debt",
+  "model": "Describe the symptoms (flaky tests, slow runs, duplicated code, nobody trusting results), how you made the debt visible (metrics, a list of worst offenders), how you prioritised (highest pain first), and how you paid it down without stopping delivery (a fixed share of each sprint, a boy-scout rule, migrating tests when touched). Give results: a faster, more trusted suite, and the practices that kept debt from returning.",
+  "tags": [
+   "tech-debt"
+  ]
+ },
+ {
+  "id": "beh-026",
+  "topic": "Behavioral",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you ensure quality throughout the SDLC, not just at the end?",
+  "what_tested": "Quality mindset",
+  "model": "Talk through each stage: requirements (testability review, clear acceptance criteria, risks identified in refinement), design (test ids, contracts, observability), development (unit tests, PR checks, contract tests), integration (API tests, preview environments), release (risk-based regression, smoke tests, feature flags), and production (monitoring, synthetic checks, feedback from incidents). The message: quality is a team responsibility, and QA enables it rather than gatekeeping at the end.",
+  "tags": [
+   "strategy"
+  ]
+ },
+ {
+  "id": "beh-027",
+  "topic": "Behavioral",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you decide what to automate and what to leave manual?",
+  "what_tested": "Automation ROI",
+  "model": "Automate what's repetitive, stable, high-risk and frequently run: regression of critical flows, API business rules, data-driven validations and smoke checks. Keep manual or exploratory work for new features still changing, usability and visual judgement, one-off checks, and complex scenarios where automation cost outweighs the value. Revisit regularly, since a manual test run every release for a year is a strong automation candidate. Exploratory testing stays valuable even with high automation coverage.",
+  "tags": [
+   "strategy"
+  ]
+ },
+ {
+  "id": "beh-028",
+  "topic": "Behavioral",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "Describe how you handled a situation where requirements were ambiguous.",
+  "what_tested": "Dealing with ambiguity",
+  "model": "Show initiative: you identified the gaps early (in refinement or while writing test scenarios), wrote concrete examples and questions ('what happens when the amount has three decimals?'), clarified with the product owner and developers, and documented the agreed behaviour as acceptance criteria or example-based specifications. Where answers weren't available, you made reasonable, documented assumptions and flagged the risk. Result: fewer late surprises and rework.",
+  "tags": [
+   "ambiguity"
+  ]
+ },
+ {
+  "id": "beh-029",
+  "topic": "Behavioral",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "Tell me about a time requirements changed late in a sprint.",
+  "what_tested": "Adaptability",
+  "model": "Show calm prioritisation: assess the impact of the change on testing scope and risk, communicate the trade-offs (what can still be covered, what moves out), re-plan with the team, and focus testing on the changed area and its regression risk. Mention how you protected quality, such as risk-based testing and not quietly skipping critical checks, and any process improvement you suggested afterwards (e.g. earlier stakeholder demos).",
+  "tags": [
+   "adaptability"
+  ]
+ },
+ {
+  "id": "beh-030",
+  "topic": "Behavioral",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you prioritise when you have more testing work than time?",
+  "what_tested": "Prioritisation",
+  "model": "Risk-based: rank areas by impact (money, security, compliance, user reach) times likelihood of defects (new or complex code, history of bugs, integration points). Test critical paths and high-risk changes first and in depth; lighter checks for low-risk areas; communicate clearly what's not covered and the residual risk. Use automation for regression so manual effort goes to new and risky areas. Give an example of a release where this mattered.",
+  "tags": [
+   "prioritisation"
+  ]
+ },
+ {
+  "id": "beh-031",
+  "topic": "Behavioral",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "Tell me about a time you made a decision with incomplete information.",
+  "what_tested": "Judgement under uncertainty",
+  "model": "Describe the situation and the time pressure (e.g. a go/no-go call with a partially failing regression and a release window closing). Explain how you gathered the most relevant information quickly (failure triage, a risk assessment, checks with the developer), the options and trade-offs you considered, the decision and how you mitigated risk (feature flag, monitoring, rollback plan), and the outcome. Interviewers look for structured thinking, not perfect outcomes.",
+  "tags": [
+   "judgement"
+  ]
+ },
+ {
+  "id": "beh-032",
+  "topic": "Behavioral",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you handle a situation where you're asked to sign off a release you believe isn't ready?",
+  "what_tested": "Integrity",
+  "model": "Be clear, factual and constructive: present the specific open risks (failing critical tests, untested areas, known defects with impact), recommend options (delay, reduced scope, feature-flag the risky part, extra monitoring), and let the accountable owner make an informed decision. If they proceed, ensure the decision and accepted risks are documented. You shouldn't misrepresent the quality status, and you should support the team in mitigating the risk either way.",
+  "tags": [
+   "integrity",
+   "release"
+  ]
+ },
+ {
+  "id": "beh-033",
+  "topic": "Behavioral",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "Tell me about a time you went beyond your role to help the team or product.",
+  "what_tested": "Initiative",
+  "model": "Pick something with real impact outside your formal responsibilities: building a tool developers use daily (a local test-data generator, a PR test-selection script), improving observability that helped diagnose production issues, mentoring another team, or leading an incident investigation. Explain why you stepped in, how you balanced it with your core work, and the result. Show initiative without implying you neglected your main job.",
+  "tags": [
+   "initiative"
+  ]
+ },
+ {
+  "id": "beh-034",
+  "topic": "Behavioral",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "Describe your experience leading a QA or automation team.",
+  "what_tested": "Leadership overview",
+  "model": "Give the scope (team size, domain, products), your leadership approach and two or three outcomes with numbers. For example: 'I lead around 20 automation engineers on a finance platform; I set the framework direction (Python, Playwright, AI-assisted generation and PR review), run planning and triage, and coach leads. Over a year we cut regression from days to under an hour and brought the flake rate under 1%.' Then mention how you develop people and handle stakeholders.",
+  "tags": [
+   "leadership"
+  ]
+ },
+ {
+  "id": "beh-035",
+  "topic": "Behavioral",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you mentor junior engineers?",
+  "what_tested": "Mentoring",
+  "model": "Describe a structure: understand their goals and current level, give stretch tasks with support (a well-scoped framework feature, owning a test area), pair regularly early on, give specific and timely feedback in code reviews (explaining the why, not just the fix), and create learning paths (locators and waits, then fixtures, then framework design). Share an example of someone you mentored and how they grew, e.g. from writing tests to owning a module.",
+  "tags": [
+   "mentoring"
+  ]
+ },
+ {
+  "id": "beh-036",
+  "topic": "Behavioral",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you handle an underperforming team member?",
+  "what_tested": "Performance management",
+  "model": "Start by understanding the cause privately: skills gap, unclear expectations, personal issues, motivation or a poor fit. Set clear, specific expectations and a support plan (training, pairing, smaller milestones), check in regularly, and document progress. Recognise improvement. If performance doesn't improve despite support, follow the formal process fairly and with HR. Show empathy and accountability together, and that the team's standards matter.",
+  "tags": [
+   "leadership",
+   "performance"
+  ]
+ },
+ {
+  "id": "beh-037",
+  "topic": "Behavioral",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you give difficult feedback to someone on your team?",
+  "what_tested": "Feedback skills",
+  "model": "Prepare specifics: observable behaviour and its impact (e.g. 'three PRs this sprint merged without stability runs, and two caused nightly failures'). Deliver it privately and promptly, focused on the behaviour rather than the person, ask for their perspective, agree on concrete next steps, and follow up. A model like SBI (Situation, Behaviour, Impact) helps. Balance it with regular positive feedback so difficult conversations aren't the only feedback they get.",
+  "tags": [
+   "leadership",
+   "feedback"
+  ]
+ },
+ {
+  "id": "beh-038",
+  "topic": "Behavioral",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you measure the effectiveness of your QA team?",
+  "what_tested": "Team metrics",
+  "model": "Use outcome metrics, not activity counts: escaped defects (and their severity) trending down, defect detection before release, regression cycle time, automation coverage of critical journeys, flake rate and suite reliability, lead time from feature done to release-ready, and stakeholder feedback. Also team health: engagement, skill growth and retention. Avoid vanity metrics like test-case counts or bugs logged per person, which drive the wrong behaviour.",
+  "tags": [
+   "leadership",
+   "metrics"
+  ]
+ },
+ {
+  "id": "beh-039",
+  "topic": "Behavioral",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you build a quality culture in an organisation where QA is seen as a gate at the end?",
+  "what_tested": "Culture change",
+  "model": "Shift the framing from 'QA tests it' to 'the team owns quality, QA enables it'. Practical steps: join refinement to shape testable requirements, give developers tools (fixtures, test data helpers, fast PR suites), share quality metrics openly, celebrate prevented incidents, run blameless post-mortems, pair developers and testers, and show quick wins. Change takes time; start with one willing team and spread success stories.",
+  "tags": [
+   "leadership",
+   "culture"
+  ]
+ },
+ {
+  "id": "beh-040",
+  "topic": "Behavioral",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you approach test planning and estimation?",
+  "what_tested": "Planning",
+  "model": "Start from scope and risk: features, integrations, environments and data needs. Break the work down (test design, data setup, automation, execution, regression, reporting) and estimate with the team, using history (similar features) and ranges rather than single numbers. Include environment and dependency risks, plus buffers for defect retesting. Revisit estimates as you learn, and communicate changes early. For automation estimates, separate framework work from test scripting.",
+  "tags": [
+   "planning"
+  ]
+ },
+ {
+  "id": "beh-041",
+  "topic": "Behavioral",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How would you create a test strategy for a new product?",
+  "what_tested": "Strategy design",
+  "model": "Understand the product, users, architecture, risks and release model first. Then define: quality goals and risks; the test levels and who owns each (unit, API, contract, UI, exploratory, performance, security, accessibility); tools and environments; test data approach; automation scope and CI integration; entry and exit criteria and reporting; and how the strategy evolves. Keep it a living, lightweight document, reviewed with engineering and product, not a 50-page artifact nobody reads.",
+  "tags": [
+   "strategy"
+  ]
+ },
+ {
+  "id": "beh-042",
+  "topic": "Behavioral",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you hire for an SDET role? What do you look for?",
+  "what_tested": "Hiring",
+  "model": "Assess real skills, not trivia: a practical coding exercise (write a robust test, debug a flaky one), framework or design discussion, a debugging scenario, and how they communicate trade-offs. Look for curiosity, ownership, collaboration and learning ability as much as current tool knowledge. Use a consistent rubric with green and red flags so interviewers calibrate. Value diverse backgrounds; strong testers come from development, manual QA and operations.",
+  "tags": [
+   "hiring"
+  ]
+ },
+ {
+  "id": "beh-043",
+  "topic": "Behavioral",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you delegate effectively as a lead?",
+  "what_tested": "Delegation",
+  "model": "Delegate outcomes, not just tasks: explain the goal, constraints and why it matters, agree what 'done' looks like and when to check in, then give real ownership (including decisions) matched to the person's growth goals. Provide support without taking it back at the first problem. Example: delegating ownership of the API client layer to a senior engineer, who then designed and delivered it, freeing you for strategy work.",
+  "tags": [
+   "leadership"
+  ]
+ },
+ {
+  "id": "beh-044",
+  "topic": "Behavioral",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you keep a team motivated during a long, high-pressure release period?",
+  "what_tested": "Team morale",
+  "model": "Make the goal and progress visible, protect the team from unnecessary churn (filter requests, push back on scope creep), share the load fairly, recognise effort publicly and specifically, watch for burnout and act (rotations, time off after the crunch), and keep humour and connection alive. After the release, hold a retrospective so the next one is less painful. Leaders also model calm behaviour under pressure.",
+  "tags": [
+   "leadership",
+   "morale"
+  ]
+ },
+ {
+  "id": "beh-045",
+  "topic": "Behavioral",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you support the career growth of people on your team?",
+  "what_tested": "People development",
+  "model": "Have regular career conversations separate from task check-ins, understand each person's goals (deeper technical, leadership, a domain), create growth opportunities (owning a framework area, leading a migration, presenting at internal sessions, mentoring others), give sponsorship (putting their names forward), and give honest feedback on gaps with a plan. Example: helping an engineer progress to tech lead over a year by giving them gradually larger ownership.",
+  "tags": [
+   "leadership",
+   "growth"
+  ]
+ },
+ {
+  "id": "beh-046",
+  "topic": "Behavioral",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you onboard new engineers onto your automation team?",
+  "what_tested": "Onboarding",
+  "model": "A structured first few weeks: environment setup in one documented step, a buddy, a reading list (framework architecture, conventions, the review checklist), a small first task that ships within the first week, pairing sessions on debugging and CI, and a 30/60/90-day plan. Gather feedback from each new joiner and update docs. Good onboarding is measured by how soon they contribute independently and how confident they feel.",
+  "tags": [
+   "leadership",
+   "onboarding"
+  ]
+ },
+ {
+  "id": "beh-047",
+  "topic": "Behavioral",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you handle attrition or a key team member leaving suddenly?",
+  "what_tested": "Resilience planning",
+  "model": "Immediately: understand what they owned, arrange a knowledge transfer and documentation, and redistribute critical work by priority. Communicate honestly with the team and stakeholders about impact on timelines. Longer term: reduce single points of failure (pairing, rotating ownership, documented runbooks), and look at whether there's a pattern behind departures (growth, workload, recognition) to address. Hire with a clear role definition.",
+  "tags": [
+   "leadership"
+  ]
+ },
+ {
+  "id": "beh-048",
+  "topic": "Behavioral",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you communicate quality status to senior management?",
+  "what_tested": "Executive communication",
+  "model": "Short, consistent and decision-focused: the release readiness verdict, the top risks and their business impact, trends (escaped defects, regression time, stability), and what you need from them (decisions, resources). Use a simple traffic-light or one-page summary with the details available on request. Avoid jargon and raw counts. When there's bad news, bring it early, with options.",
+  "tags": [
+   "communication",
+   "stakeholders"
+  ]
+ },
+ {
+  "id": "beh-049",
+  "topic": "Behavioral",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you balance hands-on technical work with management responsibilities as a lead?",
+  "what_tested": "Lead balance",
+  "model": "Be honest about the trade-off: your main job becomes multiplying the team's output, so you stay technical in high-leverage ways (framework architecture, code reviews, technical decisions, prototyping new approaches like AI-assisted testing) rather than owning critical-path tasks that block others when meetings pull you away. Time-box hands-on work, delegate ownership, and keep coding regularly enough to stay credible and current.",
+  "tags": [
+   "leadership"
+  ]
+ },
+ {
+  "id": "beh-050",
+  "topic": "Behavioral",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you handle disagreement with your manager about the testing approach?",
+  "what_tested": "Managing up",
+  "model": "Understand their reasoning and constraints first; they may have context you lack. Then present your view with data and trade-offs, ideally with a small experiment or pilot to test it. If they still decide differently, commit to the decision and execute it well, while tracking the risks you raised. Example: proposing contract testing instead of more end-to-end tests, agreeing on a one-team pilot, and expanding after it caught integration bugs.",
+  "tags": [
+   "managing-up"
+  ]
+ },
+ {
+  "id": "beh-051",
+  "topic": "Behavioral",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you introduce AI tools into a QA team responsibly?",
+  "what_tested": "AI adoption",
+  "model": "Start with clear use cases and guard rails: AI-assisted test generation, PR review comments, failure summarisation, test-data generation. Pilot with willing engineers, define standards (human review of all generated code, locator and assertion rules, no secrets or customer data in prompts, approved tools only), measure outcomes (time saved, defects introduced, review effort), and share learnings. Address fears honestly: AI changes tasks, and skilled reviewers become more valuable.",
+  "tags": [
+   "ai",
+   "leadership"
+  ]
+ },
+ {
+  "id": "beh-052",
+  "topic": "Behavioral",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "Tell me about a time you had to manage competing priorities from multiple stakeholders.",
+  "what_tested": "Stakeholder balancing",
+  "model": "Show structure: make the competing requests visible in one place, clarify the business value and urgency of each with the stakeholders, and align on priorities with whoever owns the trade-off (often a product lead or manager) rather than deciding silently. Communicate the decision and its consequences to everyone. Example result: a priority order everyone accepted, with a timeline for the deferred work.",
+  "tags": [
+   "stakeholders",
+   "prioritisation"
+  ]
+ },
+ {
+  "id": "beh-053",
+  "topic": "Behavioral",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you keep your testing skills current?",
+  "what_tested": "Continuous learning",
+  "model": "Mention concrete habits: following release notes for your core tools (Playwright, pytest), reading engineering blogs and testing communities, building small side projects or internal prototypes (this interview-prep tool counts), attending meetups or conferences, experimenting with AI-assisted testing, and teaching others through internal sessions or articles. Give one recent thing you learned and applied at work.",
+  "tags": [
+   "learning"
+  ]
+ },
+ {
+  "id": "beh-054",
+  "topic": "Behavioral",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "Tell me about a time you had to learn a new tool or technology quickly.",
+  "what_tested": "Rapid learning",
+  "model": "Describe the trigger (e.g. moving from Selenium to Playwright under a deadline), your approach (official docs and examples first, a small spike on a real flow, pairing with someone experienced, focusing on the 20% of features you'd use most), how you applied it, and the result. Mention how you shared the knowledge with the team (a starter template or a workshop), which multiplies the value of your learning.",
+  "tags": [
+   "learning"
+  ]
+ },
+ {
+  "id": "beh-055",
+  "topic": "Behavioral",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "Describe a time you received critical feedback. How did you respond?",
+  "what_tested": "Receiving feedback",
+  "model": "Show openness: describe the feedback (e.g. your status updates were too technical for stakeholders), your initial reaction honestly, how you sought to understand it (asked for examples), what you changed (one-page summaries focused on risk and decisions), and the outcome (better stakeholder trust). Thank the person, implicitly or explicitly. Interviewers look for low defensiveness and real change.",
+  "tags": [
+   "feedback"
+  ]
+ },
+ {
+  "id": "beh-056",
+  "topic": "Behavioral",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you handle a situation where you don't know the answer to a technical question?",
+  "what_tested": "Intellectual honesty",
+  "model": "Say so plainly, then show how you'd find out: reason from what you do know, outline how you'd investigate (docs, a quick experiment, asking an expert), and follow up. In an interview, thinking aloud about how you'd approach it is better than bluffing, because interviewers usually probe bluffs with 'show me the exact code'. In a team, admitting gaps builds trust and models a healthy learning culture.",
+  "tags": [
+   "honesty"
+  ]
+ },
+ {
+  "id": "beh-057",
+  "topic": "Behavioral",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How have you adapted to a major change at work (re-org, new process, new technology)?",
+  "what_tested": "Change resilience",
+  "model": "Pick a real change, e.g. moving to agile squads, a new CI platform, or a shift to AI-assisted development. Describe your initial concerns, how you sought to understand the reasons, what you did to adapt and help others adapt (documentation, training, feedback to leadership), and the outcome. Show you can be constructive about change while raising real risks through the right channels.",
+  "tags": [
+   "adaptability"
+  ]
+ },
+ {
+  "id": "beh-058",
+  "topic": "Behavioral",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "You find a critical bug the night before a major release. What do you do?",
+  "what_tested": "Release crisis",
+  "model": "Confirm and reproduce it quickly, assess the impact (who is affected, how badly, is there a workaround?), and inform the release owner, developers and product owner immediately with clear evidence, not just a ticket. Help evaluate the options: fix and retest (if low risk and quick), feature-flag or disable the affected feature, delay the release, or ship with a documented known issue. Support the decision with focused retesting and monitoring. Speed and clarity matter more than blame.",
+  "tags": [
+   "situational",
+   "release"
+  ]
+ },
+ {
+  "id": "beh-059",
+  "topic": "Behavioral",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "Production is down on a weekend and you're on call. Walk me through your actions.",
+  "what_tested": "Incident response",
+  "model": "Acknowledge the alert and join the incident channel or bridge. Assess impact and scope (which users or features). Gather evidence (dashboards, logs, recent deployments). Communicate status early and regularly. Coordinate with the right owners; mitigate first (rollback, feature flag, failover) before root-causing. Once stable, verify recovery (smoke tests, monitoring), then document a timeline for the blameless post-mortem and track the follow-up actions. As QA, you're often key in verifying the fix and adding regression coverage.",
+  "tags": [
+   "situational",
+   "incident"
+  ]
+ },
+ {
+  "id": "beh-060",
+  "topic": "Behavioral",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "Your developers don't write unit tests and push everything to QA. How do you change that?",
+  "what_tested": "Driving testing culture",
+  "model": "Understand why first: time pressure, lack of skills, no examples, slow tooling. Then make it easier and visible: provide unit-test examples and templates, pair on writing tests for a recent bug, add fast checks to PRs, share data on defects caught late versus early and the rework cost, and get engineering leadership aligned on a definition of done that includes tests. Celebrate teams that improve. Avoid positioning QA as police.",
+  "tags": [
+   "situational",
+   "culture"
+  ]
+ },
+ {
+  "id": "beh-061",
+  "topic": "Behavioral",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "You inherit an automation framework that's slow, flaky and poorly designed. What's your plan?",
+  "what_tested": "Turnaround",
+  "model": "First, assess and measure: run time, flake rate, failure categories, the worst tests, and who uses the results. Stabilise quickly: quarantine flaky tests, fix the top offenders, add artifacts for debugging. Then decide between incremental refactoring and a gradual rewrite (usually incremental), focusing on high-value areas. Set conventions, add linting and reviews, and track improvement. Communicate a roadmap with milestones so stakeholders see progress, and don't stop delivery while you fix it.",
+  "tags": [
+   "situational",
+   "tech-debt"
+  ]
+ },
+ {
+  "id": "beh-062",
+  "topic": "Behavioral",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "You're asked to estimate automating 500 existing manual test cases. How do you respond?",
+  "what_tested": "Estimation under scrutiny",
+  "model": "Don't estimate 500 × an average blindly. First triage the cases: remove duplicates and obsolete ones, identify what's better tested at API or unit level, group by flow, and rank by risk and execution frequency. Estimate framework work separately from scripting, use a pilot of 20–30 representative cases to measure the real rate, then give a phased plan with ranges and early value (critical regression first). Often the result is fewer, better tests than the 500.",
+  "tags": [
+   "situational",
+   "estimation"
+  ]
+ },
+ {
+  "id": "beh-063",
+  "topic": "Behavioral",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "A client escalates that your team missed defects in the last release. How do you handle it?",
+  "what_tested": "Escalation handling",
+  "model": "Acknowledge the impact without being defensive and get the facts: which defects, severity and how they escaped. Communicate an immediate plan (fixes, verification) and a timeline. Do a blameless root-cause analysis covering test coverage, environment differences, requirements gaps and process issues, then present concrete improvements with owners and dates. Follow up to show they were implemented. Rebuilding trust comes from transparency and consistent delivery.",
+  "tags": [
+   "situational",
+   "stakeholders"
+  ]
+ },
+ {
+  "id": "beh-064",
+  "topic": "Behavioral",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "Two of your senior engineers want to use different tools for the same problem. How do you decide?",
+  "what_tested": "Technical decision making",
+  "model": "Make the decision about criteria, not people: agree upfront on what matters (fit with the stack, team skills, maintainability, community support, CI integration, cost), time-box a small proof of concept of both on a real scenario, compare the results against the criteria, and decide, documenting the reasoning in a decision record. Make sure both engineers feel heard and get credit, and give the 'losing' side a meaningful role in the rollout.",
+  "tags": [
+   "situational",
+   "leadership"
+  ]
+ },
+ {
+  "id": "beh-065",
+  "topic": "Behavioral",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "You discover a team member has been marking tests as passed without running them. What do you do?",
+  "what_tested": "Integrity issues",
+  "model": "Verify the facts first, then talk privately and directly: describe what you found, listen to their explanation (pressure, unclear expectations, tooling issues), and be clear that it's unacceptable because it hides risk from the whole team. Fix the immediate risk by re-running the affected tests. Address the root causes (unrealistic workload, process gaps such as no evidence requirements) and follow your organisation's process for misconduct if it's serious. Then add safeguards, like automated evidence of execution.",
+  "tags": [
+   "situational",
+   "integrity"
+  ]
+ },
+ {
+  "id": "beh-066",
+  "topic": "Behavioral",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "Your automation suite is green but customers keep reporting bugs. What's going on, and what do you do?",
+  "what_tested": "Coverage reality check",
+  "model": "A green suite that misses customer bugs suggests a coverage or relevance gap: tests checking the wrong things (weak assertions), heavy mocking hiding integration issues, environment differences from production, missing real-world data, or untested user paths. Analyse the reported bugs: map each to why tests missed it, then add coverage at the right layer, use production analytics to prioritise flows, add contract tests and production monitoring, and review assertion quality. Celebrate the green suite less until it's meaningful.",
+  "tags": [
+   "situational",
+   "strategy"
+  ]
+ },
+ {
+  "id": "beh-067",
+  "topic": "Behavioral",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "Management wants 100% test automation. How do you respond?",
+  "what_tested": "Managing expectations",
+  "model": "Agree with the intent (faster, more reliable releases), then reframe the goal: 100% automation isn't achievable or valuable, because exploratory, usability and some edge-case testing need humans, and some automation costs more than it saves. Propose meaningful targets instead: automate critical journeys and API business rules, regression cycle time under X hours, escaped defects down by Y%, with a roadmap. Show the ROI logic so the conversation moves from a number to outcomes.",
+  "tags": [
+   "situational",
+   "stakeholders"
+  ]
+ },
+ {
+  "id": "beh-068",
+  "topic": "Behavioral",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "A developer asks you to approve their PR quickly, but you notice the tests they added don't really test anything. What do you do?",
+  "what_tested": "Review integrity",
+  "model": "Review respectfully but don't rubber-stamp: point out specifically what's missing (e.g. assertions only check the status code, or the test would pass even if the feature broke) and suggest concrete improvements or offer to pair for 15 minutes. If there's genuine urgency, agree on a follow-up ticket with an owner rather than silently approving. Consistent, helpful reviews raise the team's standard over time.",
+  "tags": [
+   "situational",
+   "collaboration"
+  ]
+ },
+ {
+  "id": "beh-069",
+  "topic": "Behavioral",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How would you handle being asked to test a feature with no documentation or acceptance criteria?",
+  "what_tested": "Testing without specs",
+  "model": "Gather information from every source: the developer's walkthrough, the product owner, the design files, similar existing features, and the API contract if any. Do exploratory testing to learn the behaviour, write down your understanding as examples and confirm them with the product owner, and flag risky assumptions. Turn the confirmed examples into acceptance criteria and automated tests. Suggest a lightweight process so future features come with criteria.",
+  "tags": [
+   "situational",
+   "ambiguity"
+  ]
+ },
+ {
+  "id": "beh-070",
+  "topic": "Behavioral",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "What would you do in your first 90 days as a QA lead here?",
+  "what_tested": "Leadership onboarding plan",
+  "model": "First 30 days: listen and learn: meet the team and stakeholders, understand the products, architecture, release process, current test assets and pain points, and look at metrics. Days 30–60: identify quick wins (e.g. fixing the flakiest tests, improving failure reports) and propose a strategy with priorities, validated with stakeholders. Days 60–90: start executing the roadmap, set up regular reporting, and establish team rituals and growth plans. Avoid changing everything before understanding why things are the way they are.",
+  "tags": [
+   "leadership",
+   "planning"
+  ]
+ },
+ {
+  "id": "beh-071",
+  "topic": "Behavioral",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you handle working on a project where you strongly disagree with a technical decision that's already been made?",
+  "what_tested": "Disagree and commit",
+  "model": "Raise the concern once, clearly and with evidence, through the right channel, ideally proposing what data would change the decision. If the decision stands, commit fully and execute it well; don't undermine it or say 'I told you so'. Track the risks you identified and raise them again with data if they materialise. Showing you can disagree constructively and still deliver builds trust for future decisions.",
+  "tags": [
+   "collaboration"
+  ]
+ },
+ {
+  "id": "beh-072",
+  "topic": "Behavioral",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "Tell me about a time you used data to change someone's mind.",
+  "what_tested": "Data-driven persuasion",
+  "model": "Describe the disagreement (e.g. whether to keep a 2-hour UI regression in the PR pipeline), the data you gathered (failure history showed 90% of real bugs were caught by API tests and a small UI subset), how you presented it simply (one chart, and the cost in developer hours per week), the decision that followed (a 15-minute smoke tier on PRs, full suite nightly) and the result. Show you also listened and adjusted to their concerns.",
+  "tags": [
+   "influence"
+  ]
+ },
+ {
+  "id": "beh-073",
+  "topic": "Behavioral",
+  "difficulty": "warm-up",
+  "kind": "concept",
+  "question": "What questions do you have for us?",
+  "what_tested": "Engaged curiosity",
+  "model": "Always have a few prepared, showing genuine interest in how you'd succeed. Good ones: 'What does success look like for this role in the first six months?', 'How is quality owned across dev and QA here?', 'What's the current state of automation and CI, and the biggest pain point?', 'How are releases done and how often?', 'What's the team structure and how do you support growth?' Avoid asking only about salary or leave in early rounds, or saying 'no questions'.",
+  "tags": [
+   "closing"
+  ]
+ },
+ {
+  "id": "beh-074",
+  "topic": "Behavioral",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "Tell me about a time you had to explain a technical issue to a non-technical audience.",
+  "what_tested": "Communication clarity",
+  "model": "Choose an example like explaining why a release needed a delay because of a payment rounding bug. Show how you translated it into business impact ('about 1 in 500 refunds would be off by one paisa, which breaks reconciliation and creates compliance risk'), used an analogy or a simple visual, avoided jargon, and focused on options and the decision needed. Mention how you checked understanding and the outcome.",
+  "tags": [
+   "communication"
+  ]
+ },
+ {
+  "id": "beh-075",
+  "topic": "Behavioral",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you handle stress and avoid burnout in demanding release cycles?",
+  "what_tested": "Sustainability",
+  "model": "Give practical habits: prioritising ruthlessly and saying no or 'not now' with reasons, automating repetitive work, breaking big problems into small wins, protecting focus time, taking real breaks after crunch periods, and asking for help early. As a lead, also watch the team for signs of burnout and fix systemic causes (unrealistic plans, unstable environments). Show self-awareness without suggesting you can't handle pressure.",
+  "tags": [
+   "wellbeing"
+  ]
+ },
+ {
+  "id": "beh-076",
+  "topic": "Behavioral",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "Describe a time you had to say no to a request.",
+  "what_tested": "Healthy boundaries",
+  "model": "Show that you said no to the request but yes to the person's underlying goal: you understood what they actually needed, explained why the request as asked wasn't feasible or wise (capacity, risk, priorities), offered an alternative (a later date, a smaller scope, a different approach, someone else who could help), and kept the relationship positive. Example: declining to add a large ad-hoc regression run mid-sprint and instead proposing a risk-based subset that met the actual need.",
+  "tags": [
+   "prioritisation"
+  ]
+ },
+ {
+  "id": "beh-077",
+  "topic": "Behavioral",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you ensure fairness and inclusion in your team?",
+  "what_tested": "Inclusive leadership",
+  "model": "Concrete practices: rotating visible and interesting work fairly, making sure quieter or remote members are heard in meetings (round-robins, written input before decisions), consistent, criteria-based reviews and promotions, structured hiring rubrics, addressing disrespectful behaviour promptly, and being flexible about different working needs. Give an example of a change you made, such as structured interview scorecards that reduced bias.",
+  "tags": [
+   "leadership",
+   "culture"
+  ]
+ },
+ {
+  "id": "beh-078",
+  "topic": "Behavioral",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "Tell me about a time you had to make an unpopular decision.",
+  "what_tested": "Decisive leadership",
+  "model": "Pick a real example, e.g. freezing new test development for two sprints to fix flakiness, or retiring a tool the team liked. Explain the reasoning and data, how you consulted people beforehand, how you communicated the decision (the why, what changes, how it affects them), how you handled pushback, and the outcome. Show you can make tough calls while respecting people's concerns and following up on the impact.",
+  "tags": [
+   "leadership"
+  ]
+ },
+ {
+  "id": "beh-079",
+  "topic": "Behavioral",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you stay productive when requirements, priorities and environments keep changing?",
+  "what_tested": "Working amid churn",
+  "model": "Keep work in small, independently valuable pieces so a change in priority doesn't waste much; maintain a clear, visible priority list agreed with stakeholders; build resilience into automation (API setup, mocks for unstable dependencies, environment health checks); and raise the cost of churn with data in retrospectives (e.g. time lost to environment downtime) to drive systemic fixes. Flexibility plus visibility beats frustration.",
+  "tags": [
+   "adaptability"
+  ]
+ },
+ {
+  "id": "beh-080",
+  "topic": "Behavioral",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "Why should we hire you over other candidates?",
+  "what_tested": "Closing pitch",
+  "model": "Summarise your value in three points aligned with the role's needs, each backed by evidence. For example: hands-on depth in Python, Playwright and API automation with frameworks you've built; leadership of a large automation team with measurable improvements in speed and reliability; and forward-looking experience applying AI to test generation and review. Close with genuine enthusiasm for the specific challenges they described, without disparaging other candidates.",
+  "tags": [
+   "closing"
+  ]
+ },
+ {
+  "id": "beh-081",
+  "topic": "Behavioral",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "Walk me through your current project and your role in it.",
+  "what_tested": "Project walkthrough",
+  "model": "Structure it so the interviewer can follow: the business domain and users (one sentence), the architecture at a high level (front end, services, integrations), the team setup, then your role and responsibilities, and two or three things you personally drove with results (e.g. built the Playwright framework, cut regression time, introduced contract tests or AI-assisted PR review). Prepare a simple diagram in your head. Expect deep follow-ups on anything you mention, so only claim what you can explain in detail.",
+  "tags": [
+   "project"
+  ]
+ },
+ {
+  "id": "beh-082",
+  "topic": "Behavioral",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "Explain the automation framework you built or work with, end to end.",
+  "what_tested": "Framework walkthrough",
+  "model": "Cover: tech stack and why (Python, pytest, Playwright, requests); folder structure and layers (tests, page and component objects, API clients, fixtures, data factories, config); how auth, test data and environments are handled; parallel execution and CI integration; reporting and artifacts; how flakiness is managed; and conventions and reviews. Finish with an improvement you made and one you'd make next, which shows critical thinking about your own work.",
+  "tags": [
+   "project",
+   "framework"
+  ]
+ },
+ {
+  "id": "beh-083",
+  "topic": "Behavioral",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "What's the biggest technical challenge you've solved in test automation?",
+  "what_tested": "Problem-solving depth",
+  "model": "Pick a genuinely hard problem: stabilising a suite against an eventually consistent microservice system, testing a complex payment flow with third-party dependencies, scaling parallel runs without data collisions, or automating authentication with SSO and MFA. Explain the constraints, the options you considered, why you chose your approach, the implementation details that mattered, and the measurable result. Interviewers probe depth, so be ready to go two or three levels down.",
+  "tags": [
+   "technical"
+  ]
+ },
+ {
+  "id": "beh-084",
+  "topic": "Behavioral",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "Tell me about a time you automated something that saved the team significant time.",
+  "what_tested": "Efficiency impact",
+  "model": "Choose something with clear before and after numbers: an automated regression replacing days of manual effort, a test-data generator replacing manual database setup, a script that triages nightly failures by signature, or a CI job that creates PR environments. Explain how you spotted the opportunity, built it incrementally, got adoption, and quantified the savings (hours per week or release, fewer errors).",
+  "tags": [
+   "impact"
+  ]
+ },
+ {
+  "id": "beh-085",
+  "topic": "Behavioral",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "Tell me about a time you used AI tools in your testing work. What went well and what didn't?",
+  "what_tested": "AI in practice",
+  "model": "Be concrete and balanced: e.g. using AI agents to generate first drafts of Playwright tests from user stories and to review PRs for missing assertions or hard waits. Share what worked (faster scaffolding, consistent review comments), what didn't (hallucinated APIs, weak or missing assertions, locators that ignored your conventions), and the guard rails you added (human review, conventions documented for the agent, CI checks). Interviewers value candid, experienced judgement over hype.",
+  "tags": [
+   "ai"
+  ]
+ },
+ {
+  "id": "beh-086",
+  "topic": "Behavioral",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you work with product owners and business analysts?",
+  "what_tested": "Business collaboration",
+  "model": "Engage early: refine stories together, ask 'what happens if…' questions to uncover edge cases, propose acceptance criteria as concrete examples, share risk assessments in business terms, and demo test coverage or findings. During releases, give them clear go/no-go information. Example: catching a missing rule for partial refunds during refinement, which saved a sprint of rework. Treat them as partners in defining 'correct'.",
+  "tags": [
+   "collaboration"
+  ]
+ },
+ {
+  "id": "beh-087",
+  "topic": "Behavioral",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "What is your role in agile ceremonies as a QA or SDET?",
+  "what_tested": "Agile participation",
+  "model": "Refinement: clarify requirements, raise testability and risk questions, help write acceptance criteria. Planning: estimate test and automation work, flag dependencies such as environments and data. Stand-ups: surface blockers and quality risks early. Reviews and demos: show what was verified. Retrospectives: bring data on escaped defects, flakiness and bottlenecks, and propose improvements. QA should influence quality throughout the sprint, not just test at the end.",
+  "tags": [
+   "agile"
+  ]
+ },
+ {
+  "id": "beh-088",
+  "topic": "Behavioral",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "Tell me about a time you had to deliver bad news to stakeholders.",
+  "what_tested": "Delivering bad news",
+  "model": "Show timing, clarity and options: you raised the issue as soon as you had enough evidence (e.g. a critical defect that put the release date at risk), explained the facts and impact plainly, came with options and a recommendation, and took responsibility for follow-up. Avoid surprise at the last minute or burying the message. Result: stakeholders made an informed decision and trusted your reporting more afterwards.",
+  "tags": [
+   "communication"
+  ]
+ },
+ {
+  "id": "beh-089",
+  "topic": "Behavioral",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "What would your colleagues say about working with you?",
+  "what_tested": "Self-perception",
+  "model": "Pick two or three traits that are true and relevant, and back each with a short example or real feedback you've received: 'reliable when things go wrong' (you led triage during a release incident), 'raises the bar without being difficult' (code reviews that teach), 'makes complex things clear' (stakeholder updates). Optionally mention one piece of constructive feedback you've acted on, which adds credibility.",
+  "tags": [
+   "self-awareness"
+  ]
+ },
+ {
+  "id": "beh-090",
+  "topic": "Behavioral",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "Tell me about a time you took a calculated risk at work.",
+  "what_tested": "Risk-taking",
+  "model": "Describe a decision where the payoff justified the risk and you managed the downside: e.g. replacing a large slow UI suite with API tests plus a smaller smoke set, or adopting Playwright mid-project. Explain how you assessed the risk, mitigated it (pilot, running both in parallel, rollback plan), communicated it, and the outcome. If it didn't fully work, explain what you learned; calculated risks don't always pay off.",
+  "tags": [
+   "judgement"
+  ]
+ },
+ {
+  "id": "beh-091",
+  "topic": "Behavioral",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you manage working across multiple projects or teams at the same time?",
+  "what_tested": "Multi-project juggling",
+  "model": "Explain your system: a single visible priority list agreed with the leads or managers involved, time-boxing (dedicated days or blocks per project), reducing context switching, reusing assets across projects (shared fixtures and clients), clear communication of availability, and escalating conflicts early rather than silently overcommitting. Give an example where you delivered for several teams and how you kept quality consistent.",
+  "tags": [
+   "prioritisation"
+  ]
+ },
+ {
+  "id": "beh-092",
+  "topic": "Behavioral",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "Tell me about a time your estimate was badly wrong. What happened?",
+  "what_tested": "Estimation honesty",
+  "model": "Pick a real example (e.g. automating a flow that turned out to involve a complex third-party iframe and unstable test data). Explain why the estimate was off, when you realised it, how you communicated early and re-planned (scope, help, dates), and what you changed in your estimation approach afterwards: spikes for unknowns, ranges instead of single numbers, and counting environment and data work explicitly.",
+  "tags": [
+   "estimation"
+  ]
+ },
+ {
+  "id": "beh-093",
+  "topic": "Behavioral",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you balance speed of delivery with quality?",
+  "what_tested": "Speed vs quality trade-off",
+  "model": "Show that you see them as complementary in the long run and make explicit trade-offs in the short run: invest in fast, reliable automation so speed doesn't cost quality; use risk-based testing to focus effort; use feature flags and progressive rollout to reduce release risk; and when a trade-off is necessary, make it visible and agreed (what's not tested, and the mitigation). Give an example of a release where this approach let you ship fast and safely.",
+  "tags": [
+   "judgement"
+  ]
+ },
+ {
+  "id": "beh-094",
+  "topic": "Behavioral",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "Tell me about a time you helped a struggling colleague.",
+  "what_tested": "Teamwork",
+  "model": "Describe noticing the struggle (missed estimates, frustration with a flaky area), approaching them supportively, understanding the blocker (e.g. unfamiliar with async debugging or the framework), helping practically (pairing, documentation, splitting the task), and letting them own the result. Mention the outcome for them and the team, and keep the focus on their success rather than your heroics.",
+  "tags": [
+   "teamwork"
+  ]
+ },
+ {
+  "id": "beh-095",
+  "topic": "Behavioral",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you work in an onsite–offshore model with clients?",
+  "what_tested": "Delivery models",
+  "model": "Highlight practices that make it work: clear ownership split and handover rituals across time zones, written daily summaries (progress, blockers, failures with artifacts), shared dashboards so status doesn't depend on meetings, early escalation of risks, overlapping hours used for decisions, and building direct relationships with client stakeholders. Give an example where good handovers or proactive communication prevented a delivery issue.",
+  "tags": [
+   "collaboration",
+   "delivery"
+  ]
+ },
+ {
+  "id": "beh-096",
+  "topic": "Behavioral",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you handle client communication when testing reveals the client's own requirements were wrong?",
+  "what_tested": "Client diplomacy",
+  "model": "Stay factual and solution-oriented: show the evidence (what the requirement said, what the system does, the business consequence) without blaming, frame it as a shared discovery, and propose options with their impact on timeline and cost. Escalate through the agreed channel and get the decision documented. Clients value partners who catch problems early, and handling it tactfully builds long-term trust.",
+  "tags": [
+   "stakeholders",
+   "delivery"
+  ]
+ },
+ {
+  "id": "beh-097",
+  "topic": "Behavioral",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "Tell me about a time you worked under compliance or regulatory constraints.",
+  "what_tested": "Regulated environments",
+  "model": "For finance or healthcare domains, mention concrete constraints: no production personal data in tests (masked or synthetic data), audit trails and evidence of testing, segregation of duties, validated environments, traceability from requirements to tests, and change control. Give an example of how you adapted automation to meet them, such as test evidence attached to tickets automatically, or synthetic data generators, without slowing delivery unnecessarily.",
+  "tags": [
+   "compliance"
+  ]
+ },
+ {
+  "id": "beh-098",
+  "topic": "Behavioral",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you deal with repetitive or tedious parts of the job?",
+  "what_tested": "Attitude to routine work",
+  "model": "Show a pragmatic, improving mindset: do what's needed reliably, but look for ways to reduce the tedium for everyone through automation, templates, better tooling or process changes. Example: automating test-evidence collection for audits, or scripting environment checks that used to be manual every morning. Avoid implying you neglect routine responsibilities.",
+  "tags": [
+   "attitude"
+  ]
+ },
+ {
+  "id": "beh-099",
+  "topic": "Behavioral",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "Tell me about a time you led an initiative without having a formal leadership title.",
+  "what_tested": "Informal leadership",
+  "model": "Describe seeing a problem nobody owned (e.g. a growing flaky test backlog, or no API test coverage), proposing a plan, rallying people through clear benefits and small early wins, coordinating the work, and the outcome. Highlight how you influenced without authority, shared credit, and how it shaped your path toward formal leadership.",
+  "tags": [
+   "leadership",
+   "initiative"
+  ]
+ },
+ {
+  "id": "beh-100",
+  "topic": "Behavioral",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How would you respond if your manager micromanaged your work?",
+  "what_tested": "Working relationships",
+  "model": "Assume good intent first: micromanagement often comes from pressure or lack of visibility. Proactively increase transparency (regular concise updates, visible task boards, early risk flags), ask what information they need to feel confident, and agree on check-in points and decision rights. If it continues, have a respectful direct conversation about working style and trust, with examples. Show maturity rather than resentment.",
+  "tags": [
+   "managing-up"
+  ]
+ },
+ {
+  "id": "beh-101",
+  "topic": "Behavioral",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "Describe a time you contributed to improving security or data privacy in testing.",
+  "what_tested": "Security awareness",
+  "model": "Examples: removing hard-coded credentials from a test repo and moving to a vault, masking tokens and personal data in test reports and logs, replacing production data copies with synthetic data, adding secret scanning to CI, or adding authorisation (IDOR) tests that found real issues. Explain the risk you saw, what you changed, how you got buy-in, and the outcome.",
+  "tags": [
+   "security"
+  ]
+ },
+ {
+  "id": "beh-102",
+  "topic": "Behavioral",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "If you joined and found no test strategy and only manual testing, what would you do first?",
+  "what_tested": "Greenfield quality leadership",
+  "model": "Start by understanding the product, risks, release process and the people (what's painful today?). Quick wins: a smoke checklist for every release, risk-based priorities for manual testing, and a bug triage routine. Then propose a phased strategy: an automation foundation on the most critical flows and APIs, CI integration, test data and environment fixes, and metrics. Bring developers and product along through early visible value, not a big plan presented on day one.",
+  "tags": [
+   "strategy",
+   "leadership"
+  ]
  }
 ]

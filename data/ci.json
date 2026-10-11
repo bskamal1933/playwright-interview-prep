@@ -2,19 +2,1285 @@
  {
   "id": "ci-001",
   "topic": "CI, debugging & flakiness",
+  "difficulty": "warm-up",
+  "kind": "concept",
+  "question": "What's the difference between continuous integration, continuous delivery and continuous deployment?",
+  "what_tested": "CI/CD concepts",
+  "model": "Continuous integration: everyone merges small changes to the main branch frequently, and every change is automatically built and tested. Continuous delivery: every change that passes the pipeline is releasable, and deploying to production is a business decision (often one click). Continuous deployment: every passing change goes to production automatically, with no manual gate. Automated tests are the safety net that makes the later stages possible, so their reliability matters enormously.",
+  "tags": [
+   "cicd"
+  ]
+ },
+ {
+  "id": "ci-002",
+  "topic": "CI, debugging & flakiness",
   "difficulty": "core",
   "kind": "concept",
   "question": "How would you set up Playwright tests in a CI pipeline?",
   "what_tested": "CI/CD for UI tests",
-  "model": "Use the official Playwright Docker image, or `playwright install --with-deps`, so browsers and OS libraries match the Playwright version. Run lint, then API tests, then a UI smoke suite on every PR, with the full regression nightly or before release. Shard across machines and use xdist within each. Upload traces, videos and the report as artifacts, and post a summary to the PR. Keep the PR suite under an agreed time budget."
+  "model": "Use the official Playwright Docker image, or `playwright install --with-deps`, so browsers and OS libraries match the Playwright version. Run lint, then API tests, then a UI smoke suite on every PR, with the full regression nightly or before release. Shard across machines and use xdist within each. Upload traces, videos and the report as artifacts, and post a summary to the PR. Keep the PR suite under an agreed time budget.",
+  "tags": [
+   "cicd",
+   "playwright"
+  ]
  },
  {
-  "id": "ci-002",
+  "id": "ci-003",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "What does a robust CI pipeline for a Playwright and pytest suite look like, stage by stage?",
+  "what_tested": "Pipeline design",
+  "model": "1) Checkout and restore caches (pip, browsers). 2) Lint, format check and type check (fail fast, in seconds). 3) Unit tests for framework utilities. 4) API tests against the target environment. 5) UI smoke tests (sharded, xdist). 6) Publish JUnit or Allure results, traces and videos as artifacts, plus a PR comment or summary. Nightly adds the full regression across browsers and visual or a11y checks. Every stage has timeouts, and failures clearly say which stage broke.",
+  "tags": [
+   "cicd",
+   "pipeline"
+  ]
+ },
+ {
+  "id": "ci-004",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you decide what runs on every commit, nightly and before release?",
+  "what_tested": "Test tiers",
+  "model": "Fast and critical tests run on every PR: unit and contract tests plus a 10–15 minute smoke suite of key journeys and APIs. Slower and broader tests run nightly: full regression, cross-browser, long end-to-end flows. Pre-release: regression on a production-like environment plus performance and security checks. After each deployment: a production smoke run with safe test accounts. Implement the tiers with markers and separate CI jobs, and review the smoke set as the product changes.",
+  "tags": [
+   "cicd",
+   "strategy"
+  ]
+ },
+ {
+  "id": "ci-005",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you run tests in parallel in CI, and how do you balance shards?",
+  "what_tested": "CI parallelism",
+  "model": "Use xdist inside each job (`-n auto`) and shard across jobs with a CI matrix, using pytest-split with a stored durations file so shards take similar time; splitting by file count often leaves one shard twice as slow. Each shard uploads its own results, and a final job merges them (JUnit or Allure). Watch for shared-resource limits: parallel shards against one environment can hit rate limits or data collisions.",
+  "tags": [
+   "cicd",
+   "parallel"
+  ]
+ },
+ {
+  "id": "ci-006",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you speed up a slow CI pipeline for tests?",
+  "what_tested": "Pipeline optimisation",
+  "model": "Measure each stage first. Then: cache dependencies and browser downloads (or use the Playwright Docker image), run fast checks first to fail early, shard and parallelise, move UI setup to API calls, remove hard waits, split smoke and regression tiers, run only affected tests on PRs where possible, use larger runners for heavy suites, and cancel superseded runs when a new commit is pushed (concurrency groups). Track pipeline duration as a team metric.",
+  "tags": [
+   "cicd",
+   "performance"
+  ]
+ },
+ {
+  "id": "ci-007",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you handle secrets in a CI pipeline for tests?",
+  "what_tested": "CI secrets",
+  "model": "Store them in the CI's secret store (GitHub Actions secrets or environments, Jenkins credentials, GitLab CI variables marked masked and protected) or fetch them from a vault with short-lived credentials (OIDC). Inject them as environment variables only into the jobs that need them. Never echo them, rely on masking but don't trust it fully, keep them out of artifacts and reports, and restrict which branches or forks can access them, since PRs from forks shouldn't get production-like secrets.",
+  "tags": [
+   "cicd",
+   "security"
+  ]
+ },
+ {
+  "id": "ci-008",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "What artifacts should a test job publish, and why?",
+  "what_tested": "Artifacts",
+  "model": "JUnit XML (for the CI's test tab and trend tracking), an HTML or Allure report, Playwright traces, videos and screenshots for failed tests, logs (application and framework), and sometimes downloaded files or API request and response dumps with secrets masked. The goal is that anyone can diagnose a failure from the artifacts without rerunning it. Set retention periods so storage doesn't explode.",
+  "tags": [
+   "cicd",
+   "reporting"
+  ]
+ },
+ {
+  "id": "ci-009",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "Why use Docker for running tests, and what are the gotchas?",
+  "what_tested": "Containers",
+  "model": "Docker gives a reproducible environment: the same OS libraries, browser builds, Python version and fonts everywhere, which removes 'works on my machine' and makes visual tests stable. Gotchas: shared memory for Chromium (`--ipc=host` or a larger `/dev/shm`), the container time zone and locale defaulting to UTC and C, networking to reach services on the host, file permissions on mounted volumes, image size and pull time (cache layers), and keeping the image tag in step with the pinned Playwright version.",
+  "tags": [
+   "docker"
+  ]
+ },
+ {
+  "id": "ci-010",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do GitHub Actions matrix builds help test across browsers or Python versions?",
+  "what_tested": "Matrix builds",
+  "model": "A `strategy.matrix` (e.g. `browser: [chromium, firefox, webkit]` and `shard: [1, 2, 3, 4]`) generates one job per combination, running in parallel, each with its own pass/fail status. Use `fail-fast: false` so one browser failing doesn't cancel the others, `include` and `exclude` to fine-tune combinations, and a final aggregation job to merge reports. It's the simplest way to scale cross-browser runs without complex scripts.",
+  "tags": [
+   "cicd",
+   "github-actions"
+  ]
+ },
+ {
+  "id": "ci-011",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "What is a Jenkins pipeline as code, and how would you structure one for tests?",
+  "what_tested": "Jenkinsfile",
+  "model": "A declarative Jenkinsfile in the repo defines the stages (`checkout`, `lint`, `api tests`, `ui tests`, `report`), the agent (often a Docker image), environment variables and credentials (`withCredentials`), parallel stages for shards, and `post { always { junit 'results/*.xml'; archiveArtifacts ... } }` so reports publish even on failure. Pipeline-as-code is versioned and reviewed like the tests themselves. Add timeouts and `options { disableConcurrentBuilds() }` where it matters.",
+  "tags": [
+   "cicd",
+   "jenkins"
+  ]
+ },
+ {
+  "id": "ci-012",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "What are quality gates, and which test-related gates would you put on a pull request?",
+  "what_tested": "Quality gates",
+  "model": "Quality gates are required conditions before merging or deploying. Test-related PR gates: lint and type checks pass, unit and contract tests pass, the smoke suite passes on the PR environment, and no new critical static-analysis findings. Optionally a coverage threshold on changed code. Make them required status checks with branch protection. Keep gates fast and trustworthy; if a flaky gate blocks merges, people find ways around it.",
+  "tags": [
+   "cicd",
+   "quality"
+  ]
+ },
+ {
+  "id": "ci-013",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you test a deployment immediately after it goes out?",
+  "what_tested": "Post-deploy verification",
+  "model": "Run a small, fast smoke suite against the newly deployed environment: health endpoints, login, one or two critical read-only journeys, and key API contracts, using dedicated test accounts and data that doesn't pollute real metrics. Wire it into the deployment pipeline so failure triggers alerts or an automatic rollback. In production, keep it read-only or clean up safely. Complement it with synthetic monitoring that keeps running afterwards.",
+  "tags": [
+   "cicd",
+   "deployment"
+  ]
+ },
+ {
+  "id": "ci-014",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "What are blue-green and canary deployments, and what do they mean for testing?",
+  "what_tested": "Deployment strategies",
+  "model": "Blue-green: run two identical environments, deploy to the idle one, test it, then switch traffic, with instant rollback by switching back. Canary: release to a small percentage of users first, watch metrics and errors, then expand. For testing: you can run smoke tests against the green or canary instance before full traffic (using a header or route to target it), and you need good monitoring and automated rollback criteria, because some issues only appear under real traffic.",
+  "tags": [
+   "deployment"
+  ]
+ },
+ {
+  "id": "ci-015",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "What is synthetic monitoring, and how does it relate to your test suite?",
+  "what_tested": "Production checks",
+  "model": "Synthetic monitoring runs scripted user journeys or API calls against production on a schedule (every few minutes) and alerts when they fail or slow down. You can often reuse test code (Playwright scripts, API checks) with production-safe test accounts. It catches outages, broken third-party integrations and expired certificates between deployments, which your CI suite never sees. Keep the checks few, stable and read-only.",
+  "tags": [
+   "monitoring"
+  ]
+ },
+ {
+  "id": "ci-016",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "What is shift-left testing, and how have you applied it?",
+  "what_tested": "Shift-left",
+  "model": "Shift-left means finding problems earlier: reviewing requirements and designs for testability, defining acceptance criteria up front, encouraging developers to write unit tests, running fast tests on every commit, contract testing between services, static analysis, and testing on PR preview environments before merge. As an SDET, practical steps include joining refinement sessions, providing test ids early, building reusable fixtures developers can use, and making the PR pipeline fast enough to run on every change.",
+  "tags": [
+   "strategy"
+  ]
+ },
+ {
+  "id": "ci-017",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you manage test environments, and why are ephemeral environments valuable?",
+  "what_tested": "Environment strategy",
+  "model": "Shared long-lived environments (QA, staging) drift, get broken by other teams' deployments, accumulate junk data and become bottlenecks. Ephemeral environments are created per PR or branch from infrastructure-as-code, seeded with known data, tested, then destroyed, giving isolation and realistic pre-merge testing. They need investment (containers, Kubernetes namespaces, seeding scripts, cost control), but they remove a huge source of flakiness and waiting.",
+  "tags": [
+   "environments"
+  ]
+ },
+ {
+  "id": "ci-018",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you make test results visible and actionable for the team?",
+  "what_tested": "Feedback loops",
+  "model": "Show failures where people already look: PR status checks with links to the failing test, the trace and logs; a concise PR comment summary; Slack alerts for nightly failures routed to the owning team; and a dashboard for trends (pass rate, flake rate, duration). Tie each failure to an owner. Results nobody looks at have no value, and a flood of noisy alerts trains people to ignore them.",
+  "tags": [
+   "reporting"
+  ]
+ },
+ {
+  "id": "ci-019",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you prevent one flaky test from blocking every developer's merge?",
+  "what_tested": "Flake containment",
+  "model": "Detect flakiness quickly (a test that fails then passes on rerun with no code change), move it into quarantine (still running, non-blocking, tracked with an owner and deadline), and notify the owner. Keep required checks limited to trusted tests. Use merge queues so main stays green, and fix quarantined tests within a set time or delete them. Don't 'fix' this with global retries, which hide real races.",
+  "tags": [
+   "flakiness"
+  ]
+ },
+ {
+  "id": "ci-020",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How would you use a merge queue, and why does it help test stability?",
+  "what_tested": "Merge queues",
+  "model": "A merge queue (GitHub merge queue, GitLab merge trains, Bors) tests each PR combined with the changes ahead of it before merging, so main isn't broken by two individually green PRs that conflict semantically. The queue runs the required test suite on the combined state. It needs fast, reliable tests to be practical, otherwise the queue becomes a bottleneck, which is one more reason to keep PR suites quick and non-flaky.",
+  "tags": [
+   "cicd"
+  ]
+ },
+ {
+  "id": "ci-021",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you handle CI for a monorepo with many services and test suites?",
+  "what_tested": "Monorepo CI",
+  "model": "Use path-based triggers or build tools (Nx, Bazel, Pants, or `paths` filters in GitHub Actions) to run only the builds and tests affected by changed directories, with the full suite on main or nightly. Keep test suites owned per service (CODEOWNERS), share a common framework package, and make sure cross-service changes trigger the relevant integration or contract tests. Without selective builds, monorepo CI times grow linearly with the codebase.",
+  "tags": [
+   "cicd"
+  ]
+ },
+ {
+  "id": "ci-022",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you cache dependencies and Playwright browsers in CI?",
+  "what_tested": "Caching",
+  "model": "Cache pip downloads keyed on the lock file hash (`actions/setup-python` with `cache: pip`, or `actions/cache` on `~/.cache/pip`). Cache Playwright browsers in `~/.cache/ms-playwright` keyed on the Playwright version, but you still need the OS dependencies (`install-deps`) on fresh runners. Alternatively use the Playwright Docker image, which includes the browsers. Invalidate caches on version changes to avoid subtle mismatches.",
+  "tags": [
+   "cicd",
+   "performance"
+  ]
+ },
+ {
+  "id": "ci-023",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you handle test data and state when CI runs against a shared staging environment?",
+  "what_tested": "Shared environment hygiene",
+  "model": "Every run creates its own uniquely named data (with the run id or PR number in names) and cleans up in teardown. A scheduled sweeper deletes leftovers older than a day by prefix. Read-only reference data is seeded and versioned separately. Concurrency limits (CI concurrency groups) prevent too many runs hammering the environment at once, and a pre-flight health check fails fast when staging itself is broken.",
+  "tags": [
+   "environments",
+   "test-data"
+  ]
+ },
+ {
+  "id": "ci-024",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "Your nightly regression has been red for a week and people stopped looking. What do you do?",
+  "what_tested": "Restoring trust",
+  "model": "Treat it as an incident: triage every failure into product bug (ticket with priority), test bug (fix now), environment issue (escalate) or flaky (quarantine with owner). Get to green, even if that means temporarily quarantining tests. Then put process in place: an owner on rotation for nightly failures, alerts to the owning team, a 'no new red' rule, and visible flake and pass-rate metrics. A suite nobody trusts is worse than no suite, because it costs time and gives false confidence.",
+  "tags": [
+   "scenario",
+   "process"
+  ]
+ },
+ {
+  "id": "ci-025",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you decide whether a failed CI test should block a release?",
+  "what_tested": "Release decisions",
+  "model": "Look at what it covers and why it failed. A real product failure on a critical path (payments, auth, data integrity) blocks. A failure in low-risk functionality might ship with a documented known issue and a fix plan, decided with the product owner. A test or environment problem should be fixed or rerun with evidence the feature works (a manual check, or the API layer). Make the decision explicit and recorded, not 'rerun until green'.",
+  "tags": [
+   "process",
+   "release"
+  ]
+ },
+ {
+  "id": "ci-026",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you test database migrations in CI?",
+  "what_tested": "Schema changes",
+  "model": "Run migrations forwards on a copy of a realistic schema (production snapshot with masked data, or a seeded database) in CI, then run the test suite on top. Also test the rollback or down migration if it's supported, migration duration on large tables (locking risk), and that the old application version still works with the new schema during rolling deployments (expand-and-contract pattern). Breaking migrations are a common source of release incidents.",
+  "tags": [
+   "cicd",
+   "database"
+  ]
+ },
+ {
+  "id": "ci-027",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "What is infrastructure as code, and why should testers care?",
+  "what_tested": "IaC",
+  "model": "Infrastructure as code (Terraform, CloudFormation, Pulumi, Helm) defines environments in versioned files instead of manual setup. Testers benefit because environments become reproducible (ephemeral test environments, identical staging and production config) and changes are reviewable. Infra changes themselves can be tested: plan checks, policy checks (e.g. OPA or Checkov), and smoke tests after provisioning. Many 'it works in staging but not in prod' issues are configuration drift that IaC prevents.",
+  "tags": [
+   "environments"
+  ]
+ },
+ {
+  "id": "ci-028",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you run performance or load tests as part of CI without making the pipeline slow?",
+  "what_tested": "Performance in CI",
+  "model": "Split by purpose: lightweight performance assertions (API response-time budgets, page performance on key screens) run in regular suites with generous thresholds; proper load tests (k6, Locust) run on a schedule or before releases against a production-like environment, with results compared to a baseline and failing on regressions (e.g. p95 more than 20% worse). Keep load tests out of the PR path, but make their results visible.",
+  "tags": [
+   "performance",
+   "cicd"
+  ]
+ },
+ {
+  "id": "ci-029",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you notify the right people when tests fail?",
+  "what_tested": "Alert routing",
+  "model": "Route by ownership: map tests to teams (markers, folders, CODEOWNERS) and send failures to that team's channel with the failing test, error summary and artifact links. Notify the PR author directly for PR failures. For nightly runs, send one digest rather than a message per test, and page someone only for production smoke or synthetic monitoring failures. Tune alerts until each one is actionable, or people will mute them.",
+  "tags": [
+   "reporting"
+  ]
+ },
+ {
+  "id": "ci-030",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "Self-hosted vs cloud-hosted CI runners for UI tests: what are the trade-offs?",
+  "what_tested": "Runner choice",
+  "model": "Cloud-hosted runners are zero-maintenance and clean every run, but have limited CPU and memory, cost per minute, and sometimes can't reach internal environments. Self-hosted runners can be bigger, sit inside the network next to test environments and use cached images, but you maintain them (updates, cleanup, security, capacity), and dirty state between jobs can cause flakiness. Many teams use cloud runners for general CI and self-hosted ones for heavy or internal-network test suites.",
+  "tags": [
+   "cicd"
+  ]
+ },
+ {
+  "id": "ci-031",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "warm-up",
+  "kind": "concept",
+  "question": "What is a flaky test, and why is it so damaging?",
+  "what_tested": "Flakiness basics",
+  "model": "A flaky test passes and fails on the same code without any change. It's damaging because it destroys trust: people start rerunning and ignoring failures, real bugs slip through as 'probably flaky', CI time is wasted, and developers lose confidence in automation. A small number of flaky tests in a large suite can make nearly every run fail somewhere. Flakiness can also be a real product race condition that users will eventually hit.",
+  "tags": [
+   "flakiness"
+  ]
+ },
+ {
+  "id": "ci-032",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "What are the most common root causes of flaky UI tests?",
+  "what_tested": "Flake root causes",
+  "model": "Synchronisation (hard sleeps, non-retrying assertions, acting before data loads), test data collisions (shared records, parallel workers), order dependence and leaked state, environment instability (deployments mid-run, slow services, rate limits), third-party dependencies, time-dependent logic (midnight, time zones, expiring tokens), animations and overlays, brittle locators matching different elements, and genuine product race conditions. Each needs a different fix, so classify before fixing.",
+  "tags": [
+   "flakiness"
+  ]
+ },
+ {
+  "id": "ci-033",
   "topic": "CI, debugging & flakiness",
   "difficulty": "deep",
   "kind": "concept",
   "question": "Your suite has a 7% flake rate. How do you bring it down?",
   "what_tested": "Flakiness strategy",
-  "model": "Measure first: track each test's pass/fail history and find the worst offenders. Classify root causes: synchronization (sleeps, non-web-first asserts), test data collisions, environment instability, order dependence, and real product races. Quarantine with an owner and a deadline, never silent retries. Prevent new flakes with lint rules banning sleeps, a PR checklist and stress-running new tests before merge. Report the flake rate trend and set a target such as under 1%."
+  "model": "Measure first: track each test's pass/fail history and find the worst offenders. Classify root causes: synchronisation (sleeps, non-web-first asserts), test data collisions, environment instability, order dependence, and real product races. Quarantine with an owner and a deadline, never silent retries. Prevent new flakes with lint rules banning sleeps, a PR checklist and stress-running new tests before merge. Report the flake rate trend and set a target such as under 1%.",
+  "tags": [
+   "flakiness",
+   "strategy"
+  ]
+ },
+ {
+  "id": "ci-034",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you detect flaky tests systematically rather than by gut feeling?",
+  "what_tested": "Flake detection",
+  "model": "Collect per-test results over time (JUnit history, Allure history, or a database) and flag tests that both pass and fail on the same commit, or that pass on rerun. Run a scheduled 'stress' job that executes the suite, or new tests, several times. Track a flakiness score per test. Some CI platforms (and tools like BuildPulse, or Develocity for some stacks) do this automatically. Data beats memory when deciding what to fix first.",
+  "tags": [
+   "flakiness"
+  ]
+ },
+ {
+  "id": "ci-035",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "When do retries help, and when do they hide real bugs?",
+  "what_tested": "Retry trade-offs",
+  "model": "Retries help absorb rare infrastructure blips (a runner hiccup, a transient network error) and keep the pipeline moving while a fix is in progress. They hide bugs when they're applied globally and silently: a real race condition in the product passes on the second attempt and ships. Use retries narrowly (specific exceptions or tests), always report 'passed on retry' as flaky, track the count, and never retry critical-path assertions without investigating.",
+  "tags": [
+   "flakiness"
+  ]
+ },
+ {
+  "id": "ci-036",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you prove a flaky test is actually fixed?",
+  "what_tested": "Verifying fixes",
+  "model": "Reproduce the failure first if possible (stress-run it, run it in parallel with the suite, throttle the CPU or network) so you know your fix addresses the real cause. After the fix, run the test many times in conditions similar to CI, e.g. 50 to 100 iterations with pytest-repeat or a loop, in parallel, and watch its history in CI for a few days before removing it from quarantine. 'It passed once' proves nothing for a flaky test.",
+  "tags": [
+   "flakiness"
+  ]
+ },
+ {
+  "id": "ci-037",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How can a flaky test be a real product bug rather than a test problem?",
+  "what_tested": "Product races",
+  "model": "Intermittent failures sometimes reveal real races: double-submits creating duplicates, a UI rendering stale data from a previous request, events processed out of order, caches not invalidated, or concurrency bugs under load. If the trace shows the app in a wrong state (not just the test acting too early), treat it as a product bug: reproduce with stress or concurrency, and file it with evidence. Users will hit it at scale.",
+  "tags": [
+   "flakiness"
+  ]
+ },
+ {
+  "id": "ci-038",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "What does a good flaky-test quarantine process look like?",
+  "what_tested": "Quarantine process",
+  "model": "Entry: data shows a test is flaky; it's marked `quarantine` with a ticket and owner. While quarantined: it still runs (non-blocking job) so you keep seeing data, and it's visible on a dashboard with its age. Exit: the root cause is fixed and the test passes a stress run, or after a deadline it's rewritten or deleted. Keep quarantine small; a growing quarantine list is a backlog of untested functionality.",
+  "tags": [
+   "flakiness",
+   "process"
+  ]
+ },
+ {
+  "id": "ci-039",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do animations and transitions cause flakiness, and how do you handle them?",
+  "what_tested": "Animation issues",
+  "model": "During an animation an element may be moving, partially covered or not yet clickable, and screenshots differ between runs. Playwright's stability check waits for elements to stop moving before actions, which handles most cases. For the rest: assert on the final state with `expect`, disable animations in test environments (a reduced-motion setting, CSS injected via an init script, or `animations=\"disabled\"` for screenshots), and wait for overlays to disappear rather than clicking through them.",
+  "tags": [
+   "flakiness"
+  ]
+ },
+ {
+  "id": "ci-040",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do time and date logic cause flaky tests?",
+  "what_tested": "Time-dependent flakiness",
+  "model": "Tests that compute expectations from 'now' break around midnight, month or year ends, DST changes, or when the CI runner's time zone differs from the app's. Token expiry and cache TTLs cause failures when tests run slowly. Fix by controlling time: fixed dates in test data, Playwright's clock API, freezegun or time-machine for Python code, an explicit `TZ` and locale in CI, and backend test hooks for server-side clocks.",
+  "tags": [
+   "flakiness",
+   "time"
+  ]
+ },
+ {
+  "id": "ci-041",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you avoid flakiness caused by test data collisions in parallel runs?",
+  "what_tested": "Data isolation",
+  "model": "Give every test unique data (uuid or worker-id suffixes), create it in function-scoped fixtures and clean it up afterwards; never depend on 'first row' or global counts; filter by your own unique identifiers; give each worker its own accounts when sessions or settings are per-user; and avoid tests that change global configuration, or isolate them in a serial group. pytest-xdist's `worker_id` fixture helps build per-worker names.",
+  "tags": [
+   "flakiness",
+   "parallel"
+  ]
+ },
+ {
+  "id": "ci-042",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "A test fails in CI but passes locally. How do you debug it?",
+  "what_tested": "CI-only failures",
+  "model": "Get evidence from CI first: the trace, screenshot, video, logs and network. Compare environments: browser and Playwright versions, headless versus headed, viewport, OS fonts, time zone and locale, CPU speed (CI is often slower, exposing races), parallelism (xdist on CI only?), environment URL and data, and secrets or config differences. Reproduce locally under CI-like conditions: the same Docker image, headless, with parallel workers and CPU throttling. Fix the root cause, not the symptom.",
+  "tags": [
+   "debugging"
+  ]
+ },
+ {
+  "id": "ci-043",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "Walk me through your general approach to debugging a failing automated test.",
+  "what_tested": "Debugging method",
+  "model": "Read the error and the failing line carefully. Check whether it's new (what changed: app, test, data, environment?). Look at the artifacts (trace, screenshot, logs, API responses with correlation ids). Reproduce it, ideally the single test in isolation. Form a hypothesis and test it by changing one thing at a time. Narrow down with bisection (which commit or which data). Decide whether it's a product bug, test bug or environment issue, fix or file it with evidence, and add a test or guard so it doesn't recur.",
+  "tags": [
+   "debugging"
+  ]
+ },
+ {
+  "id": "ci-044",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you use git bisect to find which change broke a test?",
+  "what_tested": "Bisecting regressions",
+  "model": "`git bisect start`, mark the current commit bad (`git bisect bad`) and a known good commit (`git bisect good <sha>`). Git checks out commits halfway between; you run the failing test and mark each good or bad until it identifies the first bad commit, which takes about log₂(n) steps. Automate it with `git bisect run pytest tests/test_x.py -x`. It works for app repos and test repos; for deployed systems, bisect over deployed versions or build artifacts instead.",
+  "tags": [
+   "debugging",
+   "git"
+  ]
+ },
+ {
+  "id": "ci-045",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "A test fails with a timeout but the screenshot looks fine. What could be happening?",
+  "what_tested": "Misleading evidence",
+  "model": "The screenshot shows the end state, not the moment the action was attempted. The element may have appeared just after the timeout, the locator may match a different (hidden or duplicate) element than the one you see, the element may be visible but covered or disabled, or you may be in the wrong frame or tab. Open the trace: the action log shows what Playwright was waiting for and the DOM snapshot at each retry, which usually reveals the mismatch.",
+  "tags": [
+   "debugging"
+  ]
+ },
+ {
+  "id": "ci-046",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you use application logs and correlation ids when a test fails?",
+  "what_tested": "Observability for testers",
+  "model": "Send a correlation id (or capture the request id from response headers) on every API call the test makes, and log it on failure. Then search the application logs and traces (Kibana, Datadog, Grafana, CloudWatch) for that id to see the server-side path: errors, slow queries, failing downstream calls. That turns 'the test failed with a 500' into 'service X threw a null pointer when field Y was missing', which developers can act on immediately.",
+  "tags": [
+   "debugging",
+   "observability"
+  ]
+ },
+ {
+  "id": "ci-047",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "What are logs, metrics and traces, and how can testers use each?",
+  "what_tested": "Observability pillars",
+  "model": "Logs are discrete event records (errors, warnings, request details), useful for the 'what happened' of a specific failure. Metrics are numeric time series (error rate, latency, CPU), useful to spot whether a failure coincides with an environment problem or a performance regression. Distributed traces follow one request across services with timings, useful to locate which service in a chain failed or was slow. Testers who can navigate all three diagnose failures far faster.",
+  "tags": [
+   "observability"
+  ]
+ },
+ {
+  "id": "ci-048",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you debug a test that fails only when run with the full suite in parallel?",
+  "what_tested": "Parallel-only failures",
+  "model": "Suspect shared state: data collisions, shared accounts, global settings changed by another test, files written to the same path, or environment rate limits. Reproduce with the same parallelism and a fixed order (pytest-randomly seed), then bisect which co-running tests trigger it. Check the server logs for conflicts (409s, deadlocks). Fix by isolating data and accounts per test or worker, or grouping tests that share a resource (xdist `loadgroup`).",
+  "tags": [
+   "debugging",
+   "parallel"
+  ]
+ },
+ {
+  "id": "ci-049",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you investigate a test failure caused by a slow or failing third-party service?",
+  "what_tested": "External dependency failures",
+  "model": "Check the trace's network log and server logs for the external call: status codes, timeouts, latency. Check the provider's status page. Decide whether the test's purpose needs the real service; if not, mock it at the network layer. Make tests that do depend on it report clearly ('payment sandbox unavailable') and run them separately, so a provider outage doesn't turn your whole regression red.",
+  "tags": [
+   "debugging"
+  ]
+ },
+ {
+  "id": "ci-050",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "What is a heisenbug, and how do you approach one?",
+  "what_tested": "Elusive bugs",
+  "model": "A heisenbug disappears or changes when you try to observe it, for example when you add logging, run headed, slow the test down or attach a debugger, usually because it's timing-related. Approach: capture evidence passively (traces, video, server logs) instead of changing timing, reproduce under stress (parallel runs, CPU throttling, many iterations), and reason about races (what could happen in a different order?). The fix is usually proper synchronisation, in the test or in the product.",
+  "tags": [
+   "debugging"
+  ]
+ },
+ {
+  "id": "ci-051",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "A critical release is tomorrow and the regression suite shows 30 new failures. How do you triage?",
+  "what_tested": "Release-pressure triage",
+  "model": "Group failures by error signature and area; 30 failures are often 3–5 root causes (a shared locator change, an environment outage, one broken API). Check the environment's health first. Prioritise by risk: anything in payments, auth or data integrity first. For each group, decide: product bug (raise immediately with evidence, involve the developer and product owner), test issue (fix or confirm manually) or environment (fix and rerun). Communicate status and risk clearly to stakeholders, with a recommendation, not just a count.",
+  "tags": [
+   "scenario",
+   "triage"
+  ]
+ },
+ {
+  "id": "ci-052",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you write a good bug report for a failure found by automation?",
+  "what_tested": "Defect reporting",
+  "model": "A clear title naming the behaviour and impact; environment and build; minimal reproduction steps (often an API call or a short UI path, not the whole test); expected versus actual; evidence (trace, screenshot, request and response, logs with correlation id); frequency (always or intermittent, with data); and severity reasoning. Link the failing test. A developer should be able to reproduce it without asking you anything, which makes automation findings credible.",
+  "tags": [
+   "process"
+  ]
+ },
+ {
+  "id": "ci-053",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "What is root cause analysis, and how do the '5 whys' apply to a test failure?",
+  "what_tested": "RCA",
+  "model": "Root cause analysis looks past the immediate failure to the underlying cause, so it doesn't recur. The 5 whys: the test failed. Why? The button wasn't clickable. Why? A loading overlay covered it. Why? The test didn't wait for data. Why? The page object's `open()` doesn't wait for the API. Why? There's no convention for page readiness. The fix then addresses the convention (a readiness check in all page objects), not just one test.",
+  "tags": [
+   "process"
+  ]
+ },
+ {
+  "id": "ci-054",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you run a blameless post-mortem after a bug escaped to production?",
+  "what_tested": "Learning from escapes",
+  "model": "Gather a factual timeline (when it was introduced, deployed, detected and fixed) and the impact. Analyse why existing tests and reviews didn't catch it: no coverage, wrong test layer, mocked away, a flaky test ignored, an environment difference. Focus on systems and processes, not individuals. Agree concrete actions with owners: regression tests at the right layer, contract tests, monitoring and alerts, process changes. Follow up that the actions actually happen.",
+  "tags": [
+   "process"
+  ]
+ },
+ {
+  "id": "ci-055",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do headless browsers in CI differ from local runs, and what problems can that cause?",
+  "what_tested": "Headless differences",
+  "model": "Differences include default viewport (responsive layouts switch, so elements hide in hamburger menus), missing or different fonts (layout shifts, visual diffs), GPU and rendering differences, and lower CPU speed exposing races. Downloads, clipboard and permission behaviour can also differ. Fix by setting an explicit viewport and locale in config, running locally in the same Docker image when debugging, and using traces to see what headless actually rendered.",
+  "tags": [
+   "debugging",
+   "headless"
+  ]
+ },
+ {
+  "id": "ci-056",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "A test passes with --headed but fails headless. What do you check?",
+  "what_tested": "Headed-only passes",
+  "model": "Viewport first: headed windows may be larger, so set the viewport explicitly. Then timing: headed runs with slow-mo or visible rendering can be slower and accidentally avoid a race. Then fonts and rendering: text wrapping can push elements off-screen. Then focus: some apps behave differently when the window isn't focused (blur events, visibility API). Open the headless trace and compare it with a headed trace step by step.",
+  "tags": [
+   "debugging",
+   "headless"
+  ]
+ },
+ {
+  "id": "ci-057",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "What causes 'net::ERR_CERT' or SSL errors in CI test runs, and how do you fix them properly?",
+  "what_tested": "Certificate issues",
+  "model": "Staging environments often use self-signed or internal-CA certificates that CI runners don't trust, or certificates that have expired or don't match the host name. Proper fixes: install the internal CA certificate in the CI image or runner trust store, renew expired certificates, and use correct host names. For browser tests against staging, `ignore_https_errors=True` scoped to that environment is acceptable; for production checks, a certificate error should fail the test, because users would see it too.",
+  "tags": [
+   "debugging",
+   "environments"
+  ]
+ },
+ {
+  "id": "ci-058",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you diagnose a test failure caused by a memory or resource leak in a long CI run?",
+  "what_tested": "Resource exhaustion",
+  "model": "Symptoms: tests start failing or slowing down late in the run, browsers crash ('Target closed'), or the runner runs out of memory. Check for contexts and pages not closed (fixtures missing teardown), traces or videos accumulating, large objects kept in session fixtures, and too many workers for the runner's memory. Monitor memory over the run, reduce xdist workers or split shards, and make sure every context is closed in teardown.",
+  "tags": [
+   "debugging"
+  ]
+ },
+ {
+  "id": "ci-059",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you handle rate limits that your parallel test runs trigger?",
+  "what_tested": "Throttling",
+  "model": "Confirm with the 429 responses and headers. Options: reduce parallelism against the rate-limited service, ask for higher limits or an allow-list for test accounts in test environments, spread load across several test accounts or API keys, cache auth tokens instead of logging in per test, and respect `Retry-After` in the client for transient cases. Rate limiting itself should be tested deliberately in a dedicated test, not hit accidentally.",
+  "tags": [
+   "debugging",
+   "parallel"
+  ]
+ },
+ {
+  "id": "ci-060",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you investigate a sudden increase in test suite duration?",
+  "what_tested": "Duration regressions",
+  "model": "Compare per-test durations between a fast and a slow run (`--durations`, JUnit timing, Allure trends) to see if it's everywhere (environment slowness, runner changes, fewer workers) or specific tests (a new slow test, an added hard wait, an API that became slower, which might be a product performance regression worth reporting). Check pipeline changes like cache misses or image pulls. Treat suite duration as a monitored metric with a budget so regressions get noticed early.",
+  "tags": [
+   "debugging",
+   "performance"
+  ]
+ },
+ {
+  "id": "ci-061",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you keep CI pipelines themselves maintainable?",
+  "what_tested": "Pipeline maintenance",
+  "model": "Treat pipeline config as code: reviewed, versioned and kept DRY with reusable workflows, templates and shared actions or libraries. Pin action and image versions, and update them deliberately. Document what each job does and who owns it. Keep scripts in the repo (`make test-smoke`) so CI just calls them, which also makes them runnable locally. Regularly delete unused jobs and stale caches. Monitor pipeline duration and failure causes like any other system.",
+  "tags": [
+   "cicd"
+  ]
+ },
+ {
+  "id": "ci-062",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "What is 'flaky infrastructure' and how do you separate it from flaky tests?",
+  "what_tested": "Infra vs test flakiness",
+  "model": "Infrastructure flakiness is failures caused by the CI platform or environment rather than the test: runner out of disk, Docker pull failures, DNS blips, a test environment restarting, shared-database locks. Separate them by categorising failures (exception types, error-message patterns, failures before any test runs) and tagging them in reports. Fix them at the source (better runners, health checks, retrying the infra step rather than the test) and report infra reliability separately so test owners aren't blamed.",
+  "tags": [
+   "flakiness",
+   "cicd"
+  ]
+ },
+ {
+  "id": "ci-063",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you test feature-flagged code in CI?",
+  "what_tested": "Flags in pipelines",
+  "model": "Run critical tests with the flag in both states while the rollout is in progress: set flags per test via the flag service's API or a test override (header, cookie, environment config), and include flag state in test ids or report metadata. Default CI runs should match what production users get, plus targeted runs for the new state. Remove flag-specific tests when the flag is cleaned up.",
+  "tags": [
+   "cicd",
+   "feature-flags"
+  ]
+ },
+ {
+  "id": "ci-064",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you make sure tests running against production don't harm real users or data?",
+  "what_tested": "Production testing safety",
+  "model": "Use dedicated, clearly marked test accounts and test tenants; read-only checks wherever possible; any writes are reversible and cleaned up immediately; test transactions are excluded from analytics, billing and emails (via flags or headers the backend respects); avoid peak hours for anything heavy; run under rate limits; and get explicit agreement from product and operations owners. Monitor the checks themselves so a broken test doesn't spam real systems.",
+  "tags": [
+   "production"
+  ]
+ },
+ {
+  "id": "ci-065",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you handle test failures that only happen at certain times of day?",
+  "what_tested": "Time-of-day failures",
+  "model": "Correlate failures with time: nightly batch jobs, backups or deployments running at the same time, data rollover at midnight (UTC versus local), maintenance windows, rate-limit resets, or token caches expiring. Check environment schedules and logs around failure times. Fixes include moving the test run, making tests independent of those processes, controlling time in tests, and asking for environment schedules to be published.",
+  "tags": [
+   "debugging",
+   "time"
+  ]
+ },
+ {
+  "id": "ci-066",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "What's your approach when a developer says 'that test is just flaky' about a failure?",
+  "what_tested": "Professional pushback",
+  "model": "Look at the evidence before agreeing: the trace, the history (has it failed before on this step?), and whether the failure shows the app in a wrong state. If it's truly test flakiness, quarantine it and fix it with an owner. If the app misbehaved, show the evidence calmly and file it as a product bug, possibly a race condition. 'Flaky' is a hypothesis to verify, not a reason to ignore a failure.",
+  "tags": [
+   "communication",
+   "flakiness"
+  ]
+ },
+ {
+  "id": "ci-067",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you use Playwright traces to debug a CI failure step by step?",
+  "what_tested": "Trace-driven debugging",
+  "model": "Download the trace artifact and open it with `playwright show-trace trace.zip` (or trace.playwright.dev). Walk the action timeline to the failing step, inspect the before and after DOM snapshots (you can pick locators in them), check what the action was waiting for, then look at the network tab for failed or slow requests and the console for JavaScript errors around that time. Compare with a trace from a passing run if needed; the difference usually points straight at the cause.",
+  "tags": [
+   "debugging",
+   "tracing"
+  ]
+ },
+ {
+  "id": "ci-068",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "What should happen automatically when the main branch's test suite turns red?",
+  "what_tested": "Main-branch hygiene",
+  "model": "Notify the authors of the commits since the last green run, and the owning team for the failing tests. Block further merges if main must stay green (merge queues help prevent this in the first place). Then either fix forward quickly or revert the offending commit; reverting is often fastest. Track 'time main was red' as a metric. A broken main blocks everyone and trains people to ignore failures.",
+  "tags": [
+   "cicd",
+   "process"
+  ]
+ },
+ {
+  "id": "ci-069",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How would you reduce the time from 'test failed' to 'we know why'?",
+  "what_tested": "Mean time to diagnose",
+  "model": "Make every failure self-explanatory: rich artifacts (trace, screenshot, request and response, correlation id, logs), clear assertion messages, error categorisation (product, test, environment) in reports, failure grouping by signature, links from the CI check straight to the relevant artifact, and ownership routing. Measure the time from failure to triage decision, and look at what slowed down the last few investigations. That usually reveals a missing artifact or poor message.",
+  "tags": [
+   "process",
+   "reporting"
+  ]
+ },
+ {
+  "id": "ci-070",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you handle environment configuration drift between staging and production?",
+  "what_tested": "Config drift",
+  "model": "Drift happens when settings, feature flags, data or versions differ between environments, so tests pass in staging but production behaves differently. Reduce it with infrastructure as code and the same deployment pipeline for all environments, config diff checks (compare flag states and versions automatically), production smoke tests, and treating staging config changes as reviewed code. When an escaped bug turns out to be drift, add a check that would have caught the difference.",
+  "tags": [
+   "environments"
+  ]
+ },
+ {
+  "id": "ci-071",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "What is chaos engineering, and is it relevant to QA?",
+  "what_tested": "Resilience testing",
+  "model": "Chaos engineering deliberately injects failures (killing instances, adding latency, failing dependencies) in a controlled way to verify a system degrades gracefully and recovers. It's relevant to QA as an extension of resilience testing: verifying timeouts, retries, circuit breakers, fallbacks and alerts actually work. Start small in test environments with clear hypotheses and abort conditions, using tools such as toxiproxy, Chaos Mesh or Gremlin, before considering production experiments.",
+  "tags": [
+   "resilience"
+  ]
+ },
+ {
+  "id": "ci-072",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you balance speed and coverage when designing a PR pipeline?",
+  "what_tested": "Pipeline trade-offs",
+  "model": "Set a time budget developers accept (e.g. 10–15 minutes), then fill it with the highest risk-per-minute checks: lint and unit tests, contract tests, API tests for changed services, and a small UI smoke set of the most critical journeys. Move broad, slow coverage to post-merge and nightly runs, with fast alerting back to authors. Revisit the selection using data on which tests catch bugs; tests that never fail in PRs might belong in nightly runs.",
+  "tags": [
+   "cicd",
+   "strategy"
+  ]
+ },
+ {
+  "id": "ci-073",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you test that your monitoring and alerting actually work?",
+  "what_tested": "Testing alerts",
+  "model": "In a test environment, trigger the conditions alerts should catch, such as error spikes, slow responses, a stopped service or a failing synthetic check, and verify the alert fires, reaches the right channel or on-call person, and contains useful information. Check alerts don't fire for normal conditions (noise). Include alert checks in game days or chaos experiments. An alert that has never been tested is a guess, not a safety net.",
+  "tags": [
+   "monitoring"
+  ]
+ },
+ {
+  "id": "ci-074",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "What would you include in a CI/CD dashboard for test health?",
+  "what_tested": "Dashboards",
+  "model": "Pass rate per suite over time (excluding quarantined tests), flake rate and the top flaky tests, suite and pipeline durations with trends, failure categories (product, test, environment), time main was red, quarantine list size and age, deployments and their post-deploy smoke results, and escaped defects by area. Keep it to what drives decisions; a dashboard with 40 charts gets ignored.",
+  "tags": [
+   "metrics",
+   "reporting"
+  ]
+ },
+ {
+  "id": "ci-075",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you onboard a new test suite into an existing CI system without disrupting the team?",
+  "what_tested": "Rolling out new checks",
+  "model": "Start in non-blocking mode: run it on PRs or nightly, report results, and fix the flaky and slow parts first. Once it has been stable for a few weeks (a low flake rate and reasonable duration), make it a required check, announced in advance with documentation on how to read failures and who owns them. Monitor the first weeks closely, and be quick to quarantine any test that causes false failures.",
+  "tags": [
+   "cicd",
+   "process"
+  ]
+ },
+ {
+  "id": "ci-076",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "Why might a test fail because of the CI runner's locale or time zone, and how do you prevent it?",
+  "what_tested": "Locale and time zone in CI",
+  "model": "CI containers often default to UTC and the C or POSIX locale, while developers run in local settings, so date formatting, number separators, currency symbols, sorting order and 'today' can differ. Set `TZ` and locale explicitly in the CI job and in the browser context (`timezone_id`, `locale`), make tests specify the locale they expect, and avoid assertions that implicitly depend on the machine's settings.",
+  "tags": [
+   "debugging",
+   "environments"
+  ]
+ },
+ {
+  "id": "ci-077",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you test a hotfix quickly and safely?",
+  "what_tested": "Hotfix testing",
+  "model": "Reproduce the bug with a test first (it fails on the current release), apply the fix, then confirm the test passes. Run the smoke suite and the regression tests for the affected area, plus anything touching the same code paths (use the diff and impact analysis). Deploy through the normal pipeline, not around it, with post-deployment smoke checks and monitoring. Afterwards, add the new test permanently and run the full regression in the next cycle.",
+  "tags": [
+   "process",
+   "release"
+  ]
+ },
+ {
+  "id": "ci-078",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you measure and communicate the value of CI test automation to management?",
+  "what_tested": "Demonstrating value",
+  "model": "Use outcome metrics: defects caught before production (and their severity), escaped defects trending down, regression time reduced (e.g. from 3 days manual to 40 minutes automated), deployment frequency enabled, and time saved per release. Show reliability too (flake rate, pipeline duration) to justify maintenance investment. Present trends and a few concrete stories ('this test caught a double-charge bug before release') rather than raw test counts.",
+  "tags": [
+   "metrics",
+   "communication"
+  ]
+ },
+ {
+  "id": "ci-079",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "What are the common ways to trigger a CI test workflow, and when would you use each?",
+  "what_tested": "Pipeline triggers",
+  "model": "On pull request (fast checks before merge), on push to main (post-merge regression and deployment), on a schedule with cron (nightly full regression, synthetic checks, dependency audits), manually with inputs such as `workflow_dispatch` with an `env` choice (ad-hoc runs against a chosen environment), and from other pipelines or deployments (a post-deploy smoke run). Schedules use UTC in GitHub Actions, so remember to convert from IST.",
+  "tags": [
+   "cicd",
+   "github-actions"
+  ]
+ },
+ {
+  "id": "ci-080",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you let someone run the test suite against a chosen environment from the CI UI?",
+  "what_tested": "Parameterised runs",
+  "model": "In GitHub Actions, use `workflow_dispatch` with inputs (`env: choice [dev, staging, preprod]`, `markers: string`, `browser: choice`), map the chosen environment to a GitHub Environment holding that environment's secrets and protection rules, and pass the inputs to pytest (`--env`, `-m`, `--browser`). In Jenkins, use build parameters. Add a sensible default and validation so a typo doesn't run destructive tests against the wrong place.",
+  "tags": [
+   "cicd",
+   "github-actions"
+  ]
+ },
+ {
+  "id": "ci-081",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "What do concurrency groups do in GitHub Actions, and why are they useful for test runs?",
+  "what_tested": "Concurrency control",
+  "model": "`concurrency: { group: tests-${{ github.ref }}, cancel-in-progress: true }` makes a new run on the same branch cancel the previous in-progress run, so you don't waste runner minutes testing superseded commits. A group per environment (`group: staging-tests`) without cancellation queues runs so two suites don't hammer the same environment and collide on data. It's a simple fix for both cost and flakiness.",
+  "tags": [
+   "cicd",
+   "github-actions"
+  ]
+ },
+ {
+  "id": "ci-082",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you debug a failing GitHub Actions step that you can't reproduce locally?",
+  "what_tested": "Debugging CI jobs",
+  "model": "Re-run the job with debug logging enabled (secrets `ACTIONS_STEP_DEBUG` and `ACTIONS_RUNNER_DEBUG`, or the 'enable debug logging' option on re-run), add diagnostic steps (print versions, environment variables without secrets, `ls` of key paths), upload extra artifacts, and run the same Docker image locally with the same commands. As a last resort, an SSH debugging action (e.g. tmate) can open a shell on the runner, but only for private repos and never with secrets exposed.",
+  "tags": [
+   "cicd",
+   "debugging"
+  ]
+ },
+ {
+  "id": "ci-083",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "What are GitHub Environments, and how do they help test and deployment pipelines?",
+  "what_tested": "Environment protection",
+  "model": "GitHub Environments group secrets and variables per target (staging, production) and add protection rules: required reviewers, wait timers and branch restrictions. Jobs that reference `environment: production` only get production secrets after the rules pass. For tests, that means staging credentials can't leak into PR runs from forks, and production smoke tests run only from approved workflows on main.",
+  "tags": [
+   "cicd",
+   "security"
+  ]
+ },
+ {
+  "id": "ci-084",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "What is OIDC in CI, and why is it better than long-lived cloud credentials?",
+  "what_tested": "Short-lived credentials",
+  "model": "With OpenID Connect, the CI job receives a short-lived identity token from the CI provider, which the cloud (AWS, GCP, Azure) or a vault exchanges for temporary credentials, based on trust rules such as 'only this repo's main branch'. No long-lived access keys sit in CI secrets, so there's nothing to leak or rotate. Test jobs that need cloud resources (buckets for reports, test databases) should use it.",
+  "tags": [
+   "cicd",
+   "security"
+  ]
+ },
+ {
+  "id": "ci-085",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "What does 'build once, deploy many' mean, and why does it matter for testing?",
+  "what_tested": "Artifact promotion",
+  "model": "Build one immutable artifact (a container image with a specific tag or digest) per commit, then promote that same artifact through test, staging and production, changing only configuration. What you tested is exactly what you ship, unlike rebuilding per environment, where dependencies or build flags can differ. Tests should record which artifact version they ran against, so results are traceable.",
+  "tags": [
+   "cicd",
+   "deployment"
+  ]
+ },
+ {
+  "id": "ci-086",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How does trunk-based development affect your test strategy?",
+  "what_tested": "Branching strategy",
+  "model": "In trunk-based development everyone merges small changes to main frequently (at least daily), using feature flags for incomplete work. Tests must be fast and reliable enough to run on every merge, since main must stay releasable; flaky tests directly block the team. It favours strong unit, contract and smoke suites in the PR path, merge queues, feature-flag testing in both states, and quick revert culture, rather than long stabilisation phases on release branches.",
+  "tags": [
+   "cicd",
+   "process"
+  ]
+ },
+ {
+  "id": "ci-087",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "Merge vs rebase: what do you prefer for a test repository, and why?",
+  "what_tested": "Git workflow",
+  "model": "Rebasing a feature branch onto main before merging gives a linear, readable history and surfaces conflicts in your own branch. Merge commits preserve exact history but can clutter it. Many teams squash-merge PRs (one commit per change), which makes `git bisect` and reverts simple. The key rules: never rebase shared branches others are working on, keep PRs small, and use a consistent strategy enforced in repository settings.",
+  "tags": [
+   "git"
+  ]
+ },
+ {
+  "id": "ci-088",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you use Docker Compose to run tests against a local stack?",
+  "what_tested": "Local environments",
+  "model": "Define the app, its database, cache and mock services (e.g. WireMock) in `docker-compose.yml`, with healthchecks so dependents wait until services are ready (`depends_on: condition: service_healthy`). Run the stack, seed data, then run tests in a container on the same network or from the host against mapped ports. `docker compose logs <service>` and `docker compose exec` help debugging. That gives every engineer and CI job the same disposable environment.",
+  "tags": [
+   "docker",
+   "environments"
+  ]
+ },
+ {
+  "id": "ci-089",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you debug a service running in a container that your tests depend on?",
+  "what_tested": "Container debugging",
+  "model": "`docker ps` to check it's running and healthy, `docker logs -f <container>` for errors, `docker exec -it <container> sh` to inspect files, config and connectivity from inside (curl the dependency), `docker inspect` for environment variables, networks and mounts, and check port mappings when tests can't connect. In Kubernetes the equivalents are `kubectl get pods`, `logs`, `describe` (events show crash loops and failed probes) and `exec`.",
+  "tags": [
+   "docker",
+   "debugging"
+  ]
+ },
+ {
+  "id": "ci-090",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "What Kubernetes basics are useful for an SDET?",
+  "what_tested": "Kubernetes literacy",
+  "model": "Know the objects: pods (running containers), deployments (desired replicas and rollouts), services (stable networking), config maps and secrets (configuration), namespaces (often one per environment or ephemeral PR environment), and probes (liveness and readiness). Useful commands: `kubectl get`, `describe`, `logs`, `exec` and `port-forward` (to reach an internal service from your test machine). It lets you diagnose 'the environment is broken' failures yourself, such as crash-looping pods or failed readiness probes.",
+  "tags": [
+   "kubernetes",
+   "environments"
+  ]
+ },
+ {
+  "id": "ci-091",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you merge test results from parallel CI shards into one report?",
+  "what_tested": "Report aggregation",
+  "model": "Each shard writes results with a unique name (`results/junit-shard-${n}.xml`, or its own `allure-results` folder) and uploads them as an artifact. A final job that depends on all shards downloads them, merges them (most CI tools accept several JUnit files; Allure combines result folders; junitparser can merge XML), generates one report, and publishes it as the PR summary. Make that job run even when shards fail (`if: always()`), since that's exactly when you need the report.",
+  "tags": [
+   "cicd",
+   "reporting"
+  ]
+ },
+ {
+  "id": "ci-092",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "What can go wrong with CI caching, and how do you avoid it?",
+  "what_tested": "Cache pitfalls",
+  "model": "Stale caches give different results than a clean install: cached dependencies that don't match the lock file, browser binaries from an old Playwright version, or cached build outputs masking a broken build. Avoid it by keying caches on exact lock-file hashes and tool versions, using restore keys carefully, never caching test results or environment state, and occasionally running a clean build (no cache) to confirm everything still works from scratch.",
+  "tags": [
+   "cicd"
+  ]
+ },
+ {
+  "id": "ci-093",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "Why should conditional or 'always' steps be used carefully in CI pipelines?",
+  "what_tested": "Pipeline logic",
+  "model": "Steps like report publishing and artifact upload should run even when tests fail (`if: always()` or `post { always }`), otherwise you lose the evidence exactly when you need it. But wrapping test steps with 'continue on error' or `|| true` hides failures and turns the pipeline green while tests fail. Keep the test step's exit code meaningful, and make only reporting and cleanup unconditional.",
+  "tags": [
+   "cicd"
+  ]
+ },
+ {
+  "id": "ci-094",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you control the cost of running large test suites in CI?",
+  "what_tested": "CI cost management",
+  "model": "Cancel superseded runs, run expensive suites (full cross-browser, visual, load) nightly instead of per PR, use test selection for PRs, cache aggressively, right-size runners (bigger runners can finish faster and cost less overall), shut down ephemeral environments automatically, limit artifact retention, and track cost per pipeline. Removing redundant and flaky tests saves money as well as time.",
+  "tags": [
+   "cicd"
+  ]
+ },
+ {
+  "id": "ci-095",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "What is semantic versioning, and how does it help when upgrading test dependencies?",
+  "what_tested": "Versioning",
+  "model": "Semantic versioning (MAJOR.MINOR.PATCH) signals the kind of change: patch for bug fixes, minor for new backward-compatible features, major for breaking changes. With it, you can let patch and minor updates through with confidence (after CI passes) and plan major upgrades (e.g. pytest 8 to 9, a Playwright major) with changelog review. Your own shared test framework package should follow it too, so consuming teams know when an upgrade needs work.",
+  "tags": [
+   "tooling"
+  ]
+ },
+ {
+  "id": "ci-096",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you keep Playwright and browser versions consistent across local machines and CI?",
+  "what_tested": "Version alignment",
+  "model": "Pin `playwright` (and pytest-playwright) in the lock file, use the matching official Docker image tag (`mcr.microsoft.com/playwright/python:v1.xx.x-...`) in CI, and run `playwright install` after every dependency update locally (a make target or post-install hook helps). Browsers are tied to the Playwright version, so mismatches cause 'executable doesn't exist' errors or subtle behaviour differences. Update everything together in one PR.",
+  "tags": [
+   "cicd",
+   "playwright"
+  ]
+ },
+ {
+  "id": "ci-097",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "What is a smoke test vs a sanity test vs a regression test in a pipeline context?",
+  "what_tested": "Test types",
+  "model": "A smoke test is a quick, broad check that the build or deployment is fundamentally working (the app loads, login works, key APIs respond), run first or right after a deploy. A sanity test is a narrow, focused check that a specific fix or change works, often after a hotfix. A regression test checks existing functionality still works after changes, usually the full or tiered suite. Pipelines typically run smoke on every deploy and regression on schedule or before release.",
+  "tags": [
+   "fundamentals"
+  ]
+ },
+ {
+  "id": "ci-098",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you handle a test that depends on an asynchronous background job finishing?",
+  "what_tested": "Async jobs in tests",
+  "model": "Don't sleep for a guessed duration. Poll a status endpoint or the resulting state with a bounded wait (a helper like `wait_until(condition, timeout=60, interval=2, message=...)`), triggering the job via API where possible. In test environments, ask for hooks to run the job on demand or to shorten intervals. Report clearly when the timeout is reached, including the last observed state, so you can tell 'slow' from 'never ran'.",
+  "tags": [
+   "flakiness",
+   "async"
+  ]
+ },
+ {
+  "id": "ci-099",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "What's the difference between a test failing, erroring and being skipped, and why does it matter in CI reports?",
+  "what_tested": "Result categories",
+  "model": "Failed: an assertion didn't hold, so the behaviour is wrong (or the test expectation is). Error: something broke outside the assertion, e.g. in a fixture's setup or teardown, or an unexpected exception, often pointing to an environment or test-code problem. Skipped: not run by design. Distinguishing them speeds triage: a wall of fixture errors usually means the environment or setup is broken, not 50 product bugs. Track skips so they don't silently grow.",
+  "tags": [
+   "reporting"
+  ]
+ },
+ {
+  "id": "ci-100",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How would you design CI for a team that releases mobile web, desktop web and APIs from one codebase?",
+  "what_tested": "Multi-surface pipelines",
+  "model": "Share the early stages (lint, unit, contract tests), then fan out: API tests, desktop web UI smoke (Chromium), and mobile web smoke (device emulation, plus some real-device runs on a schedule) as parallel jobs. Run the full cross-browser and device matrix nightly. Use markers to tag tests per surface, publish one combined report with per-surface sections, and route failures to the owning sub-team.",
+  "tags": [
+   "cicd",
+   "strategy"
+  ]
+ },
+ {
+  "id": "ci-101",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "A previously stable test starts failing after a dependency upgrade. How do you handle it?",
+  "what_tested": "Upgrade regressions",
+  "model": "Confirm the correlation: revert the upgrade locally or on a branch and rerun. Read the changelog for breaking or behavioural changes (e.g. stricter locator matching, changed defaults, deprecated APIs removed). Decide whether to adapt the test (a new correct behaviour), pin the old version temporarily with a ticket, or report a bug upstream with a minimal reproduction. Upgrade dependencies in small, separate PRs so the cause is obvious.",
+  "tags": [
+   "debugging",
+   "tooling"
+  ]
+ },
+ {
+  "id": "ci-102",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you protect test pipelines from malicious pull requests in an open-source repo?",
+  "what_tested": "CI security",
+  "model": "Run PRs from forks without secrets (the default `pull_request` event), and be very careful with `pull_request_target`, which runs with repository secrets: never check out and execute fork code in it. Require approval for first-time contributors' workflow runs, pin third-party actions to commit SHAs, give the `GITHUB_TOKEN` minimal permissions, and keep production-like environments behind protected GitHub Environments. Tests that need secrets run only after review or merge.",
+  "tags": [
+   "cicd",
+   "security"
+  ]
  }
 ]

@@ -2,28 +2,1301 @@
  {
   "id": "fw-001",
   "topic": "Pytest & framework design",
-  "difficulty": "core",
+  "difficulty": "warm-up",
   "kind": "concept",
-  "question": "Explain fixture scopes in pytest and a case where the wrong scope causes flaky tests.",
-  "what_tested": "Fixture scopes and isolation",
-  "model": "Scopes are function (default), class, module, package and session. A wider scope is shared and cheaper but can leak state. A classic flake: a session-scoped page or a module-scoped object that tests modify, so results depend on test order and break under xdist. Share expensive, read-only things widely (browser, config, auth state) and keep anything mutable at function scope."
+  "question": "How does pytest discover tests?",
+  "what_tested": "Test discovery",
+  "model": "By default pytest searches the given paths (or `testpaths` from config) for files named `test_*.py` or `*_test.py`, then collects functions starting with `test` and methods starting with `test` inside classes named `Test*` that have no `__init__`. You can change the patterns with `python_files`, `python_classes` and `python_functions` in config. A common gotcha is a test class with an `__init__` method, which silently stops it being collected.",
+  "tags": [
+   "pytest"
+  ]
  },
  {
   "id": "fw-002",
   "topic": "Pytest & framework design",
-  "difficulty": "core",
+  "difficulty": "warm-up",
   "kind": "concept",
-  "question": "How do you structure a Page Object Model so it doesn't turn into a mess?",
-  "what_tested": "POM design",
-  "model": "One class per page or reusable component, taking `page` in the constructor, exposing locators as attributes and intent-level methods such as `login(user)`. Keep assertions in tests (or explicit `expect_*` helpers), use component objects for shared widgets like tables and modals, and wire page objects through fixtures so tests just ask for `login_page`. Avoid a giant BasePage that every page inherits everything from."
+  "question": "What are pytest fixtures, and why are they better than setup/teardown methods?",
+  "what_tested": "Fixtures",
+  "model": "Fixtures are functions decorated with `@pytest.fixture` that provide something a test needs (a page, an API client, test data); tests request them by naming them as parameters. Compared with xUnit-style setup and teardown, they're explicit (you see what each test uses), composable (fixtures can use other fixtures), reusable across files through conftest.py, scoped (function to session) and handle teardown cleanly with `yield`.",
+  "tags": [
+   "pytest",
+   "fixtures"
+  ]
  },
  {
   "id": "fw-003",
+  "topic": "Pytest & framework design",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "Explain fixture scopes and how you choose between them in a large suite.",
+  "what_tested": "Fixture scopes",
+  "model": "Scopes are function (default), class, module, package and session. A wider scope is shared and cheaper but can leak state. Rule of thumb: session for expensive, read-only things (browser, config, auth tokens or storage-state files, an API client); function for anything a test modifies (page, context, test data). A classic flake is a session- or module-scoped object that tests mutate, so results depend on order and break under xdist. Note that a fixture can only use fixtures of the same or wider scope.",
+  "tags": [
+   "pytest",
+   "fixtures"
+  ]
+ },
+ {
+  "id": "fw-004",
+  "topic": "Pytest & framework design",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do yield fixtures handle teardown, and what happens if the test fails?",
+  "what_tested": "Fixture teardown",
+  "model": "Code before `yield` is setup, the yielded value goes to the test, and code after `yield` is teardown. Teardown runs whether the test passes or fails, but only if setup completed (an exception before `yield` skips it). Teardowns run in reverse order of setup. For several cleanups, or cleanups registered conditionally, use `request.addfinalizer(...)`. Make teardown robust (e.g. delete by id, ignore 'already gone') so one failure doesn't cascade.",
+  "tags": [
+   "pytest",
+   "fixtures"
+  ]
+ },
+ {
+  "id": "fw-005",
+  "topic": "Pytest & framework design",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "What is conftest.py, and how does its location matter?",
+  "what_tested": "conftest",
+  "model": "conftest.py holds fixtures and hooks shared by the tests in its directory and all subdirectories, with no import needed. You can have several: a root conftest for global fixtures (config, browser settings) and directory-level ones for domain fixtures (`tests/payments/conftest.py`). A fixture in a deeper conftest overrides one with the same name higher up, which is useful for specialising, e.g. a different `base_url` for one area. Keep conftests small; move logic into importable modules.",
+  "tags": [
+   "pytest",
+   "conftest"
+  ]
+ },
+ {
+  "id": "fw-006",
+  "topic": "Pytest & framework design",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "What does autouse=True do, and when is it appropriate?",
+  "what_tested": "Autouse fixtures",
+  "model": "An autouse fixture runs for every test in its scope without being requested. It's appropriate for cross-cutting concerns every test genuinely needs: attaching a trace or screenshot on failure, resetting a global setting, adding a correlation id, or checking for console errors. Overusing it hides dependencies: readers can't tell why a test touches the database or the network. If only some tests need it, request it explicitly or use `@pytest.mark.usefixtures`.",
+  "tags": [
+   "pytest",
+   "fixtures"
+  ]
+ },
+ {
+  "id": "fw-007",
+  "topic": "Pytest & framework design",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How does @pytest.mark.parametrize work, and how do you make test ids readable?",
+  "what_tested": "Parametrisation",
+  "model": "`@pytest.mark.parametrize(\"amount,expected\", [(0, 400), (1, 201), (10**9, 422)])` runs the test once per tuple. Readable ids make reports and `-k` selection useful: pass `ids=[\"zero\", \"min\", \"too-large\"]`, an id function, or wrap cases in `pytest.param(..., id=\"zero\", marks=pytest.mark.xfail(reason=\"BUG-123\"))`. Stacking two parametrize decorators gives the cross product. Keep each case's data meaningful rather than a giant opaque table.",
+  "tags": [
+   "pytest",
+   "parametrize"
+  ]
+ },
+ {
+  "id": "fw-008",
+  "topic": "Pytest & framework design",
+  "difficulty": "deep",
+  "kind": "concept",
+  "question": "What is indirect parametrisation?",
+  "what_tested": "Parametrising fixtures",
+  "model": "With `@pytest.mark.parametrize(\"user\", [\"admin\", \"viewer\"], indirect=True)`, each value is passed to the `user` fixture (as `request.param`) instead of directly to the test. The fixture can then build something expensive or with teardown, such as logging in as that role and yielding a page. It keeps setup logic in the fixture while letting tests declare which variants they need. `indirect=[\"user\"]` applies it to just some arguments.",
+  "tags": [
+   "pytest",
+   "parametrize"
+  ]
+ },
+ {
+  "id": "fw-009",
+  "topic": "Pytest & framework design",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "What can you do with the `request` fixture?",
+  "what_tested": "Fixture introspection",
+  "model": "`request` gives fixtures information about the requesting test: `request.param` (indirect or fixture parametrisation), `request.node` (the test item: its name, markers via `get_closest_marker`, and the call outcome if a hook stores it), `request.config` (CLI options via `getoption`), `request.addfinalizer` for teardown, and `request.getfixturevalue` for dynamic lookup. A common use is a fixture reading a marker such as `@pytest.mark.role(\"admin\")` to decide which user to log in as.",
+  "tags": [
+   "pytest",
+   "fixtures"
+  ]
+ },
+ {
+  "id": "fw-010",
+  "topic": "Pytest & framework design",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "What is a factory fixture, and when do you use one?",
+  "what_tested": "Factory pattern",
+  "model": "A factory fixture returns a function instead of a value, so a test can create as many objects as it needs with different parameters, and the fixture can still clean them all up: `def make_order(api): created = []; def _make(**kw): o = api.create_order(**kw); created.append(o); return o; yield _make; for o in created: api.delete(o.id)`. Use it when tests need several items, or variations, that a single fixed fixture can't express.",
+  "tags": [
+   "pytest",
+   "fixtures",
+   "test-data"
+  ]
+ },
+ {
+  "id": "fw-011",
+  "topic": "Pytest & framework design",
+  "difficulty": "warm-up",
+  "kind": "concept",
+  "question": "What's the difference between skip, skipif and xfail?",
+  "what_tested": "Markers",
+  "model": "`@pytest.mark.skip(reason=...)` never runs the test. `skipif(condition, reason=...)` skips conditionally (an OS, a missing environment variable, a browser). `xfail(reason=\"BUG-123\")` runs the test but expects it to fail, reporting xfailed or, if it unexpectedly passes, xpassed; `strict=True` makes an unexpected pass a failure, so you notice when the bug is fixed. Always give a reason and a ticket, and review skips regularly so they don't pile up.",
+  "tags": [
+   "pytest",
+   "markers"
+  ]
+ },
+ {
+  "id": "fw-012",
+  "topic": "Pytest & framework design",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you register custom markers, and why use --strict-markers?",
+  "what_tested": "Marker hygiene",
+  "model": "Declare them in config: `markers = smoke: fast critical checks` (pytest.ini) or under `[tool.pytest.ini_options]`. Then select with `-m \"smoke and not slow\"`. `--strict-markers` (usually in `addopts`) turns unknown markers into errors, so a typo like `@pytest.mark.smok` fails loudly instead of silently excluding the test from your smoke run, a quiet and dangerous gap.",
+  "tags": [
+   "pytest",
+   "markers"
+  ]
+ },
+ {
+  "id": "fw-013",
+  "topic": "Pytest & framework design",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "What do you typically put in pytest.ini or pyproject.toml for a test project?",
+  "what_tested": "Configuration",
+  "model": "`testpaths`, `addopts` (`--strict-markers -ra --tb=short`, plus defaults like `--browser chromium --tracing retain-on-failure`), registered `markers`, `log_cli` and log level settings, `filterwarnings` (e.g. treat specific warnings as errors), `xfail_strict = true`, `timeout` if you use pytest-timeout, and `junit_family` for CI reports. Keep environment-specific values (URLs, secrets) out of it and pass them via environment variables or CLI options.",
+  "tags": [
+   "pytest",
+   "config"
+  ]
+ },
+ {
+  "id": "fw-014",
+  "topic": "Pytest & framework design",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you add custom command-line options, e.g. --env staging?",
+  "what_tested": "pytest_addoption",
+  "model": "In the root conftest.py: `def pytest_addoption(parser): parser.addoption(\"--env\", default=\"dev\", choices=[\"dev\", \"staging\", \"preprod\"])`. Read it in a session fixture with `request.config.getoption(\"--env\")` and build a config object (base URL, API URL, credentials from the matching secret store). Options must be defined in a conftest at the rootdir or in a plugin, not in nested conftests, otherwise pytest doesn't know them at startup.",
+  "tags": [
+   "pytest",
+   "config"
+  ]
+ },
+ {
+  "id": "fw-015",
+  "topic": "Pytest & framework design",
+  "difficulty": "deep",
+  "kind": "concept",
+  "question": "What are pytest hooks? Give examples you've used in a framework.",
+  "what_tested": "Hooks",
+  "model": "Hooks are functions with special names that pytest calls at points in its lifecycle; implement them in conftest.py or a plugin. Common ones: `pytest_addoption` (CLI options), `pytest_configure` (register markers, set up global things), `pytest_collection_modifyitems` (reorder, deselect or auto-mark tests, e.g. skip destructive tests in pre-prod), `pytest_runtest_makereport` (capture each phase's outcome to attach screenshots or traces on failure) and `pytest_sessionfinish` (publish a summary to Slack).",
+  "tags": [
+   "pytest",
+   "hooks"
+  ]
+ },
+ {
+  "id": "fw-016",
+  "topic": "Pytest & framework design",
+  "difficulty": "deep",
+  "kind": "concept",
+  "question": "How do you take a screenshot or keep a trace only when a test fails?",
+  "what_tested": "Outcome-aware teardown",
+  "model": "Use a hookwrapper: `@pytest.hookimpl(hookwrapper=True) def pytest_runtest_makereport(item, call): outcome = yield; rep = outcome.get_result(); setattr(item, f\"rep_{rep.when}\", rep)`. Then in the page fixture's teardown, check `request.node.rep_call.failed` and save the screenshot or stop tracing with a path (attaching it to Allure); otherwise discard. With pytest-playwright, `--screenshot only-on-failure --tracing retain-on-failure` does this for you.",
+  "tags": [
+   "pytest",
+   "hooks",
+   "reporting"
+  ]
+ },
+ {
+  "id": "fw-017",
+  "topic": "Pytest & framework design",
+  "difficulty": "deep",
+  "kind": "concept",
+  "question": "How would you write a custom pytest plugin for your organisation?",
+  "what_tested": "Plugins",
+  "model": "Put shared fixtures and hooks (auth, environment config, reporting, standard markers) in a Python package, then expose it via an entry point: `[project.entry-points.pytest11] acme = \"acme_testing.plugin\"`. Every team that `pip install`s it gets the fixtures automatically, versioned like any dependency. Add tests for the plugin itself using pytest's `pytester` fixture, document the fixtures, and release with a changelog so teams upgrade deliberately.",
+  "tags": [
+   "pytest",
+   "plugins"
+  ]
+ },
+ {
+  "id": "fw-018",
+  "topic": "Pytest & framework design",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "Which pytest plugins do you commonly use, and what does each solve?",
+  "what_tested": "Plugin ecosystem",
+  "model": "pytest-xdist (parallel runs), pytest-playwright (browser fixtures), pytest-rerunfailures (controlled reruns), pytest-timeout (kill hung tests), pytest-randomly (expose order dependence), pytest-html or allure-pytest (reports), pytest-cov (coverage), pytest-mock (the `mocker` fixture), pytest-check (soft assertions), pytest-bdd (Gherkin), pytest-dotenv (load .env), and pytest-split (balanced CI shards). Adopt them deliberately; every plugin is a dependency to maintain.",
+  "tags": [
+   "pytest",
+   "plugins"
+  ]
+ },
+ {
+  "id": "fw-019",
+  "topic": "Pytest & framework design",
+  "difficulty": "warm-up",
+  "kind": "concept",
+  "question": "What are the most useful pytest command-line flags for daily work?",
+  "what_tested": "CLI fluency",
+  "model": "`-k \"login and not slow\"` (select by name), `-m smoke` (by marker), `-x` or `--maxfail=3` (stop early), `--lf` / `--ff` (last failed, failed first), `--sw` (stepwise), `-v` / `-q`, `-ra` (summary of skips, xfails and failures), `--tb=short`, `-s` (don't capture output), `--durations=10` (slowest tests), `--collect-only` (see what would run), `-p no:randomly` (disable a plugin) and `--pdb` (debugger on failure).",
+  "tags": [
+   "pytest",
+   "cli"
+  ]
+ },
+ {
+  "id": "fw-020",
+  "topic": "Pytest & framework design",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "What do the built-in fixtures tmp_path, capsys, caplog and monkeypatch give you?",
+  "what_tested": "Built-in fixtures",
+  "model": "`tmp_path`: a unique temporary directory per test (`pathlib.Path`), perfect for downloads and generated files. `capsys` / `capfd`: capture stdout and stderr to assert on printed output. `caplog`: capture log records and assert a warning was logged (`caplog.records`, `caplog.text`). `monkeypatch`: set environment variables or attributes with automatic undo. There's also `tmp_path_factory` for session-scoped temp dirs and `pytestconfig` for config access.",
+  "tags": [
+   "pytest",
+   "fixtures"
+  ]
+ },
+ {
+  "id": "fw-021",
+  "topic": "Pytest & framework design",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "pytest vs unittest: why do most Python test teams choose pytest?",
+  "what_tested": "Framework choice",
+  "model": "pytest uses plain functions and plain `assert` with rich failure diffs (no `self.assertEqual`), fixtures instead of setUp/tearDown inheritance, powerful parametrisation, markers, and a huge plugin ecosystem (xdist, Playwright, Allure). It can still run unittest-style tests, which makes migration gradual. unittest's advantages are being in the standard library and familiar to people coming from JUnit-style xUnit frameworks.",
+  "tags": [
+   "pytest"
+  ]
+ },
+ {
+  "id": "fw-022",
+  "topic": "Pytest & framework design",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How does pytest's exit code matter in CI?",
+  "what_tested": "Exit codes",
+  "model": "Exit codes: 0 means all collected tests passed, 1 means some failed, 2 means interrupted, 3 means an internal error, 4 means a usage error (bad options), and 5 means no tests were collected. CI uses the code to pass or fail the job. Code 5 is a useful safety net: if a wrong `-m` expression or path selects nothing, the job should fail rather than show green. Make sure wrapper scripts propagate pytest's exit code instead of masking it.",
+  "tags": [
+   "pytest",
+   "ci"
+  ]
+ },
+ {
+  "id": "fw-023",
+  "topic": "Pytest & framework design",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you share data between fixtures without global variables?",
+  "what_tested": "Fixture composition",
+  "model": "Have fixtures depend on each other: a `config` session fixture feeds `api_client`, which feeds `user` and then `order`. pytest resolves the graph and the scopes. For values computed in one test phase and needed in teardown, return an object (a dataclass or dict) from the fixture. Avoid module-level globals and `pytest` namespace hacks; they break under xdist and make order matter.",
+  "tags": [
+   "pytest",
+   "fixtures"
+  ]
+ },
+ {
+  "id": "fw-024",
+  "topic": "Pytest & framework design",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "What is pytest-bdd, and when does BDD-style testing add value?",
+  "what_tested": "BDD",
+  "model": "pytest-bdd lets you write scenarios in Gherkin (`Given / When / Then` in `.feature` files) and bind steps to Python functions, with pytest fixtures underneath. It adds value when business people or product owners actually read, write or review the scenarios, so the feature files become shared, living specifications. If only engineers read them, the extra layer is overhead: plain pytest with descriptive test names is simpler and easier to refactor.",
+  "tags": [
+   "bdd"
+  ]
+ },
+ {
+  "id": "fw-025",
+  "topic": "Pytest & framework design",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you run data-driven tests from a CSV or JSON file in pytest?",
+  "what_tested": "External test data",
+  "model": "Load the file at collection time and feed it to parametrize: `cases = json.loads(Path(...).read_text())`, then `@pytest.mark.parametrize(\"case\", cases, ids=lambda c: c[\"name\"])`. Or generate tests dynamically in `pytest_generate_tests` for more control. Validate the data shape when loading so a malformed row fails clearly. Keep the files small and reviewed; huge spreadsheets of cases tend to hide which ones matter.",
+  "tags": [
+   "pytest",
+   "data-driven"
+  ]
+ },
+ {
+  "id": "fw-026",
+  "topic": "Pytest & framework design",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "What does pytest-xdist's --dist option control?",
+  "what_tested": "Distribution modes",
+  "model": "`--dist load` (the default with `-n`) sends tests to whichever worker is free. `--dist loadscope` groups tests by module or class so they share module- or class-scoped fixtures on one worker. `--dist loadfile` groups by file. `--dist loadgroup` lets you pin related tests together with `@pytest.mark.xdist_group(\"payments\")`, e.g. tests sharing a limited resource. Session-scoped fixtures run once per worker, not once overall, which surprises people.",
+  "tags": [
+   "pytest",
+   "parallel"
+  ]
+ },
+ {
+  "id": "fw-027",
+  "topic": "Pytest & framework design",
+  "difficulty": "deep",
+  "kind": "concept",
+  "question": "Session-scoped fixtures run once per xdist worker. How do you do something exactly once for the whole run?",
+  "what_tested": "Cross-worker coordination",
+  "model": "Use a file lock with a shared temp directory: get `tmp_path_factory.getbasetemp().parent` (shared by all workers), take a `filelock.FileLock` on a lock file, and inside it, if the result file exists read it, otherwise compute it (e.g. log in and save storage state, or seed reference data) and write it. pytest-xdist's documentation describes this pattern. Alternatively, do the one-time work in a CI step before pytest starts.",
+  "tags": [
+   "pytest",
+   "parallel"
+  ]
+ },
+ {
+  "id": "fw-028",
+  "topic": "Pytest & framework design",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you generate an Allure report, and what makes it useful?",
+  "what_tested": "Reporting",
+  "model": "Install allure-pytest, run with `--alluredir=allure-results`, then `allure generate` or `allure serve`. Useful features: `@allure.step` for readable step breakdowns, `allure.attach` for screenshots, traces, request and response bodies, history and trends across runs (keep the history folder between CI runs), categories that separate product bugs from test errors, and environment info. Mask secrets in attachments. JUnit XML (`--junitxml`) is the simpler format most CI tools read natively.",
+  "tags": [
+   "reporting"
+  ]
+ },
+ {
+  "id": "fw-029",
+  "topic": "Pytest & framework design",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you control test execution order, and should you?",
+  "what_tested": "Order independence",
+  "model": "pytest runs tests in file and definition order by default. You can reorder with `pytest_collection_modifyitems` or plugins like pytest-order, but tests should not depend on order: each should set up its own state. Use pytest-randomly in CI (or periodically) to prove independence. Legitimate ordering is for efficiency, such as running fast smoke tests first, never for correctness.",
+  "tags": [
+   "pytest",
+   "design"
+  ]
+ },
+ {
+  "id": "fw-030",
+  "topic": "Pytest & framework design",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you test code that depends on the current time, in pytest?",
+  "what_tested": "Time control",
+  "model": "Inject the clock (pass a `now` function or a clock object) so tests can supply fixed times; that's the cleanest design. Otherwise freeze time with freezegun or time-machine (`@time_machine.travel(\"2026-03-31 23:59\")`) to test month-end, leap-day and time-zone boundaries. For browser tests, use Playwright's clock API. Avoid assertions like 'created today' computed from the real clock, which fail around midnight in CI.",
+  "tags": [
+   "pytest",
+   "time"
+  ]
+ },
+ {
+  "id": "fw-031",
+  "topic": "Pytest & framework design",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "What's the difference between pytest-mock's mocker fixture and unittest.mock.patch?",
+  "what_tested": "Mocking in pytest",
+  "model": "`mocker` (from pytest-mock) wraps `unittest.mock`: `mocker.patch(\"module.func\", return_value=...)` works the same but undoes itself automatically at the end of the test, with no decorators or `with` blocks. It also has `mocker.spy` to wrap a real function and assert calls while keeping its behaviour, and `mocker.stub`. The same 'patch where it's used' rule applies.",
+  "tags": [
+   "pytest",
+   "mocking"
+  ]
+ },
+ {
+  "id": "fw-032",
+  "topic": "Pytest & framework design",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you handle tests that need cleanup even if they crash midway?",
+  "what_tested": "Robust cleanup",
+  "model": "Put cleanup in fixtures (after `yield` or via `request.addfinalizer`), not at the end of the test body, where it never runs if an assertion fails first. Register cleanup as soon as the resource is created (a factory fixture records ids as it creates them). Make cleanup idempotent and tolerant ('already deleted' isn't an error), and add a periodic sweeper job for anything that escapes, identified by a test-data prefix or tag.",
+  "tags": [
+   "pytest",
+   "test-data"
+  ]
+ },
+ {
+  "id": "fw-033",
+  "topic": "Pytest & framework design",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "What is the difference between a fixture's return and yield, and can a fixture be a generator and return a value?",
+  "what_tested": "Fixture mechanics",
+  "model": "A fixture that returns gives the value with no teardown. A fixture that yields gives the yielded value to the test, then resumes after the test for teardown. A fixture should yield exactly once. If you need several objects, yield a tuple or a small object, or provide a factory. Returning after the `yield` has no effect on the test.",
+  "tags": [
+   "pytest",
+   "fixtures"
+  ]
+ },
+ {
+  "id": "fw-034",
+  "topic": "Pytest & framework design",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How would you make a failing test's output immediately understandable?",
+  "what_tested": "Diagnosability",
+  "model": "Name tests after the behaviour (`test_transfer_rejected_when_balance_insufficient`). Use parametrize ids, assertion messages with context (`f\"order {order_id} status\"`) and pytest's diff output for structured data. Attach artifacts on failure (screenshot, trace, API request and response with secrets masked, correlation id). Log key steps at INFO, and keep each test focused on one behaviour so the failing assertion points straight at the problem.",
+  "tags": [
+   "design",
+   "reporting"
+  ]
+ },
+ {
+  "id": "fw-035",
   "topic": "Pytest & framework design",
   "difficulty": "deep",
   "kind": "concept",
   "question": "Design the folder structure and key fixtures for a new Playwright + pytest framework.",
   "what_tested": "Framework architecture",
-  "model": "`pages/` for page and component objects, `api/` for API clients, `tests/ui` and `tests/api`, layered `conftest.py` files, `data/` factories and `config/` per environment. Key fixtures: environment config from CLI options or env vars, `browser_context_args` with base_url, per-role storage state, API client, and data factories that create unique records and clean up after themselves. Add markers (smoke, regression), xdist, traces/videos on failure and Allure or pytest-html reporting."
+  "model": "`pages/` for page and component objects, `api/` for API clients, `tests/ui` and `tests/api`, layered `conftest.py` files, `data/` factories and `config/` per environment. Key fixtures: environment config from CLI options or environment variables, `browser_context_args` with base_url, per-role storage state, an API client, and data factories that create unique records and clean up after themselves. Add markers (smoke, regression), xdist, traces and videos on failure, and Allure or pytest-html reporting.",
+  "tags": [
+   "architecture"
+  ]
+ },
+ {
+  "id": "fw-036",
+  "topic": "Pytest & framework design",
+  "difficulty": "deep",
+  "kind": "concept",
+  "question": "Walk me through how you would build an automation framework from scratch for a new product.",
+  "what_tested": "Greenfield design",
+  "model": "Start from goals and constraints: what to cover first (critical journeys and APIs), who writes tests, the CI setup and environments. Then build a thin vertical slice: config and secrets handling, one API client, one page object, auth via storage state, one smoke test running in CI with reports and artifacts. Get that reviewed and stable before scaling. Add conventions (naming, markers, data factories), linting, and documentation that lets a newcomer add a test in an hour. Measure runtime and flakiness from day one.",
+  "tags": [
+   "architecture"
+  ]
+ },
+ {
+  "id": "fw-037",
+  "topic": "Pytest & framework design",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you structure a Page Object Model so it doesn't turn into a mess?",
+  "what_tested": "POM design",
+  "model": "One class per page or reusable component, taking `page` in the constructor, exposing locators as attributes and intent-level methods such as `login(user)`. Keep assertions in tests (or explicit `expect_*` helpers), use component objects for shared widgets like tables and modals, and wire page objects through fixtures so tests just ask for `login_page`. Avoid a giant BasePage that every page inherits everything from.",
+  "tags": [
+   "pom"
+  ]
+ },
+ {
+  "id": "fw-038",
+  "topic": "Pytest & framework design",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "Should page objects contain assertions?",
+  "what_tested": "POM responsibilities",
+  "model": "Mostly no. Page objects should model what a user can do and see; tests decide what's expected, which keeps page objects reusable for positive and negative cases. Exceptions that work well: explicit helper methods like `expect_loaded()` or `expect_error(message)` that wrap common `expect` checks, and internal synchronisation (waiting for a spinner to disappear) needed for the page object's own actions to be reliable.",
+  "tags": [
+   "pom"
+  ]
+ },
+ {
+  "id": "fw-039",
+  "topic": "Pytest & framework design",
+  "difficulty": "deep",
+  "kind": "concept",
+  "question": "How do the Page Object Model, the Screenplay pattern and component-based design compare?",
+  "what_tested": "Design patterns",
+  "model": "POM organises code by page: simple and widely understood, but pages can grow into god-classes. Component objects organise by reusable UI pieces (header, table, date picker), matching modern component-based front ends and reducing duplication. Screenplay organises by actors performing tasks and asking questions (`actor.attempts_to(Login.as(admin))`): very composable and readable for complex domains, but more abstraction and a steeper learning curve. Many teams combine component objects with thin page objects.",
+  "tags": [
+   "pom",
+   "patterns"
+  ]
+ },
+ {
+  "id": "fw-040",
+  "topic": "Pytest & framework design",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "DRY vs DAMP: how much should test code avoid repetition?",
+  "what_tested": "Readability vs reuse",
+  "model": "Production code leans DRY (Don't Repeat Yourself); test code leans DAMP (Descriptive And Meaningful Phrases). A test should read top to bottom as a clear scenario, even if a few lines repeat across tests. Extract what's truly reusable and noisy (setup, API clients, page interactions, data builders), but don't hide the essential steps or expected values behind layers of helpers, or every failure becomes a treasure hunt.",
+  "tags": [
+   "design"
+  ]
+ },
+ {
+  "id": "fw-041",
+  "topic": "Pytest & framework design",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you manage configuration for multiple environments in a framework?",
+  "what_tested": "Config architecture",
+  "model": "One typed config object (a pydantic `BaseSettings` or a dataclass) built once per session from an `--env` option or `ENV` variable, layered as defaults, then a per-environment file (URLs, feature flags, timeouts), then environment variables for secrets. Everything reads from that object, never directly from `os.environ`. Validate at startup and fail fast with a clear message. Mark tests that are only valid in certain environments and skip them automatically.",
+  "tags": [
+   "config"
+  ]
+ },
+ {
+  "id": "fw-042",
+  "topic": "Pytest & framework design",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "What's your test data strategy in a framework?",
+  "what_tested": "Test data management",
+  "model": "Prefer creating data per test via API or factories, with unique identifiers and fixture-based cleanup; use static seed data only for read-only reference data. Use builder or factory functions with sensible defaults and explicit overrides (`make_user(role=\"checker\")`), Faker for realistic values, and never production personal data. Tag created data with a run id so leftovers can be swept. For complex states, add test-only setup endpoints or database seeding in lower environments.",
+  "tags": [
+   "test-data"
+  ]
+ },
+ {
+  "id": "fw-043",
+  "topic": "Pytest & framework design",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do factories, fixtures and builders differ in a test data approach?",
+  "what_tested": "Data patterns",
+  "model": "A fixture provides a ready-made object with pytest-managed lifecycle and teardown. A factory is a function (often exposed through a fixture) that creates objects on demand with parameters, possibly many per test. A builder constructs complex objects step by step with a fluent interface (`OrderBuilder().with_items(3).paid().build()`), which is great for deeply nested payloads. Libraries like factory_boy or polyfactory generate model instances with defaults and sequences.",
+  "tags": [
+   "test-data",
+   "patterns"
+  ]
+ },
+ {
+  "id": "fw-044",
+  "topic": "Pytest & framework design",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How should an API client layer in a test framework be designed?",
+  "what_tested": "Client abstraction",
+  "model": "A base client owns the session, base URL, auth (with automatic token refresh), timeouts, retries for transient errors, logging with masking, and correlation ids. Service clients extend it with intent-level methods (`orders.create(payload)`) that return typed models or raw responses for negative tests. Tests never build URLs or headers by hand. That keeps auth or URL changes to one place and makes tests read as business actions.",
+  "tags": [
+   "architecture",
+   "api"
+  ]
+ },
+ {
+  "id": "fw-045",
+  "topic": "Pytest & framework design",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you make a framework easy for a new joiner to add a test in 10 minutes?",
+  "what_tested": "Developer experience",
+  "model": "Provide a clear README with a quick start (install, run one test, view the report), a template or an example test per layer, consistent naming and folder conventions, fixtures with obvious names and docstrings, a single command to run locally against the shared environment, helpful failure messages, and pre-commit hooks that catch mistakes early. Pair on their first PR and turn their questions into documentation.",
+  "tags": [
+   "onboarding"
+  ]
+ },
+ {
+  "id": "fw-046",
+  "topic": "Pytest & framework design",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "What goes into a code review checklist for automation code?",
+  "what_tested": "Review standards",
+  "model": "Does the test check the right behaviour, and would it fail if the feature broke? Locators: user-facing or test ids, no brittle XPath. No sleeps; web-first assertions. It's independent and parallel-safe (unique data, cleanup). It sits at the right layer (could it be an API or unit test?). Names are readable, with clear assertion messages. No secrets or hard-coded environment values. Reuse of existing page objects and fixtures. Markers applied. It was run several times to check stability.",
+  "tags": [
+   "review"
+  ]
+ },
+ {
+  "id": "fw-047",
+  "topic": "Pytest & framework design",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you apply linting, formatting and type checking to test code?",
+  "what_tested": "Code quality",
+  "model": "Same tools as product code: ruff for linting and formatting (or Black plus flake8), mypy or pyright for types, configured in pyproject.toml and enforced in pre-commit and CI. Add rules that matter for tests: ban `time.sleep` and `wait_for_timeout` (a custom rule or grep check), ban `print`, require type hints on fixtures and page objects. Type hints pay off in frameworks used by many people, where autocompletion and early errors save real time.",
+  "tags": [
+   "quality"
+  ]
+ },
+ {
+  "id": "fw-048",
+  "topic": "Pytest & framework design",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you handle logging inside a test framework?",
+  "what_tested": "Logging design",
+  "model": "Use the standard `logging` module with a logger per module, INFO for business steps ('creating order', 'logging in as checker') and DEBUG for details like full request and response bodies. Let pytest capture logs and show them for failures; enable `log_cli` locally when needed. Mask secrets in a logging filter, add the test name or correlation id to records, and write a per-test log file as a CI artifact for long flows.",
+  "tags": [
+   "logging"
+  ]
+ },
+ {
+  "id": "fw-049",
+  "topic": "Pytest & framework design",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you decide what goes into a smoke suite, and how big should it be?",
+  "what_tested": "Smoke suite design",
+  "model": "A smoke suite answers one question fast: is this build or deployment fundamentally usable? Include the few journeys whose failure would make a release pointless or dangerous: the app loads, login, one core read flow and one core write flow per critical area (e.g. create and pay an invoice), plus health and key API contracts. Keep it small enough to run in minutes (often 15–40 tests), extremely stable, and owned. Review it when features change, and resist adding every important test to it; that's what regression is for.",
+  "tags": [
+   "strategy",
+   "ci"
+  ]
+ },
+ {
+  "id": "fw-050",
+  "topic": "Pytest & framework design",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you keep a large test suite fast as it grows?",
+  "what_tested": "Suite scalability",
+  "model": "Push coverage down the pyramid (API and unit tests over UI), set up state via API and storage state, parallelise with xdist and shard across machines balanced by duration, remove hard waits, delete redundant tests, run only affected tests on PRs where you can map tests to code areas, and track suite duration as a metric with a budget. Review the slowest tests (`--durations`) every sprint.",
+  "tags": [
+   "performance",
+   "strategy"
+  ]
+ },
+ {
+  "id": "fw-051",
+  "topic": "Pytest & framework design",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How would you structure a test repo for 200+ tests across several teams?",
+  "what_tested": "Multi-team scale",
+  "model": "A shared core (config, auth, clients, base components, reporting) owned by a small platform group with versioning and review rules; domain folders or packages per team (payments, onboarding) with their own conftests, page objects and markers; CODEOWNERS so the right team reviews changes; consistent conventions enforced by linting; and per-team reporting so failures route to owners. Consider packaging the core as an internal pytest plugin if teams live in separate repos.",
+  "tags": [
+   "architecture",
+   "scale"
+  ]
+ },
+ {
+  "id": "fw-052",
+  "topic": "Pytest & framework design",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you make the framework support multiple browsers and devices cleanly?",
+  "what_tested": "Cross-browser design",
+  "model": "Keep browser and device choice in configuration, never in tests: pytest-playwright's `--browser` and `--device` options, or projects defined in a CI matrix. Page objects should work at any viewport; for genuinely different mobile layouts, use responsive-aware components or a separate component variant selected by a fixture. Mark the few tests that only make sense on one platform with `only_browser` or a custom marker, with a reason.",
+  "tags": [
+   "architecture"
+  ]
+ },
+ {
+  "id": "fw-053",
+  "topic": "Pytest & framework design",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you implement a quarantine for flaky tests in a framework?",
+  "what_tested": "Flake management",
+  "model": "Add a `quarantine` marker carrying a ticket id; quarantined tests still run but in a separate CI job, or with results that don't fail the build, so you keep the signal without blocking PRs. A dashboard or report lists them with owner and age, and there's a rule that quarantine expires (e.g. two weeks), after which the test is fixed or deleted. Combine it with flake detection from rerun data so tests enter quarantine based on evidence.",
+  "tags": [
+   "flakiness"
+  ]
+ },
+ {
+  "id": "fw-054",
+  "topic": "Pytest & framework design",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you design custom assertions or matchers for your domain?",
+  "what_tested": "Domain assertions",
+  "model": "Wrap repeated, multi-step checks into well-named helpers that produce excellent failure messages: `assert_money_equal(actual, \"125.50\", \"INR\")`, `assert_order_matches(api_order, expected)` (diffing only relevant fields), or `expect_toast(page, \"Saved\")`. Register helper modules with `pytest.register_assert_rewrite` so plain asserts inside them still get pytest's rich output. Keep them small, tested and documented.",
+  "tags": [
+   "design"
+  ]
+ },
+ {
+  "id": "fw-055",
+  "topic": "Pytest & framework design",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "What metrics show that an automation framework is healthy?",
+  "what_tested": "Framework health",
+  "model": "Flake rate per test and overall (target under 1%), suite duration and its trend, time from failure to diagnosis, the percentage of failures that are real product bugs versus test or environment issues, defects caught before release versus escaped, coverage of critical journeys and APIs (not raw test count), the age of quarantined tests, and how long a new test takes to write. Review them in a recurring health check, not only when things break.",
+  "tags": [
+   "metrics"
+  ]
+ },
+ {
+  "id": "fw-056",
+  "topic": "Pytest & framework design",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How would you design a reporting strategy for developers, QA and management?",
+  "what_tested": "Audience-specific reporting",
+  "model": "Developers need fast, actionable detail on their PR: failing test, error, trace or screenshot, correlation id, linked from the CI check. QA needs trends, flake data, coverage gaps and the quarantine list (Allure history, a dashboard). Management needs a short, stable summary: release readiness, escaped defects, coverage of critical flows, and how long regression takes, with trends rather than raw counts. Automate the distribution (PR comments, Slack summaries, a weekly email).",
+  "tags": [
+   "reporting"
+  ]
+ },
+ {
+  "id": "fw-057",
+  "topic": "Pytest & framework design",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you handle feature flags in automated tests?",
+  "what_tested": "Feature toggles",
+  "model": "Make the flag state explicit per test: set flags via the flag service's API, a test override header or cookie, or `storage_state`/init scripts for client-side flags, then restore them. Test both states of important flags during rollout. Mark tests that depend on a flag so they're easy to find when the flag is removed, and add cleanup tasks to delete the obsolete branch's tests.",
+  "tags": [
+   "design"
+  ]
+ },
+ {
+  "id": "fw-058",
+  "topic": "Pytest & framework design",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you keep test code maintainable when the UI changes often?",
+  "what_tested": "Resilience to change",
+  "model": "Centralise locators in page and component objects, so a change is fixed in one place. Prefer role, label and test-id locators over structure-based CSS or XPath, and agree test ids with developers as a contract. Keep tests focused (one behaviour each), push logic checks to the API layer, and get involved early in UI changes (design reviews or PR previews) to update tests alongside features instead of after they break.",
+  "tags": [
+   "maintenance"
+  ]
+ },
+ {
+  "id": "fw-059",
+  "topic": "Pytest & framework design",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "What is test impact analysis, and how could you use it?",
+  "what_tested": "Selective execution",
+  "model": "Test impact analysis selects only the tests affected by a code change, using a mapping from code to tests (coverage data, or ownership by directory or service). For PRs it cuts feedback time dramatically; the full suite still runs nightly as a safety net. Practical starting points: run tests tagged for the changed service, or use coverage-based selection for unit tests. Track misses, meaning bugs found nightly that PR selection skipped.",
+  "tags": [
+   "strategy",
+   "ci"
+  ]
+ },
+ {
+  "id": "fw-060",
+  "topic": "Pytest & framework design",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you test against environments that are often unstable?",
+  "what_tested": "Environment resilience",
+  "model": "Add a pre-flight health check (key endpoints, login, test data present) that fails the run early with a clear 'environment down' message instead of hundreds of confusing failures. Mock unstable third parties, separate environment errors from product failures in reports (categories, or an exception type like `EnvironmentNotReady`), and track environment availability as a metric to push for improvements. Ephemeral per-PR environments are the long-term fix.",
+  "tags": [
+   "environments"
+  ]
+ },
+ {
+  "id": "fw-061",
+  "topic": "Pytest & framework design",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "What makes test names and structure readable for non-technical stakeholders?",
+  "what_tested": "Communicating tests",
+  "model": "Name tests after business behaviour (`test_checker_cannot_approve_own_request`), group them by feature in folders and classes, use parametrize ids that read as cases, and use Allure features, stories and steps so reports read like specifications. Avoid technical noise in names (no 'click button 3'). If stakeholders need to contribute scenarios, BDD feature files can help, provided someone maintains them.",
+  "tags": [
+   "communication"
+  ]
+ },
+ {
+  "id": "fw-062",
+  "topic": "Pytest & framework design",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you version and manage dependencies of a test framework?",
+  "what_tested": "Dependency management",
+  "model": "Pin direct dependencies and lock transitive ones (pip-tools, Poetry or uv lock files) so runs are reproducible. Pin Playwright and the matching browser install or Docker image together. Update on a schedule (e.g. monthly, with Renovate or Dependabot PRs) and run the suite on each update branch. Read changelogs for breaking changes in pytest, Playwright and plugins. A shared framework package should follow semantic versioning with a changelog.",
+  "tags": [
+   "tooling"
+  ]
+ },
+ {
+  "id": "fw-063",
+  "topic": "Pytest & framework design",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you run the same suite locally, in Docker and in CI without 'works on my machine' problems?",
+  "what_tested": "Reproducibility",
+  "model": "One source of truth for dependencies (a lock file), the same Playwright version and browser builds everywhere (ideally the official Docker image for CI and an optional dev container locally), configuration via environment variables with documented defaults, and no reliance on local paths or machine time zones (set TZ explicitly). A make or tox command that runs the same way in all three places removes most of the drift.",
+  "tags": [
+   "tooling",
+   "ci"
+  ]
+ },
+ {
+  "id": "fw-064",
+  "topic": "Pytest & framework design",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "When would you write a unit test instead of a UI or API test?",
+  "what_tested": "Test pyramid in practice",
+  "model": "When the logic can be exercised directly, such as calculations, validators, formatting, state transitions or pure functions in the front end or back end, unit tests are fastest and pinpoint failures. SDETs add value by encouraging developers to unit test these and by reviewing the gaps, so UI tests don't have to cover every combination. Use API tests for service behaviour and integration, and UI tests for critical journeys.",
+  "tags": [
+   "strategy"
+  ]
+ },
+ {
+  "id": "fw-065",
+  "topic": "Pytest & framework design",
+  "difficulty": "deep",
+  "kind": "concept",
+  "question": "How would you make your framework 'AI-friendly' so agents can generate and review tests reliably?",
+  "what_tested": "AI-assisted automation",
+  "model": "Agents follow patterns well when patterns are clear: consistent structure, documented conventions (a CONTRIBUTING or CLAUDE.md-style file stating locator rules, no sleeps, fixture usage), small reusable building blocks with docstrings, example tests per layer, and strong guard rails in CI (linting, type checks, stability reruns of new tests). Generated tests still need human review for meaningful assertions, and should never receive production credentials or customer data.",
+  "tags": [
+   "ai"
+  ]
+ },
+ {
+  "id": "fw-066",
+  "topic": "Pytest & framework design",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you handle test dependencies on external systems such as email, SMS or payment providers in the framework?",
+  "what_tested": "External integrations",
+  "model": "Abstract them behind clients with test-environment implementations: an email-capture service (Mailpit or a provider sandbox) with a helper that polls for a message to a unique address; SMS via the provider's test numbers or a stub; payments via sandbox cards or service virtualisation. Expose these as fixtures (`inbox`, `payment_sandbox`) so tests read naturally, and keep the real-provider checks to a few scheduled tests.",
+  "tags": [
+   "integrations"
+  ]
+ },
+ {
+  "id": "fw-067",
+  "topic": "Pytest & framework design",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you design waits and timeouts centrally in a framework?",
+  "what_tested": "Synchronisation policy",
+  "model": "Rely on Playwright auto-waiting and `expect` for UI work, with defaults set once (`set_default_timeout`, `expect.set_options`). Provide a single polling helper for non-UI eventual consistency (`wait_until(fn, timeout, interval, message)`) that raises with a clear description. Ban sleeps through linting, and document when a longer timeout is acceptable (a known slow report) so it's applied locally with a comment, not globally.",
+  "tags": [
+   "design",
+   "waits"
+  ]
+ },
+ {
+  "id": "fw-068",
+  "topic": "Pytest & framework design",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you handle secrets in a framework used by many engineers and CI?",
+  "what_tested": "Secret management",
+  "model": "Secrets come from a vault or the CI secret store, injected as environment variables; locally from a git-ignored `.env` or a secret manager CLI. The config layer validates presence and never logs values; logging filters mask tokens and passwords in output and report attachments. Use separate least-privilege test accounts per environment, rotate them, and add secret scanning (e.g. gitleaks) in pre-commit and CI to catch accidental commits.",
+  "tags": [
+   "security",
+   "config"
+  ]
+ },
+ {
+  "id": "fw-069",
+  "topic": "Pytest & framework design",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "What's the role of fixtures vs page objects vs helpers? How do you decide where code belongs?",
+  "what_tested": "Layer responsibilities",
+  "model": "Fixtures manage lifecycle and dependencies: setup, teardown, scope and injection. Page and component objects model UI structure and user actions. API clients model service calls. Helpers or utilities hold pure functions (formatting money, parsing dates). Tests hold the scenario and assertions. If code needs teardown it's probably a fixture; if it touches locators it's a page object; if it's stateless logic it's a helper.",
+  "tags": [
+   "architecture"
+  ]
+ },
+ {
+  "id": "fw-070",
+  "topic": "Pytest & framework design",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How would you migrate a legacy framework incrementally without stopping delivery?",
+  "what_tested": "Incremental migration",
+  "model": "Wrap or strangle: build the new core alongside the old one, write all new tests in the new style, and migrate old tests when they're touched, flaky or in a high-value area. Share what you can (config, data factories) through adapters. Track migration progress and the remaining count, keep both suites green in CI, and set a cutoff date for deleting the old framework so the dual maintenance doesn't last forever.",
+  "tags": [
+   "strategy"
+  ]
+ },
+ {
+  "id": "fw-071",
+  "topic": "Pytest & framework design",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you document a test framework effectively?",
+  "what_tested": "Documentation",
+  "model": "Keep it close to the code and short: a README with quick start, architecture overview and conventions; docstrings on fixtures, page objects and clients (they show up in IDEs); a CONTRIBUTING guide with the review checklist; and decision records for big choices (why Playwright, why storage state). Example tests are the best documentation. Review the docs when onboarding someone new, and fix whatever confused them.",
+  "tags": [
+   "documentation"
+  ]
+ },
+ {
+  "id": "fw-072",
+  "topic": "Pytest & framework design",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you make tests independent so they can run in any order and in parallel?",
+  "what_tested": "Test isolation",
+  "model": "Each test creates its own data with unique identifiers, uses a fresh browser context, and cleans up in fixture teardown. No test reads data another test wrote. Shared fixtures are read-only or function-scoped, and shared resources such as accounts are pooled per worker. Verify it with pytest-randomly and parallel runs in CI. Isolation is the foundation of reliable parallelism and of trustworthy failures.",
+  "tags": [
+   "design",
+   "parallel"
+  ]
+ },
+ {
+  "id": "fw-073",
+  "topic": "Pytest & framework design",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you test a framework's own utilities?",
+  "what_tested": "Testing the tests",
+  "model": "Unit test the non-trivial helpers: data factories, parsers, money and date utilities, retry and wait helpers, custom assertions. Use pytest's `pytester` fixture for plugin and hook behaviour. Run these fast tests on every framework change before the long suites. A bug in a shared helper can silently weaken hundreds of tests, such as an assertion helper that never fails, so these tests protect the whole suite's credibility.",
+  "tags": [
+   "quality"
+  ]
+ },
+ {
+  "id": "fw-074",
+  "topic": "Pytest & framework design",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you handle a test that legitimately needs to run serially (e.g. it changes a global setting)?",
+  "what_tested": "Serial exceptions",
+  "model": "First try to remove the need: scope the setting per tenant or user, or mock it. If it's unavoidable, isolate it with `@pytest.mark.serial` and run that group in a separate non-parallel CI step (`-m \"not serial\" -n auto`, then `-m serial`), or use xdist's `loadgroup` to pin related tests to one worker. Keep the serial group tiny and documented, and always restore the global state in teardown.",
+  "tags": [
+   "parallel"
+  ]
+ },
+ {
+  "id": "fw-075",
+  "topic": "Pytest & framework design",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you integrate accessibility and visual checks into an existing framework?",
+  "what_tested": "Extending coverage",
+  "model": "Add them as optional fixtures or helpers used on key pages rather than everywhere: an `a11y` fixture running axe-core and failing on serious or critical violations (with a baseline of known issues tracked as tickets), and visual snapshots on stable components in a fixed Docker image with masked dynamic regions. Run them in nightly tiers first, tune the noise, then promote the stable ones to PR checks.",
+  "tags": [
+   "a11y",
+   "visual"
+  ]
+ },
+ {
+  "id": "fw-076",
+  "topic": "Pytest & framework design",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How would you introduce contract testing between microservices into your test strategy?",
+  "what_tested": "Contract testing adoption",
+  "model": "Start with one high-churn consumer–provider pair that has had integration breakages. Agree on the tool (Pact) and a broker, write consumer tests for the interactions the consumer really uses, add provider verification to the provider's pipeline with provider states, and add a 'can I deploy?' gate. Show the bugs caught, then expand pair by pair. Contract tests replace some slow end-to-end tests; they don't replace all of them.",
+  "tags": [
+   "contracts",
+   "strategy"
+  ]
+ },
+ {
+  "id": "fw-077",
+  "topic": "Pytest & framework design",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you compare floating-point results in pytest?",
+  "what_tested": "pytest.approx",
+  "model": "`assert 0.1 + 0.2 == pytest.approx(0.3)` uses a relative tolerance of 1e-6 by default; set `rel=` or `abs=` explicitly when precision matters. It works on lists, dicts and numpy arrays too. For money, don't use approx at all: compare `Decimal` values exactly, because a tolerance can hide a one-paisa rounding bug.",
+  "tags": [
+   "pytest"
+  ]
+ },
+ {
+  "id": "fw-078",
+  "topic": "Pytest & framework design",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you check that the right exception and message are raised in pytest?",
+  "what_tested": "pytest.raises",
+  "model": "`with pytest.raises(ValueError, match=r\"amount must be positive\"):` around the call. `match` is a regex searched in the message, so escape special characters or use `re.escape`. Capture `as excinfo` to inspect `excinfo.value` attributes (e.g. an error code). Keep the block tight around the single call that should raise, so an earlier line raising the same type doesn't make the test pass for the wrong reason.",
+  "tags": [
+   "pytest"
+  ]
+ },
+ {
+  "id": "fw-079",
+  "topic": "Pytest & framework design",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "When would you call pytest.skip() or pytest.importorskip() inside a test or fixture?",
+  "what_tested": "Dynamic skipping",
+  "model": "`pytest.skip(\"reason\")` skips at runtime when the condition is only known then, e.g. a feature flag is off in this environment, or a fixture discovers a dependency is unavailable. `pytest.importorskip(\"pandas\")` skips if an optional library isn't installed. Use them sparingly and with clear reasons; a skipped test is a coverage gap that's easy to forget, so report skip counts and review them.",
+  "tags": [
+   "pytest",
+   "markers"
+  ]
+ },
+ {
+  "id": "fw-080",
+  "topic": "Pytest & framework design",
+  "difficulty": "deep",
+  "kind": "concept",
+  "question": "What is pytest_generate_tests, and when would you use it instead of parametrize?",
+  "what_tested": "Dynamic parametrisation",
+  "model": "`pytest_generate_tests(metafunc)` is a hook that lets you parametrise tests programmatically at collection time: `if \"browser_locale\" in metafunc.fixturenames: metafunc.parametrize(\"browser_locale\", locales_from_config())`. Use it when the parameters come from configuration, CLI options or external data, or when many tests share the same dynamic parametrisation, which would be repetitive with decorators.",
+  "tags": [
+   "pytest",
+   "hooks"
+  ]
+ },
+ {
+  "id": "fw-081",
+  "topic": "Pytest & framework design",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "What does `pytest --fixtures` and `--setup-show` tell you?",
+  "what_tested": "Fixture debugging",
+  "model": "`pytest --fixtures` lists every available fixture with its docstring and where it's defined, which is great for discovering what a framework offers. `--setup-show` prints the setup and teardown of each fixture as tests run, with scopes, so you can see exactly when a session fixture is created or why a teardown runs late. Both are invaluable when debugging fixture order or scope problems.",
+  "tags": [
+   "pytest",
+   "debugging"
+  ]
+ },
+ {
+  "id": "fw-082",
+  "topic": "Pytest & framework design",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "What is rootdir, and why does it matter for conftest and config files?",
+  "what_tested": "Project root detection",
+  "model": "pytest determines a rootdir from the command-line args and the first config file it finds (pytest.ini, pyproject.toml with a pytest section, tox.ini or setup.cfg). The rootdir anchors node ids in reports, where config is read from, and where `pytest_addoption` must live. Running pytest from a different directory can pick up a different config and silently change behaviour. Put the config at the repo root and run from there (or set `rootdir` explicitly).",
+  "tags": [
+   "pytest",
+   "config"
+  ]
+ },
+ {
+  "id": "fw-083",
+  "topic": "Pytest & framework design",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "Two test files have the same name in different folders and pytest errors on import. Why, and how do you fix it?",
+  "what_tested": "Import modes",
+  "model": "With the default `prepend` import mode, test modules without `__init__.py` packages are imported by basename, so `tests/ui/test_login.py` and `tests/api/test_login.py` clash. Fixes: add `__init__.py` files so they become distinct packages, rename the files, or use `--import-mode=importlib`, which avoids changing `sys.path` (though then test modules can't import each other directly).",
+  "tags": [
+   "pytest"
+  ]
+ },
+ {
+  "id": "fw-084",
+  "topic": "Pytest & framework design",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you attach custom properties to JUnit XML reports?",
+  "what_tested": "CI metadata",
+  "model": "Use the `record_property` fixture: `record_property(\"jira\", \"PAY-123\")` or `record_property(\"browser\", browser_name)` adds `<property>` elements to the test case in `--junitxml` output, which some CI dashboards display. `record_testsuite_property` adds suite-level properties such as environment or build number. Set `junit_family=xunit2` in config for compatibility with most CI tools.",
+  "tags": [
+   "reporting",
+   "ci"
+  ]
+ },
+ {
+  "id": "fw-085",
+  "topic": "Pytest & framework design",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you stop a hung test from blocking CI forever?",
+  "what_tested": "pytest-timeout",
+  "model": "Install pytest-timeout and set a global `timeout = 300` in config, with per-test overrides via `@pytest.mark.timeout(900)` for known long tests. The `thread` method dumps all thread stacks when it fires, which shows where it hung. Also set timeouts on every network call and Playwright action, and a job-level timeout in the CI pipeline as the last line of defence.",
+  "tags": [
+   "pytest",
+   "ci"
+  ]
+ },
+ {
+  "id": "fw-086",
+  "topic": "Pytest & framework design",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "pytest-randomly found an order-dependent failure. How do you reproduce and fix it?",
+  "what_tested": "Order dependence",
+  "model": "pytest-randomly prints the seed at the top of the run; rerun with `pytest --randomly-seed=<seed>` (or `--randomly-seed=last`) to reproduce the same order, and `-p no:randomly` to compare with the default order. Then bisect: run the failing test after smaller subsets of the preceding tests until you find the polluter. The fix is in the polluting test or a shared fixture, usually leaked state like a changed setting, leftover data or a mutated module-level object.",
+  "tags": [
+   "pytest",
+   "flakiness"
+  ]
+ },
+ {
+  "id": "fw-087",
+  "topic": "Pytest & framework design",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you configure pytest-rerunfailures responsibly?",
+  "what_tested": "Controlled reruns",
+  "model": "Prefer targeted reruns (`@pytest.mark.flaky(reruns=2, reruns_delay=1)` on specific known-flaky tests with a ticket) over a global `--reruns`. Use `--only-rerun` to rerun only on specific exceptions (e.g. network timeouts), never on AssertionError for business logic. Make sure reports show tests that passed on rerun, track that number over time, and remove the marker once the root cause is fixed.",
+  "tags": [
+   "pytest",
+   "flakiness"
+  ]
+ },
+ {
+  "id": "fw-088",
+  "topic": "Pytest & framework design",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you use database fixtures that roll back after each test?",
+  "what_tested": "Transactional fixtures",
+  "model": "For integration tests owning their database: open a connection in a session fixture, and in a function fixture begin a transaction (or a savepoint), yield the session, then roll back in teardown, so each test starts clean without slow re-seeding. That works when the code under test uses the same connection or transaction. For black-box API tests against a shared environment, roll back isn't possible, so create and delete data through the API instead.",
+  "tags": [
+   "test-data",
+   "database"
+  ]
+ },
+ {
+  "id": "fw-089",
+  "topic": "Pytest & framework design",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "What is Testcontainers, and how could it help your test framework?",
+  "what_tested": "Ephemeral dependencies",
+  "model": "testcontainers-python starts real dependencies in Docker from a fixture: PostgreSQL, Redis, Kafka, LocalStack or a WireMock server. It waits until they're ready and cleans them up afterwards. Integration tests then run against real, disposable services instead of shared, unstable environments or over-simplified mocks. It needs Docker in CI and adds startup time, so use session-scoped containers and reuse them across tests.",
+  "tags": [
+   "integrations",
+   "tooling"
+  ]
+ },
+ {
+  "id": "fw-090",
+  "topic": "Pytest & framework design",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you mock HTTP calls when unit testing an API client?",
+  "what_tested": "HTTP mocking libraries",
+  "model": "With requests, use the `responses` library (`responses.add(responses.GET, url, json={...}, status=200)`); with httpx, use respx; or pytest-httpserver for a real local server. Assert the client sends the right method, URL, headers and body, and handles errors, timeouts and retries correctly. These are fast unit tests of your framework's client layer; they complement, not replace, tests against the real API.",
+  "tags": [
+   "mocking",
+   "api"
+  ]
+ },
+ {
+  "id": "fw-091",
+  "topic": "Pytest & framework design",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "What is snapshot testing, and when is it appropriate for API responses?",
+  "what_tested": "Snapshot assertions",
+  "model": "Snapshot testing (e.g. syrupy) stores the output of the first run and compares future runs against it, failing on any difference until you review and update the snapshot. It's handy for large, stable structures (an API response shape, a generated report or an error catalogue) where hand-written assertions would be tedious. Risks: volatile fields (ids, timestamps) must be excluded or normalised, and teams sometimes 'update snapshots' without reviewing the diff.",
+  "tags": [
+   "assertions"
+  ]
+ },
+ {
+  "id": "fw-092",
+  "topic": "Pytest & framework design",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do tox, nox or a Makefile help a test project?",
+  "what_tested": "Task runners",
+  "model": "They give one command for common tasks: lint, type check, run smoke tests, run the full suite, generate the report. Commands then run identically for every engineer and in CI. tox and nox also create isolated virtual environments and can test several Python versions, which suits a shared framework library. A Makefile or justfile is a lighter option for simple command aliases. The point is fewer 'how do I run this?' questions and less CI drift.",
+  "tags": [
+   "tooling"
+  ]
+ },
+ {
+  "id": "fw-093",
+  "topic": "Pytest & framework design",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do pytest_plugins in a conftest work, and what's the caveat?",
+  "what_tested": "Plugin loading",
+  "model": "`pytest_plugins = [\"fixtures.auth\", \"fixtures.data\"]` in the root conftest loads fixture modules as plugins, which helps split a huge conftest into organised files. The caveat: declaring `pytest_plugins` in non-root conftest files is deprecated and errors in recent pytest, because it affects global state. Keep it in the root conftest, or package shared fixtures as a real plugin with an entry point.",
+  "tags": [
+   "pytest",
+   "conftest"
+  ]
+ },
+ {
+  "id": "fw-094",
+  "topic": "Pytest & framework design",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you use classes to group pytest tests, and what are the gotchas?",
+  "what_tested": "Test classes",
+  "model": "A `class TestCheckout:` groups related tests, shares markers (`@pytest.mark.payments` on the class) and class-scoped fixtures. Gotchas: no `__init__` (or the class isn't collected), and each test gets a new instance, so you can't pass state between test methods via `self`, which is correct, because tests shouldn't depend on each other. Use fixtures for shared setup, not `setup_method` state.",
+  "tags": [
+   "pytest"
+  ]
+ },
+ {
+  "id": "fw-095",
+  "topic": "Pytest & framework design",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "What's the difference between @pytest.mark.usefixtures and requesting a fixture as an argument?",
+  "what_tested": "Fixture usage styles",
+  "model": "Requesting a fixture as an argument gives the test its value. `@pytest.mark.usefixtures(\"clean_cart\")` activates the fixture for its side effect without passing the value, which is useful on a class to apply setup to every method, or when the value isn't needed. It doesn't work on fixtures themselves (a fixture can't use usefixtures). For readability, prefer arguments when the test actually uses the value.",
+  "tags": [
+   "pytest",
+   "fixtures"
+  ]
+ },
+ {
+  "id": "fw-096",
+  "topic": "Pytest & framework design",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you share a browser session across tests in a class for speed, and what's the risk?",
+  "what_tested": "Shared context trade-off",
+  "model": "You could define a class-scoped context or page fixture so tests in a class reuse one logged-in page, which saves setup time for long read-only flows. The risk is state leakage: one test's navigation, data or failure affects the next, order starts to matter, and parallel distribution must keep the class together (`--dist loadscope`). Usually storage state plus fresh contexts gives most of the speed with none of the coupling.",
+  "tags": [
+   "fixtures",
+   "performance"
+  ]
+ },
+ {
+  "id": "fw-097",
+  "topic": "Pytest & framework design",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you handle warnings in a test suite?",
+  "what_tested": "Warning policy",
+  "model": "Don't ignore them; deprecation warnings predict tomorrow's breakages. Use `filterwarnings` in config to turn specific warnings into errors (e.g. your own framework's deprecations) and to silence known third-party noise explicitly. `pytest.warns(DeprecationWarning)` asserts that code emits a warning. Review the warnings summary at the end of CI runs periodically, especially before upgrading pytest, Playwright or Python.",
+  "tags": [
+   "pytest",
+   "quality"
+  ]
+ },
+ {
+  "id": "fw-098",
+  "topic": "Pytest & framework design",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you measure code coverage, and does coverage of test code mean anything?",
+  "what_tested": "Coverage",
+  "model": "pytest-cov (`--cov=src --cov-report=term-missing`) measures which lines of the code under test ran. It's most meaningful for unit and integration tests of code in the same repo; for black-box UI or API tests against a deployed system, coverage needs server-side instrumentation. Coverage shows what isn't tested, not that tested code is correct. Coverage of the test code itself mostly reveals dead helpers worth deleting.",
+  "tags": [
+   "metrics"
+  ]
+ },
+ {
+  "id": "fw-099",
+  "topic": "Pytest & framework design",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you parametrise a fixture itself, and how is that different from parametrising a test?",
+  "what_tested": "Fixture params",
+  "model": "`@pytest.fixture(params=[\"chromium\", \"firefox\"], ids=[\"cr\", \"ff\"])` makes every test using that fixture run once per param, read via `request.param`. That's ideal when a whole family of tests should run in each variant, such as currencies, roles or API versions, without decorating each test. Test-level parametrize is better when only specific tests need specific cases.",
+  "tags": [
+   "pytest",
+   "fixtures",
+   "parametrize"
+  ]
+ },
+ {
+  "id": "fw-100",
+  "topic": "Pytest & framework design",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "What's the right way to test both the happy path and many edge cases of the same feature without a mess?",
+  "what_tested": "Test organisation",
+  "model": "Keep one clear happy-path test that tells the story, then a parametrised test (or a small class) for edge cases with descriptive ids, sharing setup via fixtures. Group by behaviour rather than by technique: `test_transfer_succeeds`, `test_transfer_validation[zero]`, `[negative]`, `[exceeds_limit]`. That keeps failures readable and avoids huge tests that check twenty things.",
+  "tags": [
+   "design"
+  ]
+ },
+ {
+  "id": "fw-101",
+  "topic": "Pytest & framework design",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you make sure a new test can actually fail?",
+  "what_tested": "Guarding against false positives",
+  "model": "Before trusting a new test, make it fail on purpose: break the expected value, point it at a known-bad state, or temporarily revert the fix it covers, and confirm it goes red for the right reason. Watch for assertions that can never fail (asserting on the value you just set, `assert response` on an object that's always truthy, or missing `await`). Mutation testing tools can do this systematically for unit tests.",
+  "tags": [
+   "quality"
+  ]
+ },
+ {
+  "id": "fw-102",
+  "topic": "Pytest & framework design",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you handle test cases that are known bugs and won't be fixed this sprint?",
+  "what_tested": "Known defects",
+  "model": "Mark them `@pytest.mark.xfail(reason=\"BUG-482: rounding on refunds\", strict=True)` so they keep running, are visible in reports, and alert you (by failing as XPASS) when the bug is fixed. Don't delete or skip them silently. Link the ticket, review the xfail list during triage, and remove the marker in the same PR as the fix.",
+  "tags": [
+   "pytest",
+   "markers"
+  ]
+ },
+ {
+  "id": "fw-103",
+  "topic": "Pytest & framework design",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How would you run tests against a feature branch's preview environment automatically?",
+  "what_tested": "Ephemeral environments",
+  "model": "Have the deployment pipeline publish the preview URL (e.g. as a job output or PR comment), then trigger the test job with `--base-url` (or `ENV=preview` plus the URL) pointing at it. Seed the needed test data via API in a session fixture, run the smoke tier, and report results on the PR. Tear the environment down when the PR closes. That gives realistic feedback before merge, without sharing a fragile staging environment.",
+  "tags": [
+   "ci",
+   "environments"
+  ]
  }
 ]

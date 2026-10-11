@@ -1289,7 +1289,7 @@
   "kind": "concept",
   "question": "Tests pass when run alone but fail when the whole suite runs. How do you investigate?",
   "what_tested": "Test interdependence",
-  "model": "That points to shared state or order dependence. Check for data created or changed by one test and expected by another, shared accounts whose settings a test changes, fixtures with too wide a scope holding mutable state, leftover cookies or storage when contexts are reused, and parallel workers colliding. Run the suite with `-p randomly` (pytest-randomly) to expose order dependence, then give each test its own data and setup through fixtures.",
+  "model": "That points to shared state or order dependence. Check for data created or changed by one test and expected by another, shared accounts whose settings a test changes, fixtures with too wide a scope holding mutable state, leftover cookies or storage when contexts are reused, and parallel workers colliding. Install pytest-randomly to shuffle the order on every run and expose order dependence, then give each test its own data and setup through fixtures.",
   "tags": [
    "scenario",
    "flakiness"
