@@ -1,0 +1,881 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="Free SDET mock interview practice: Python, Playwright and API testing questions, a live Python editor with hidden tests, and model answers.">
+<style>[hidden]{display:none!important}body{margin:0}img{max-width:100%}</style>
+</head>
+<body>
+<title>SDET Interview Room</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Public+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: an interview console. Setup sheet first, then a question column beside a feedback column; stacks on phones. */
+:root{
+  --bg:#F3F4F8; --surface:#FFFFFF; --sunken:#E8EAF2; --fg:#151A2D; --muted:#5A6180; --line:#D3D7E5;
+  --accent:#3346D3; --accent-fg:#FFFFFF; --accent-soft:#E2E6FB;
+  --s1:#C2362B; --s2:#B86A00; --s3:#1F7A4D; --s4:#1257B8;
+  --s1-soft:#FBE6E3; --s2-soft:#FCF0DC; --s3-soft:#DFF3E8; --s4-soft:#DDE9FA;
+  --code-bg:#151A2D; --code-fg:#E7EAF6;
+  --f-display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --f-body:"Public Sans", "Segoe UI", system-ui, sans-serif;
+  --f-mono:"JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0E1120; --surface:#161A2E; --sunken:#1D2239; --fg:#E6E8F3; --muted:#9AA1C0; --line:#2B3152;
+  --accent:#8C99FF; --accent-fg:#0E1120; --accent-soft:#232A52;
+  --s1:#FF8A7D; --s2:#F2B24D; --s3:#5DD39A; --s4:#7DB2FF;
+  --s1-soft:#3A1E22; --s2-soft:#372A14; --s3-soft:#14342A; --s4-soft:#15294A;
+  --code-bg:#090B16; --code-fg:#E7EAF6; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0E1120; --surface:#161A2E; --sunken:#1D2239; --fg:#E6E8F3; --muted:#9AA1C0; --line:#2B3152;
+  --accent:#8C99FF; --accent-fg:#0E1120; --accent-soft:#232A52;
+  --s1:#FF8A7D; --s2:#F2B24D; --s3:#5DD39A; --s4:#7DB2FF;
+  --s1-soft:#3A1E22; --s2-soft:#372A14; --s3-soft:#14342A; --s4-soft:#15294A;
+  --code-bg:#090B16; --code-fg:#E7EAF6; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font:15px/1.55 var(--f-body);padding-inline:16px;padding-block:0 48px}
+.wrap{max-width:1180px;margin:0 auto}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;line-height:1.15}
+button,input,textarea,select{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+header.top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding-block:18px;border-bottom:1px solid var(--line);margin-bottom:24px}
+.brand{display:flex;align-items:center;gap:10px}
+.brand .mark{width:34px;height:34px;border-radius:8px;background:var(--fg);color:var(--bg);display:grid;place-items:center;font:600 13px var(--f-mono)}
+.brand h1{font-size:20px;font-weight:700}
+.brand small{display:block;color:var(--muted);font-size:12.5px;font-family:var(--f-body)}
+.status{font:500 12px var(--f-mono);color:var(--muted);display:flex;align-items:center;gap:8px}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--muted)}
+.dot.on{background:var(--s3)} .dot.off{background:var(--s2)}
+
+.btn{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--surface);padding:9px 16px;border-radius:8px;cursor:pointer;font-weight:600;font-size:14px}
+.btn:hover{border-color:var(--muted)}
+.btn.primary{background:var(--accent);color:var(--accent-fg);border-color:var(--accent)}
+.btn.primary:hover{filter:brightness(1.07)}
+.btn.ghost{background:transparent}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn.sm{padding:6px 11px;font-size:13px}
+
+/* Setup */
+.setup{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:28px;align-items:start}
+.intro h2{font-size:clamp(28px,4.2vw,44px);font-weight:700;letter-spacing:-.01em}
+.intro p{color:var(--muted);max-width:56ch;margin:12px 0 0}
+.sheet{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:22px;display:grid;gap:20px}
+.field{display:grid;gap:8px}
+.label{font:600 11.5px var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1px solid var(--line);background:var(--bg);padding:7px 12px;border-radius:999px;cursor:pointer;font-size:13.5px;font-weight:500;display:inline-flex;gap:6px;align-items:center}
+.chip[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent);color:var(--fg)}
+.chip[aria-pressed="true"]::before{content:"✓";font-size:12px;color:var(--accent);font-weight:700}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;flex-wrap:wrap}
+.seg button{border:0;background:var(--bg);padding:8px 14px;cursor:pointer;font-size:13.5px;font-weight:500;border-right:1px solid var(--line)}
+.seg button:last-child{border-right:0}
+.seg button[aria-pressed="true"]{background:var(--fg);color:var(--bg)}
+textarea,input[type=text]{width:100%;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px 12px;resize:vertical}
+textarea:focus,input:focus{border-color:var(--accent);outline:none}
+.hint{font-size:12.5px;color:var(--muted)}
+.syllabus{display:grid;gap:10px;margin-top:22px}
+.syl{display:grid;grid-template-columns:110px minmax(0,1fr);gap:12px;padding-block:10px;border-top:1px solid var(--line)}
+.syl b{font:600 12px var(--f-mono);color:var(--accent);text-transform:uppercase;letter-spacing:.06em;padding-top:2px}
+.syl span{color:var(--muted);font-size:14px}
+.resume{display:flex;gap:10px;align-items:center;flex-wrap:wrap;background:var(--accent-soft);border-radius:8px;padding:10px 14px;font-size:14px}
+
+/* Session */
+.progress{display:flex;gap:6px;align-items:center;margin-bottom:18px;flex-wrap:wrap}
+.pip{width:28px;height:6px;border-radius:3px;background:var(--line)}
+.pip.done{background:var(--accent)} .pip.cur{background:var(--fg)}
+.progress .count{font:500 12.5px var(--f-mono);color:var(--muted);margin-left:8px}
+.session{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:20px;align-items:start}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:22px;min-width:0}
+.qmeta{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.tag{font:600 11px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;padding:4px 8px;border-radius:5px;background:var(--sunken);color:var(--muted)}
+.tag.topic{background:var(--accent-soft);color:var(--accent)}
+.question{font-family:var(--f-display);font-size:clamp(19px,2.2vw,23px);font-weight:500;line-height:1.35;margin:0 0 10px}
+.tested{color:var(--muted);font-size:13.5px;margin:0 0 16px}
+.hintbox{background:var(--sunken);border-radius:8px;padding:10px 12px;font-size:14px;margin-bottom:14px}
+#answer{min-height:200px;font-size:14.5px}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;align-items:center}
+.actions .grow{flex:1}
+.kbd{font:500 11.5px var(--f-mono);color:var(--muted)}
+
+.empty{color:var(--muted);display:grid;gap:10px;place-items:start}
+.empty h3{color:var(--fg);font-size:18px}
+.thinking{display:flex;align-items:center;gap:12px;color:var(--muted);font:500 13.5px var(--f-mono)}
+.spinner{width:16px;height:16px;border:2px solid var(--line);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.spinner{animation:none}}
+
+.score{display:flex;align-items:center;gap:14px;margin-bottom:16px}
+.score .num{font:700 34px/1 var(--f-display);width:62px;height:62px;border-radius:12px;display:grid;place-items:center}
+.sc1 .num{background:var(--s1-soft);color:var(--s1)} .sc2 .num{background:var(--s2-soft);color:var(--s2)}
+.sc3 .num{background:var(--s3-soft);color:var(--s3)} .sc4 .num{background:var(--s4-soft);color:var(--s4)}
+.score .verdict b{display:block;font-size:16px}
+.score .verdict span{color:var(--muted);font-size:13.5px}
+.fb{display:grid;gap:16px}
+.fb h4{margin:0 0 6px;font:600 11.5px var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.fb ul{margin:0;padding-left:18px;display:grid;gap:4px}
+.good li::marker{color:var(--s3)} .bad li::marker{color:var(--s1)}
+.model{border-left:3px solid var(--accent);padding-left:14px}
+.rich p{margin:0 0 8px} .rich p:last-child{margin:0}
+code{font-family:var(--f-mono);font-size:.88em;background:var(--sunken);padding:1px 5px;border-radius:4px}
+pre{background:var(--code-bg);color:var(--code-fg);border-radius:8px;padding:14px;overflow-x:auto;font:13px/1.55 var(--f-mono);margin:8px 0}
+pre code{background:none;padding:0;color:inherit;font-size:inherit}
+.err{background:var(--s1-soft);color:var(--s1);border-radius:8px;padding:10px 12px;font-size:14px}
+
+/* Summary */
+.summary{display:grid;gap:20px}
+.sumhead{display:flex;gap:20px;align-items:center;flex-wrap:wrap}
+.big{font:700 56px/1 var(--f-display)}
+.big small{font-size:20px;color:var(--muted)}
+.bars{display:grid;gap:10px}
+.bar{display:grid;grid-template-columns:130px minmax(0,1fr) 40px;gap:10px;align-items:center;font-size:14px}
+.track{height:10px;background:var(--sunken);border-radius:5px;overflow:hidden}
+.fill{height:100%;background:var(--accent);border-radius:5px}
+.bar .v{font:600 13px var(--f-mono);text-align:right;font-variant-numeric:tabular-nums}
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+.log{display:grid;gap:0}
+.logrow{display:grid;grid-template-columns:28px minmax(0,1fr) 34px;gap:10px;padding-block:10px;border-top:1px solid var(--line);font-size:14px;align-items:start}
+.logrow .n{font:500 12px var(--f-mono);color:var(--muted);padding-top:2px}
+.logrow .s{font:700 14px var(--f-mono);text-align:right}
+
+/* Code editor + runner */
+.ide{border:1px solid var(--line);border-radius:8px;overflow:hidden;margin-bottom:14px;background:var(--code-bg)}
+.ide-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:8px 10px;background:var(--sunken);border-bottom:1px solid var(--line)}
+.ide-bar .file{font:600 12px var(--f-mono);color:var(--fg)}
+.ide-bar .note{font:500 11.5px var(--f-mono);color:var(--muted)}
+.ide-bar .grow{flex:1}
+.ide-wrap{display:grid;grid-template-columns:auto minmax(0,1fr);max-height:420px;overflow:auto}
+.gutter{font:13px/1.6 var(--f-mono);color:#6B7395;text-align:right;padding:12px 8px 12px 12px;user-select:none;white-space:pre;background:var(--code-bg)}
+.code{font:13px/1.6 var(--f-mono);background:var(--code-bg);color:var(--code-fg);border:0;border-radius:0;padding:12px 12px 12px 6px;min-height:240px;white-space:pre;overflow:hidden;resize:none;tab-size:4;caret-color:var(--code-fg);width:100%}
+.code:focus{outline:none;border:0}
+.ide:focus-within{border-color:var(--accent)}
+.console{border-top:1px solid #2B3152;background:var(--code-bg);color:var(--code-fg);font:12.5px/1.55 var(--f-mono);padding:10px 12px;max-height:240px;overflow:auto}
+.console .row{display:grid;grid-template-columns:18px minmax(0,1fr);gap:8px;padding-block:2px}
+.console .ok{color:#5DD39A} .console .no{color:#FF8A7D}
+.console .muted{color:#9AA1C0}
+.console pre{background:none;padding:0;margin:4px 0;color:inherit;white-space:pre-wrap}
+.console .sum{font-weight:600;margin-bottom:6px}
+.runpill{font:600 11px var(--f-mono);padding:3px 8px;border-radius:999px;background:var(--surface);color:var(--muted);border:1px solid var(--line)}
+.runpill.pass{color:var(--s3);border-color:var(--s3)} .runpill.fail{color:var(--s1);border-color:var(--s1)}
+
+.mix{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.mixitem{font:600 12.5px var(--f-mono);padding:5px 10px;border-radius:6px;background:var(--sunken);font-variant-numeric:tabular-nums}
+.mixitem b{color:var(--accent);margin-right:4px}
+.pip.t-py{background:var(--line)} 
+footer{margin-top:36px;color:var(--muted);font-size:12.5px}
+
+@media (max-width:860px){
+  .setup,.session{grid-template-columns:minmax(0,1fr)}
+  .bar{grid-template-columns:96px minmax(0,1fr) 36px}
+  .syl{grid-template-columns:minmax(0,1fr);gap:2px}
+}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <div class="mark">py</div>
+      <div><h1>SDET Interview Room</h1><small>Playwright · Python · API testing</small></div>
+    </div>
+    <div class="status"><span class="dot" id="aiDot"></span><span id="aiStatus">Connecting to interviewer…</span></div>
+  </header>
+
+  <!-- SETUP -->
+  <section id="setupView">
+    <div class="setup">
+      <div class="intro">
+        <h2>Practise the interview before the real one.</h2>
+        <p>Pick your level and start. Answer real SDET interview questions out loud or in writing, solve Python tasks in a live editor with hidden tests, then compare with a model answer and score yourself 1–4.</p>
+        <div class="syllabus">
+          <div class="syl"><b>Playwright</b><span>Locators, auto-wait and actionability, web-first assertions, contexts, network mocking, storage state, frames and popups, tracing.</span></div>
+          <div class="syl"><b>Python</b><span>Data structures, comprehensions, generators, decorators, context managers, OOP, exceptions, typing. Live-coding tasks run in a real Python editor with hidden tests.</span></div>
+          <div class="syl"><b>API testing</b><span>REST semantics, status codes, auth, schema and contract validation, requests + pytest, Playwright APIRequestContext, idempotency, pagination.</span></div>
+          <div class="syl"><b>Framework</b><span>Pytest fixtures and scopes, parametrize, POM design, test data, parallel runs with xdist, reporting.</span></div>
+          <div class="syl"><b>CI &amp; flakiness</b><span>Debugging CI-only failures, trace viewer, flake root causes, pipelines, sharding.</span></div>
+        </div>
+      </div>
+
+      <form class="sheet" id="setupForm" autocomplete="off">
+        <div class="resume" id="resumeBox" hidden>
+          <span id="resumeText"></span>
+          <button type="button" class="btn sm" id="resumeBtn">Resume</button>
+          <button type="button" class="btn sm ghost" id="discardBtn">Discard</button>
+        </div>
+        <div class="field">
+          <span class="label" id="lvlLabel">Level</span>
+          <div class="seg" role="group" aria-labelledby="lvlLabel" id="levelSeg">
+            <button type="button" data-v="Mid-level SDET" aria-pressed="false">Mid-level</button>
+            <button type="button" data-v="Senior SDET" aria-pressed="true">Senior SDET</button>
+            <button type="button" data-v="QA Lead / Manager" aria-pressed="false">Lead / Manager</button>
+          </div>
+        </div>
+        <div class="field">
+          <span class="label" id="trkLabel">Skills to cover</span>
+          <div class="chips" role="group" aria-labelledby="trkLabel" id="trackChips">
+            <button type="button" class="chip" data-v="Playwright" aria-pressed="true">Playwright</button>
+            <button type="button" class="chip" data-v="Python" aria-pressed="true">Python</button>
+            <button type="button" class="chip" data-v="API testing" aria-pressed="true">API testing</button>
+            <button type="button" class="chip" data-v="Pytest & framework design" aria-pressed="false">Framework</button>
+            <button type="button" class="chip" data-v="CI, debugging & flakiness" aria-pressed="false">CI &amp; flakiness</button>
+            <button type="button" class="chip" data-v="Behavioral" aria-pressed="false">Behavioral</button>
+          </div>
+        </div>
+        <div class="field">
+          <span class="label" id="lenLabel">Questions</span>
+          <div class="seg" role="group" aria-labelledby="lenLabel" id="lenSeg">
+            <button type="button" data-v="5" aria-pressed="false">5</button>
+            <button type="button" data-v="8" aria-pressed="false">8</button>
+            <button type="button" data-v="10" aria-pressed="true">10</button>
+          </div>
+        </div>
+        <div class="field">
+          <span class="label">Question mix</span>
+          <div class="mix" id="mixLine"></div>
+        </div>
+        <div class="field" hidden>
+          <label class="label" for="jd">Target role or job description <span style="text-transform:none;letter-spacing:0">(optional)</span></label>
+          <textarea id="jd" rows="4" placeholder="e.g. Senior SDET at a fintech. Python, Playwright, REST APIs, Jenkins, AWS. Paste the JD for tailored questions."></textarea>
+        </div>
+        <div class="err" id="setupErr" hidden></div>
+        <div class="actions">
+          <button type="submit" class="btn primary" id="startBtn">Start interview</button>
+          <span class="hint" id="modeHint"></span>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <!-- SESSION -->
+  <section id="sessionView" hidden>
+    <div class="progress" id="progress"></div>
+    <div class="session">
+      <div class="panel" id="qPanel">
+        <div id="qBody"></div>
+      </div>
+      <div class="panel" id="fPanel">
+        <div id="fBody"></div>
+      </div>
+    </div>
+    <div class="actions" style="margin-top:16px">
+      <button class="btn ghost sm" id="endBtn" type="button">End and see summary</button>
+      <span class="grow"></span>
+      <span class="hint">Your session is saved in this browser only.</span>
+    </div>
+  </section>
+
+  <!-- SUMMARY -->
+  <section id="summaryView" hidden>
+    <div class="summary">
+      <div class="panel">
+        <div class="sumhead">
+          <div class="big" id="avgScore">–<small> / 4</small></div>
+          <div>
+            <h2 style="font-size:24px" id="sumTitle">Session summary</h2>
+            <div class="hint" id="sumMeta"></div>
+          </div>
+        </div>
+      </div>
+      <div class="cols">
+        <div class="panel"><h4 class="label" style="margin:0 0 12px">Score by skill</h4><div class="bars" id="bars"></div></div>
+        <div class="panel"><h4 class="label" style="margin:0 0 12px">Coach's notes</h4><div id="coach" class="rich"></div></div>
+      </div>
+      <div class="panel"><h4 class="label" style="margin:0 0 4px">Question log</h4><div class="log" id="log"></div></div>
+      <div class="actions">
+        <button class="btn primary" id="againBtn" type="button">New interview</button>
+        <button class="btn" id="copyBtn" type="button">Copy summary</button>
+        <span class="hint" id="copyNote"></span>
+      </div>
+    </div>
+  </section>
+
+  <footer>Scores use a 1–4 scale: 1 no hire · 2 weak · 3 meets the bar · 4 strong hire. Built for SDET interview practice. Python runs in your browser via Pyodide; nothing is sent anywhere.</footer>
+</div>
+
+<script>
+(() => {
+  const $ = s => document.querySelector(s);
+  const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  const STORE = "sdet-room-v1";
+
+  // Minimal markdown: fenced code, inline code, bold, paragraphs/bullets.
+  function rich(src){
+    const parts = String(src ?? "").split(/```[a-zA-Z]*\n?/);
+    return parts.map((p,i) => {
+      if (i % 2) return `<pre><code>${esc(p.replace(/\n$/,""))}</code></pre>`;
+      return p.trim().split(/\n{2,}/).filter(Boolean).map(block => {
+        const lines = block.split("\n");
+        const inline = t => esc(t).replace(/`([^`]+)`/g,"<code>$1</code>").replace(/\*\*([^*]+)\*\*/g,"<b>$1</b>");
+        if (lines.every(l => /^\s*[-*]\s+/.test(l))) return "<ul>"+lines.map(l=>"<li>"+inline(l.replace(/^\s*[-*]\s+/,""))+"</li>").join("")+"</ul>";
+        return "<p>"+lines.map(inline).join("<br>")+"</p>";
+      }).join("");
+    }).join("");
+  }
+
+  // ---------- Offline bank (used when AI is unavailable) ----------
+  const BANK = [{"topic": "Python", "difficulty": "warm-up", "kind": "concept", "question": "What's the problem with `def add(item, items=[])`, and how do you fix it?", "what_tested": "Mutable default arguments", "hint": "", "model": "Default values are evaluated once, when the function is defined, so every call shares the same list and items leak between calls. Use `items=None` and create a new list inside: `if items is None: items = []`. In test code this shows up as state leaking between tests through helper functions."}, {"topic": "Python", "difficulty": "warm-up", "kind": "concept", "question": "What's the difference between `is` and `==`?", "what_tested": "Identity vs equality", "hint": "", "model": "`==` compares values (calls `__eq__`); `is` compares identity, i.e. whether both names point to the same object. Use `is` only for singletons like `None` (`if x is None`). A classic gotcha: `a = 256; b = 256; a is b` is True because CPython caches small ints, but that's an implementation detail you should never rely on."}, {"topic": "Python", "difficulty": "core", "kind": "concept", "question": "Explain decorators and write one that retries a function up to 3 times on AssertionError.", "what_tested": "Closures, decorators, functools.wraps", "hint": "", "model": "A decorator is a function that takes a function and returns a wrapped one.\n\n```python\nimport functools, time\n\ndef retry(times=3, delay=0.5):\n    def deco(fn):\n        @functools.wraps(fn)\n        def wrapper(*args, **kwargs):\n            for attempt in range(1, times + 1):\n                try:\n                    return fn(*args, **kwargs)\n                except AssertionError:\n                    if attempt == times:\n                        raise\n                    time.sleep(delay)\n        return wrapper\n    return deco\n```\n\n`functools.wraps` keeps the name and docstring so pytest reports stay readable. In UI tests I'd rather fix the root cause than retry assertions."}, {"topic": "Python", "difficulty": "core", "kind": "concept", "question": "What's a generator, and where would you use one in a test framework?", "what_tested": "Lazy iteration, yield", "hint": "", "model": "A generator uses `yield` to produce values lazily, one at a time, keeping its state between calls, so it saves memory on large data. In pytest, `yield` fixtures are the everyday example: code before `yield` is setup, code after is teardown. I also use generators to stream large CSV test data or walk paginated API results without loading everything at once."}, {"topic": "Python", "difficulty": "core", "kind": "concept", "question": "Shallow copy vs deep copy: when does the difference bite you?", "what_tested": "Object references, copy module", "hint": "", "model": "A shallow copy (`list(x)`, `dict.copy()`, `copy.copy`) creates a new outer container but shares the nested objects. A deep copy (`copy.deepcopy`) copies everything recursively. It bites with nested test data: you copy a base payload, change a nested field for one test, and the base payload changes for every other test too. For nested payload templates, use `deepcopy` or build them from a factory function."}, {"topic": "Python", "difficulty": "core", "kind": "concept", "question": "How do context managers work, and how would you write one for a temporary environment variable in tests?", "what_tested": "__enter__/__exit__, contextlib", "hint": "", "model": "`with` calls `__enter__` on entry and `__exit__` on exit, even if an exception is raised, so cleanup always runs. The quickest way to write one is `contextlib.contextmanager`:\n\n```python\nimport os\nfrom contextlib import contextmanager\n\n@contextmanager\ndef temp_env(key, value):\n    old = os.environ.get(key)\n    os.environ[key] = value\n    try:\n        yield\n    finally:\n        if old is None:\n            os.environ.pop(key, None)\n        else:\n            os.environ[key] = old\n```\n\nIn pytest you'd usually use the built-in `monkeypatch.setenv`, which restores the value for you."}, {"topic": "Python", "difficulty": "core", "kind": "concept", "question": "What do `*args` and `**kwargs` do, and when are they useful in test helpers?", "what_tested": "Variadic arguments", "hint": "", "model": "`*args` collects extra positional arguments into a tuple; `**kwargs` collects extra keyword arguments into a dict. They also unpack: `f(*items, **options)`. In test helpers they let a wrapper pass options through without knowing them, for example a `create_user(**overrides)` factory that merges overrides into default fields, or a decorator that forwards any call signature to the wrapped function."}, {"topic": "Python", "difficulty": "deep", "kind": "concept", "question": "Explain the GIL. Does it matter for running tests in parallel?", "what_tested": "Concurrency model", "hint": "", "model": "The GIL lets only one thread execute Python bytecode at a time in CPython, so threads don't speed up CPU-bound work. They still help for I/O-bound work (network, browser commands), because the GIL is released while waiting. For parallel test runs, `pytest-xdist` uses separate processes, each with its own interpreter and GIL, so the GIL isn't the bottleneck there. The real limits are shared test data and environment capacity."}, {"topic": "Python", "difficulty": "core", "kind": "concept", "question": "When do you use try / except / else / finally, and what's wrong with a bare `except:`?", "what_tested": "Exception handling", "hint": "", "model": "`try` holds the risky code, `except` handles specific exceptions, `else` runs only if nothing was raised (keep the success path there), and `finally` always runs for cleanup. A bare `except:` also catches `KeyboardInterrupt` and `SystemExit`, and it hides real bugs, so catch the narrowest exception you expect and re-raise or log the rest. In test code, swallowing exceptions can make a broken test pass silently."}, {"topic": "Python", "difficulty": "core", "kind": "python_code", "question": "Write dedupe(items) that removes duplicates from a list while keeping the original order.", "what_tested": "Sets vs order preservation, edge cases", "hint": "A set tells you what you've seen; a list keeps the order.", "starter_code": "def dedupe(items):\n    \"\"\"Return items without duplicates, keeping first-seen order.\"\"\"\n    pass\n", "tests": ["assert dedupe([3, 1, 3, 2, 1]) == [3, 1, 2]", "assert dedupe([]) == []", "assert dedupe(['b', 'a', 'b', 'c', 'a']) == ['b', 'a', 'c']", "assert dedupe([1, 1, 1]) == [1]"], "model": "```python\ndef dedupe(items):\n    seen = set()\n    out = []\n    for x in items:\n        if x not in seen:\n            seen.add(x)\n            out.append(x)\n    return out\n```\n\n`list(set(items))` loses the order. One-liner alternative: `list(dict.fromkeys(items))`, since dicts keep insertion order. Both are O(n) and need hashable items."}, {"topic": "Python", "difficulty": "deep", "kind": "python_code", "question": "Write failed_tests(log) that takes pytest-style log lines and returns a dict mapping each test file to its number of FAILED tests, highest count first.", "what_tested": "String parsing, dicts, sorting", "hint": "Split on '::' to get the file; collections.Counter helps.", "starter_code": "def failed_tests(log):\n    \"\"\"log: list of lines like 'FAILED tests/test_login.py::test_bad_pwd - AssertionError'.\n    Return {file: failed_count}, highest count first.\"\"\"\n    pass\n", "tests": ["assert failed_tests([]) == {}", "assert failed_tests(['PASSED tests/a.py::t1']) == {}", "assert failed_tests(['FAILED tests/a.py::t1 - E', 'FAILED tests/b.py::t2 - E', 'FAILED tests/b.py::t3 - E']) == {'tests/b.py': 2, 'tests/a.py': 1}", "assert list(failed_tests(['FAILED x.py::a', 'FAILED y.py::b', 'FAILED y.py::c'])) == ['y.py', 'x.py']"], "model": "```python\nfrom collections import Counter\n\ndef failed_tests(log):\n    counts = Counter(\n        line.split()[1].split(\"::\")[0]\n        for line in log\n        if line.startswith(\"FAILED \")\n    )\n    return dict(counts.most_common())\n```\n\n`most_common()` sorts by count and dicts keep insertion order, so the result stays sorted. O(n log k). In an interview, state the line-format assumption and how you'd harden it (a regex, skipping malformed lines)."}, {"topic": "Python", "difficulty": "core", "kind": "python_code", "question": "Write flatten(nested) that flattens an arbitrarily nested list of numbers into one flat list.", "what_tested": "Recursion, type checks", "hint": "If an element is a list, flatten it too.", "starter_code": "def flatten(nested):\n    \"\"\"flatten([1, [2, [3, 4]], 5]) -> [1, 2, 3, 4, 5]\"\"\"\n    pass\n", "tests": ["assert flatten([1, [2, [3, 4]], 5]) == [1, 2, 3, 4, 5]", "assert flatten([]) == []", "assert flatten([[[]], [1]]) == [1]", "assert flatten([1, 2, 3]) == [1, 2, 3]"], "model": "```python\ndef flatten(nested):\n    out = []\n    for x in nested:\n        if isinstance(x, list):\n            out.extend(flatten(x))\n        else:\n            out.append(x)\n    return out\n```\n\nO(n) over all elements. For very deep nesting, recursion can hit Python's recursion limit; an explicit stack avoids that. A generator version (`yield from flatten(x)`) avoids building intermediate lists."}, {"topic": "Python", "difficulty": "core", "kind": "python_code", "question": "Write backoff_delays(base, factor, retries, cap) that returns the list of wait times for exponential backoff, never exceeding cap.", "what_tested": "Loops, arithmetic, retry logic", "hint": "Delay n is base * factor ** n, limited by cap.", "starter_code": "def backoff_delays(base, factor, retries, cap):\n    \"\"\"backoff_delays(1, 2, 5, 10) -> [1, 2, 4, 8, 10]\"\"\"\n    pass\n", "tests": ["assert backoff_delays(1, 2, 5, 10) == [1, 2, 4, 8, 10]", "assert backoff_delays(0.5, 3, 3, 100) == [0.5, 1.5, 4.5]", "assert backoff_delays(1, 2, 0, 10) == []", "assert backoff_delays(5, 2, 3, 5) == [5, 5, 5]"], "model": "```python\ndef backoff_delays(base, factor, retries, cap):\n    return [min(base * factor ** n, cap) for n in range(retries)]\n```\n\nO(n). In real retry logic, add random jitter so many clients don't retry at the same moment, and only retry on errors that are actually transient (timeouts, 429, 503), not on 400s."}, {"topic": "Python", "difficulty": "deep", "kind": "python_code", "question": "Write mask_secrets(payload, keys) that returns a copy of a nested dict/list where the values of any key in `keys` are replaced with '***'. The original must not change.", "what_tested": "Recursion over JSON, immutability", "hint": "Handle dicts and lists recursively; build new objects instead of editing in place.", "starter_code": "def mask_secrets(payload, keys):\n    \"\"\"Mask values of sensitive keys anywhere in a JSON-like structure.\"\"\"\n    pass\n", "tests": ["assert mask_secrets({'user': 'a', 'password': 'p'}, {'password'}) == {'user': 'a', 'password': '***'}", "assert mask_secrets({'items': [{'token': 't', 'id': 1}]}, {'token'}) == {'items': [{'token': '***', 'id': 1}]}", "data = {'auth': {'token': 'x'}}; mask_secrets(data, {'token'}); assert data == {'auth': {'token': 'x'}}", "assert mask_secrets([1, 'a', None], {'x'}) == [1, 'a', None]"], "model": "```python\ndef mask_secrets(payload, keys):\n    if isinstance(payload, dict):\n        return {k: \"***\" if k in keys else mask_secrets(v, keys) for k, v in payload.items()}\n    if isinstance(payload, list):\n        return [mask_secrets(v, keys) for v in payload]\n    return payload\n```\n\nO(n) over all nodes, and it never mutates the input. This is exactly what you'd use before attaching API request/response bodies to test reports, so tokens and passwords don't leak into CI logs."}, {"topic": "Python", "difficulty": "warm-up", "kind": "python_code", "question": "Write chunk(items, size) that splits a list into consecutive chunks of length `size` (the last chunk may be shorter).", "what_tested": "Slicing, ranges", "hint": "range(0, len(items), size) gives the start of each chunk.", "starter_code": "def chunk(items, size):\n    \"\"\"chunk([1, 2, 3, 4, 5], 2) -> [[1, 2], [3, 4], [5]]\"\"\"\n    pass\n", "tests": ["assert chunk([1, 2, 3, 4, 5], 2) == [[1, 2], [3, 4], [5]]", "assert chunk([], 3) == []", "assert chunk([1, 2, 3], 3) == [[1, 2, 3]]", "assert chunk([1, 2], 5) == [[1, 2]]"], "model": "```python\ndef chunk(items, size):\n    return [items[i:i + size] for i in range(0, len(items), size)]\n```\n\nO(n). Mention input validation: `size <= 0` would loop forever in some implementations or raise in `range`; raise a clear `ValueError`. Useful for batching API calls or splitting test data across workers."}, {"topic": "Python", "difficulty": "core", "kind": "python_code", "question": "Write group_by_status(results) that takes a list of dicts like {'name': 'test_x', 'status': 'passed'} and returns {status: [names...]} with names sorted alphabetically.", "what_tested": "Dict grouping, defaultdict", "hint": "collections.defaultdict(list) saves the 'if key not in' check.", "starter_code": "def group_by_status(results):\n    \"\"\"Return {status: sorted list of test names}.\"\"\"\n    pass\n", "tests": ["assert group_by_status([]) == {}", "assert group_by_status([{'name': 'b', 'status': 'failed'}, {'name': 'a', 'status': 'failed'}]) == {'failed': ['a', 'b']}", "assert group_by_status([{'name': 't1', 'status': 'passed'}, {'name': 't2', 'status': 'skipped'}, {'name': 't0', 'status': 'passed'}]) == {'passed': ['t0', 't1'], 'skipped': ['t2']}"], "model": "```python\nfrom collections import defaultdict\n\ndef group_by_status(results):\n    groups = defaultdict(list)\n    for r in results:\n        groups[r[\"status\"]].append(r[\"name\"])\n    return {status: sorted(names) for status, names in groups.items()}\n```\n\nO(n log n) because of the sort. Convert the defaultdict back to a plain dict so callers don't get surprise keys created on lookup."}, {"topic": "Python", "difficulty": "core", "kind": "python_code", "question": "Write parse_query(url) that returns the query parameters of a URL as a dict. Repeated keys become lists; a URL with no query returns {}.", "what_tested": "String parsing, standard library", "hint": "urllib.parse has most of what you need.", "starter_code": "def parse_query(url):\n    \"\"\"parse_query('https://x.com/s?q=pw&page=2') -> {'q': 'pw', 'page': '2'}\"\"\"\n    pass\n", "tests": ["assert parse_query('https://x.com/s?q=pw&page=2') == {'q': 'pw', 'page': '2'}", "assert parse_query('https://x.com/') == {}", "assert parse_query('https://x.com/?tag=a&tag=b') == {'tag': ['a', 'b']}", "assert parse_query('https://x.com/?q=hello%20world') == {'q': 'hello world'}"], "model": "```python\nfrom urllib.parse import urlparse, parse_qs\n\ndef parse_query(url):\n    parsed = parse_qs(urlparse(url).query)\n    return {k: v[0] if len(v) == 1 else v for k, v in parsed.items()}\n```\n\nUsing `urllib.parse` handles URL decoding (`%20`) correctly, which a hand-written split on `&` and `=` would miss. Handy in UI tests to assert on the parameters of `page.url` or an intercepted request."}, {"topic": "Playwright", "difficulty": "warm-up", "kind": "concept", "question": "What does Playwright check before it performs a click, and why does that make time.sleep unnecessary?", "what_tested": "Auto-wait and actionability", "hint": "", "model": "Before a click, Playwright resolves the locator fresh and runs actionability checks: attached, visible, stable (not animating), receives events (not covered), and enabled. It retries until they pass or the action timeout (30s by default) expires. The locator itself is lazy and doesn't wait; the action does. A fixed sleep is either too short on slow CI (flaky) or too long locally (wasted). I still use an explicit wait for non-element signals such as `expect_response` or `wait_for_url`, and I prefer an `expect` assertion as the wait."}, {"topic": "Playwright", "difficulty": "warm-up", "kind": "concept", "question": "Locator vs ElementHandle: which do you use and why?", "what_tested": "Locator model and strictness", "hint": "", "model": "Locators. A Locator is a lazy query that re-resolves on every action and auto-waits, so it survives re-renders. An ElementHandle pins one DOM node and goes stale. Locators are also strict: an action fails if the query matches more than one element, which catches ambiguous selectors early. My priority is `get_by_role` with a name, then label/placeholder/text, then `get_by_test_id`, with CSS/XPath last."}, {"topic": "Playwright", "difficulty": "core", "kind": "concept", "question": "What's the difference between `expect(locator).to_have_text('Done')` and `assert locator.inner_text() == 'Done'`?", "what_tested": "Web-first assertions", "hint": "", "model": "`expect` is a web-first assertion: it retries until the condition is true or the timeout (5s by default) runs out. `inner_text()` reads the text once, so the plain assert races the UI and fails if the text updates a moment later. Use `expect` for anything on the page; use plain asserts for values already in hand, such as a parsed API response."}, {"topic": "Playwright", "difficulty": "core", "kind": "concept", "question": "How do you mock an API response in a Playwright test, and when shouldn't you?", "what_tested": "page.route, test isolation trade-offs", "hint": "", "model": "Register a route before the page makes the call:\n\n```python\npage.route(\"**/api/orders*\", lambda route: route.fulfill(json=[]))\npage.goto(\"/orders\")\nexpect(page.get_by_text(\"No orders yet\")).to_be_visible()\n```\n\n`route.abort()` simulates network failures, and `route.fetch()` lets you patch a real response. Mocking makes UI tests fast and deterministic and lets you test error states. Don't rely on it alone: mocks drift from the real API, so pair them with API or contract tests, and keep a few end-to-end tests that hit the real backend."}, {"topic": "Playwright", "difficulty": "core", "kind": "concept", "question": "What is a BrowserContext, and how would you test a flow that needs two users at once?", "what_tested": "Context isolation", "hint": "", "model": "A BrowserContext is an isolated, incognito-like session with its own cookies, storage and cache. It's cheap to create compared with launching a browser, which is why pytest-playwright gives each test a fresh one. For two users, create two contexts from the same browser, each with its own `storage_state`, open a page in each, and drive them in turn, for example a maker submitting and a checker approving. Close both in a `finally` or a fixture."}, {"topic": "Playwright", "difficulty": "core", "kind": "concept", "question": "How do you handle an iframe, a new tab, and a file download in Playwright Python?", "what_tested": "frame_locator, expect_popup, expect_download", "hint": "", "model": "Iframe: `page.frame_locator(\"#payment\").get_by_label(\"Card number\").fill(...)`, with no switching like in Selenium. New tab: `with page.expect_popup() as info: link.click()`, then `info.value` is the new page. Download: `with page.expect_download() as d: button.click()`, then `d.value.save_as(path)`. The pattern is the same for both events: start waiting before the action that triggers them, otherwise you can miss the event."}, {"topic": "Playwright", "difficulty": "deep", "kind": "concept", "question": "How do you avoid logging in through the UI in every test, across three user roles, when running with pytest -n 4?", "what_tested": "storage_state, fixtures, parallel safety", "hint": "", "model": "Log in once per role (ideally via API), save `context.storage_state(path=...)`, and load it with `browser.new_context(storage_state=...)` in a fixture. Generate the files in a session-scoped fixture. With xdist each worker is its own process, so generate per worker (use `worker_id` in the path) or guard generation with a file lock. If the app limits concurrent sessions per account, use one account per worker. Tests that change shared data need unique data per test."}, {"topic": "Playwright", "difficulty": "deep", "kind": "concept", "question": "A test passes locally but fails 1 in 10 runs in CI. Walk me through how you debug it.", "what_tested": "Trace viewer, root-cause analysis", "hint": "", "model": "Run CI with `--tracing retain-on-failure`, download the trace and open it with `playwright show-trace trace.zip`. The DOM snapshots, network log and console show what differed at the failing step. Then classify the cause: timing (sleeps, non-web-first assertions), data collisions under parallelism, environment (viewport, timezone, slower CPU), order dependence, or a real race in the product. Reproduce headless locally, stress-run the test, and fix the root cause. If it can't be fixed quickly, quarantine it with an owner and a ticket. Retries hide bugs."}, {"topic": "API testing", "difficulty": "warm-up", "kind": "concept", "question": "PUT vs PATCH vs POST: what's the difference, and which are idempotent?", "what_tested": "REST semantics", "hint": "", "model": "POST creates a resource (or triggers an action) and isn't idempotent. PUT replaces the whole resource at a known URI and is idempotent. PATCH partially updates and isn't guaranteed to be idempotent (an `increment` patch isn't). GET, PUT and DELETE are idempotent. In tests I check idempotency by sending the same PUT twice and confirming the state and response don't change."}, {"topic": "API testing", "difficulty": "warm-up", "kind": "concept", "question": "Which status codes would you expect for: created, validation error, unauthenticated, forbidden, not found, rate limited?", "what_tested": "HTTP status codes", "hint": "", "model": "201 Created (ideally with a `Location` header), 400 or 422 for validation errors, 401 when you're not authenticated, 403 when you are authenticated but not allowed, 404 for not found, and 429 for rate limiting (with `Retry-After`). Mixing up 401 and 403 is a common real bug worth having negative tests for."}, {"topic": "API testing", "difficulty": "core", "kind": "concept", "question": "How do you validate an API response beyond checking the status code?", "what_tested": "Schema, contract, data assertions", "hint": "", "model": "Status code first, then the schema (jsonschema or a pydantic model) so a missing or retyped field fails loudly, then business data (values match what I created), headers (content-type, caching), and response time where it matters. For services owned by other teams, contract tests (e.g. Pact) catch breaking changes before integration."}, {"topic": "API testing", "difficulty": "core", "kind": "concept", "question": "How would you test pagination on a GET /orders endpoint?", "what_tested": "Pagination edge cases", "hint": "", "model": "Seed a known number of records, then check: page size is respected, pages don't overlap or skip items (collect all IDs across pages and compare with what you seeded), ordering is stable, the last page and an empty page behave correctly, and invalid inputs (page=0, negative or huge sizes) return clear errors. With cursor pagination, also check that inserting a record mid-walk doesn't cause duplicates."}, {"topic": "API testing", "difficulty": "core", "kind": "concept", "question": "How do you handle authentication in an API test suite where tokens expire every 15 minutes?", "what_tested": "Auth handling in fixtures", "hint": "", "model": "Get the token in a session-scoped fixture (client-credentials or a test user login), store its expiry, and have the API client refresh it automatically when it's close to expiring or after a 401. Keep secrets in environment variables or a secrets manager, never in the repo, and mask them in logs and reports. Also write explicit negative tests: no token, expired token, wrong-scope token."}, {"topic": "API testing", "difficulty": "deep", "kind": "concept", "question": "How would you test an endpoint that is rate limited to 100 requests per minute?", "what_tested": "Non-functional API testing", "hint": "", "model": "Confirm the contract first: the limit, the window, what it's scoped to (user, IP or key), and the response (429 with `Retry-After`). Then test that requests just under the limit pass, the next one returns 429 with the right headers, the window resets correctly, and limits are isolated per key. Run it against a dedicated environment or a lowered limit so it doesn't affect other suites, and keep it out of the PR pipeline."}, {"topic": "API testing", "difficulty": "deep", "kind": "concept", "question": "A payments API supports an `Idempotency-Key` header. What would you test?", "what_tested": "Idempotency, financial correctness", "hint": "", "model": "Same key and same body sent twice: one payment is created and the second response matches the first. Same key with a different body: rejected (usually 409 or 422). Concurrent requests with the same key: still exactly one payment. Different keys: separate payments. Also check how long keys are kept, and verify in the database or ledger, not just the response, that no duplicate charge exists."}, {"topic": "API testing", "difficulty": "core", "kind": "concept", "question": "How do you use Playwright's APIRequestContext alongside UI tests?", "what_tested": "API + UI test design", "hint": "", "model": "`playwright.request.new_context(base_url=...)` gives you an API client, and `page.request` / `context.request` share cookies with the browser. The common pattern is to set up through the API and verify through the UI: create the order via API in a fixture, open the page, assert it's shown, and delete it in teardown. That's faster and less flaky than clicking through setup screens, and it keeps each UI test focused on one behaviour."}, {"topic": "Pytest & framework design", "difficulty": "core", "kind": "concept", "question": "Explain fixture scopes in pytest and a case where the wrong scope causes flaky tests.", "what_tested": "Fixture scopes and isolation", "hint": "", "model": "Scopes are function (default), class, module, package and session. A wider scope is shared and cheaper but can leak state. A classic flake: a session-scoped page or a module-scoped object that tests modify, so results depend on test order and break under xdist. Share expensive, read-only things widely (browser, config, auth state) and keep anything mutable at function scope."}, {"topic": "Pytest & framework design", "difficulty": "core", "kind": "concept", "question": "How do you structure a Page Object Model so it doesn't turn into a mess?", "what_tested": "POM design", "hint": "", "model": "One class per page or reusable component, taking `page` in the constructor, exposing locators as attributes and intent-level methods such as `login(user)`. Keep assertions in tests (or explicit `expect_*` helpers), use component objects for shared widgets like tables and modals, and wire page objects through fixtures so tests just ask for `login_page`. Avoid a giant BasePage that every page inherits everything from."}, {"topic": "Pytest & framework design", "difficulty": "deep", "kind": "concept", "question": "Design the folder structure and key fixtures for a new Playwright + pytest framework.", "what_tested": "Framework architecture", "hint": "", "model": "`pages/` for page and component objects, `api/` for API clients, `tests/ui` and `tests/api`, layered `conftest.py` files, `data/` factories and `config/` per environment. Key fixtures: environment config from CLI options or env vars, `browser_context_args` with base_url, per-role storage state, API client, and data factories that create unique records and clean up after themselves. Add markers (smoke, regression), xdist, traces/videos on failure and Allure or pytest-html reporting."}, {"topic": "CI, debugging & flakiness", "difficulty": "core", "kind": "concept", "question": "How would you set up Playwright tests in a CI pipeline?", "what_tested": "CI/CD for UI tests", "hint": "", "model": "Use the official Playwright Docker image, or `playwright install --with-deps`, so browsers and OS libraries match the Playwright version. Run lint, then API tests, then a UI smoke suite on every PR, with the full regression nightly or before release. Shard across machines and use xdist within each. Upload traces, videos and the report as artifacts, and post a summary to the PR. Keep the PR suite under an agreed time budget."}, {"topic": "CI, debugging & flakiness", "difficulty": "deep", "kind": "concept", "question": "Your suite has a 7% flake rate. How do you bring it down?", "what_tested": "Flakiness strategy", "hint": "", "model": "Measure first: track each test's pass/fail history and find the worst offenders. Classify root causes: synchronization (sleeps, non-web-first asserts), test data collisions, environment instability, order dependence, and real product races. Quarantine with an owner and a deadline, never silent retries. Prevent new flakes with lint rules banning sleeps, a PR checklist and stress-running new tests before merge. Report the flake rate trend and set a target such as under 1%."}, {"topic": "Behavioral", "difficulty": "core", "kind": "concept", "question": "Tell me about a time automation missed a bug that reached production.", "what_tested": "Ownership and systemic fixes", "hint": "", "model": "Use STAR. Give the situation and task in two sentences, then what you personally did: confirmed the gap (no coverage, wrong test layer, mocked away), added a regression test at the right layer, and fixed the systemic cause, such as adding contract tests or a review checklist item. Finish with a measurable result, like no repeat issues in that area over the following releases."}, {"topic": "Behavioral", "difficulty": "core", "kind": "concept", "question": "A developer says your UI tests slow down their pull requests. How do you respond?", "what_tested": "Collaboration under pressure", "hint": "", "model": "Acknowledge the cost and bring data: suite duration, flake rate, and bugs the suite caught. Then propose changes: a fast smoke tier on PRs, parallelism and sharding, moving the full regression to post-merge or nightly, and fixing the slowest tests. Agree a shared time budget with the developers so it's a team target, not an argument."}];
+
+  // ---------- State ----------
+  let S = fresh();
+  function fresh(){ return {level:"Senior SDET", tracks:["Playwright","Python","API testing"], total:10, plan:[], jd:"", items:[], current:null, phase:"setup", summary:null, offline:false, startedAt:null}; }
+  function save(){ try{ localStorage.setItem(STORE, JSON.stringify(S)); }catch(e){} }
+  function load(){ try{ const v = JSON.parse(localStorage.getItem(STORE)||"null"); return v && v.items ? v : null; }catch(e){ return null; } }
+  function clear(){ try{ localStorage.removeItem(STORE); }catch(e){} }
+
+  let sample = null, aiReady = false, ctl = null, aiP = Promise.resolve();
+
+  // ---------- Setup controls ----------
+  function seg(id, onPick){
+    $(id).addEventListener("click", e => {
+      const b = e.target.closest("button"); if (!b) return;
+      [...$(id).children].forEach(x => x.setAttribute("aria-pressed", x===b ? "true":"false"));
+      onPick(b.dataset.v);
+    });
+  }
+  seg("#levelSeg", v => S.level = v);
+  seg("#lenSeg", v => { S.total = +v; renderMix(); });
+  $("#trackChips").addEventListener("click", e => {
+    const b = e.target.closest(".chip"); if (!b) return;
+    const on = b.getAttribute("aria-pressed") !== "true";
+    b.setAttribute("aria-pressed", on ? "true" : "false");
+    S.tracks = [...$("#trackChips").children].filter(x => x.getAttribute("aria-pressed")==="true").map(x => x.dataset.v);
+    renderMix();
+  });
+
+  // ---------- Session blueprint ----------
+  // Default 10-question mix: 5 Python, 3 Playwright, 2 API. Other tracks get weight 1; counts scale to the length chosen.
+  const WEIGHT = {"Python":5, "Playwright":3, "API testing":2};
+  const SHORT = {"Python":"Python","Playwright":"Playwright","API testing":"API","Pytest & framework design":"Framework","CI, debugging & flakiness":"CI & flakiness","Behavioral":"Behavioral"};
+  function allocate(tracks, total){
+    if (!tracks.length) return {};
+    const w = tracks.map(t => WEIGHT[t] || 1), sum = w.reduce((a,b)=>a+b,0);
+    const raw = w.map(x => x/sum*total), base = raw.map(Math.floor);
+    let left = total - base.reduce((a,b)=>a+b,0);
+    raw.map((r,i)=>[r-base[i], i]).sort((a,b)=>b[0]-a[0] || (WEIGHT[tracks[b[1]]]||1)-(WEIGHT[tracks[a[1]]]||1) || a[1]-b[1]).forEach(([,i]) => { if (left > 0){ base[i]++; left--; } });
+    const out = {}; tracks.forEach((t,i) => { if (base[i]) out[t] = base[i]; }); return out;
+  }
+  function buildPlan(tracks, total){
+    const alloc = allocate(tracks, total), left = {...alloc}, plan = [];
+    let last = null;
+    for (let i = 0; i < total; i++){
+      // pick the topic with the most remaining share, avoiding repeats when possible
+      const opts = Object.keys(left).filter(t => left[t] > 0)
+        .sort((a,b) => (left[b]/alloc[b]) - (left[a]/alloc[a]) || alloc[b] - alloc[a]);
+      const t = opts.find(o => o !== last) || opts[0];
+      left[t]--; last = t; plan.push({topic: t});
+    }
+    // Python: first one is a spoken warm-up, then roughly 3 in 5 are live-coding tasks
+    const py = plan.filter(x => x.topic === "Python");
+    const codeKinds = ["concept","python_code","concept","python_code","python_code"];
+    py.forEach((x, i) => { x.kind = codeKinds[i % codeKinds.length]; });
+    return plan;
+  }
+  function mixText(alloc){ return Object.entries(alloc).sort((x,y)=>y[1]-x[1]).map(([t,n]) => `${n} ${SHORT[t]||t}`).join(" · "); }
+  function renderMix(){
+    const el = $("#mixLine"); if (!el) return;
+    const a = allocate(S.tracks, S.total);
+    el.innerHTML = Object.keys(a).length ? Object.entries(a).sort((x,y)=>y[1]-x[1]).map(([t,n]) => `<span class="mixitem"><b>${n}</b>${esc(SHORT[t]||t)}</span>`).join("") : `<span class="hint">Pick at least one skill.</span>`;
+  }
+
+  function setAI(state){
+    const dot = $("#aiDot"), st = $("#aiStatus");
+    dot.className = "dot " + (state==="on" ? "on" : state==="off" ? "off" : "");
+    st.textContent = state==="on" ? "AI interviewer ready" : state==="off" ? "Practice mode · 40 questions" : "Loading…";
+    $("#modeHint").textContent = state==="on" ? "Questions are generated live and adapt to your answers." : state==="off" ? "Questions are drawn at random from a 40-question bank, so each session is different." : "";
+  }
+
+  // ---------- Prompts ----------
+  const RULES = `You are a demanding but fair technical interviewer for automation testing roles. Stack: Python, Playwright (Python sync API with pytest-playwright), pytest, REST API testing (requests, Playwright APIRequestContext, jsonschema/pydantic), CI/CD.
+Rules for anything technical you write:
+- Only real, current Python Playwright APIs (e.g. page.get_by_role, expect(locator).to_have_text, page.route, page.expect_response, context.storage_state, playwright.request.new_context). Never invent methods.
+- Never recommend time.sleep or wait_for_timeout for synchronization. Prefer user-facing locators and web-first assertions.
+- Python answers must be idiomatic Python 3.10+.
+- Keep model answers spoken-length (about 45-90 seconds out loud): direct answer first, then reasoning, then one real-world detail (trade-off, gotcha, or project practice).`;
+
+  function context(){
+    const done = S.items.map((it,i)=>`Q${i+1} [${it.q.topic}, ${it.q.difficulty}] ${it.q.question}\n -> score ${it.grade?.score ?? "skipped"}${it.grade?.gaps?.length ? "; gaps: "+it.grade.gaps.slice(0,2).join("; ") : ""}`).join("\n");
+    return `Candidate level: ${S.level}.
+Session blueprint (fixed): ${mixText(allocate(S.tracks, S.total))}.
+Total questions in session: ${S.total}. Questions asked so far: ${S.items.length}.
+${S.jd ? "Target role / job description (tailor questions to it):\n"+S.jd.slice(0,3000)+"\n" : ""}${done ? "History so far:\n"+done : "This is the first question: make it a warm-up."}`;
+  }
+  const QSHAPE = `{"topic": one of the skills listed, "difficulty": "warm-up" | "core" | "deep", "kind": "concept" | "python_code" | "code", "question": string (scenario-based where possible), "what_tested": string (one line), "hint": string (one line nudge, no answer), "starter_code": string (only for python_code or code; else ""), "tests": [string] (only for python_code; else [])}`;
+  const KINDS = `Question kinds:
+- "concept": a spoken answer.
+- "python_code": a live-coding task the candidate solves in a real Python 3.12 editor (standard library only, no pip packages, no input(), no network, no files). Ask for one small function of 5-25 lines relevant to test automation where possible (parsing logs or JSON, data transforms, retry/backoff logic, dedupe, grouping results, validating payloads). starter_code = the function signature with a docstring and "pass". tests = 4-6 single-line Python assert statements calling that function, covering normal and edge cases; every test must pass for a correct solution and never depend on set or dict ordering unless the task requires it.
+- "code": write Playwright or API test code (pytest-playwright, requests, APIRequestContext). It is reviewed, not executed. starter_code may give a short skeleton or relevant HTML/API shape.
+When Python is among the skills, make about half of the Python questions "python_code". Use "code" for some Playwright and API questions.`;
+
+  async function askQuestion(){
+    const prompt = `${RULES}\n\n${context()}\n\nWrite the NEXT interview question. ${slotRule(S.plan[S.items.length])} Don't repeat concepts already asked. Ramp difficulty: go deeper where the candidate scored 3-4, probe gaps where they scored 1-2, and pick a skill not yet covered when possible.\n\n${KINDS}\n\nReply with only JSON: ${QSHAPE}`;
+    const q = await sample.json(prompt, {signal: ctl.signal, cache:false});
+    if (!q || !q.question) throw {code:"invalid_json"};
+    return applySlot(normQ(q), S.plan[S.items.length]);
+  }
+
+  function slotRule(slot){
+    if (!slot) return "";
+    let r = `It MUST be a "${slot.topic}" question (set "topic" to exactly "${slot.topic}").`;
+    if (slot.kind === "python_code") r += ` It MUST be kind "python_code" (a runnable live-coding task with starter_code and tests).`;
+    if (slot.kind === "concept") r += ` It MUST be kind "concept" (a spoken answer, no coding task).`;
+    return r;
+  }
+  function applySlot(q, slot){
+    if (slot){ q.topic = slot.topic; }
+    return q;
+  }
+
+  function normQ(q){
+    q.kind = ["concept","python_code","code"].includes(q.kind) ? q.kind : "concept";
+    q.tests = Array.isArray(q.tests) ? q.tests.filter(t => typeof t === "string" && t.trim()) : [];
+    q.starter_code = typeof q.starter_code === "string" ? q.starter_code : "";
+    if (q.kind === "python_code" && !q.starter_code) q.starter_code = "# Write your solution here\n";
+    return q;
+  }
+
+  function runSummary(run){
+    if (!run) return "Not run.";
+    if (run.unavailable) return "Python runner unavailable in this view; not executed.";
+    if (run.timeout) return "Run stopped after the time limit (likely an infinite loop).";
+    let s = run.error ? "Error while running the code:\n" + run.error : "";
+    if (run.results?.length){
+      const passed = run.results.filter(r => r.ok).length;
+      s += `${s ? "\n" : ""}Tests: ${passed}/${run.results.length} passed.`;
+      run.results.filter(r => !r.ok).forEach(r => { s += `\nFAILED ${r.test}${r.got ? " (got " + r.got + ")" : ""}${r.err ? " " + r.err : ""}`; });
+    }
+    if (run.stdout) s += `\nstdout:\n${run.stdout.slice(0,1500)}`;
+    return s || "Ran with no output.";
+  }
+
+  async function gradeAnswer(item){
+    const last = S.items.length >= S.total;
+    const prompt = `${RULES}\n\n${context()}\n\nCurrent question [${item.q.topic}, ${item.q.difficulty}]: ${item.q.question}\nWhat it tests: ${item.q.what_tested}${item.q.tests?.length ? "\nHidden tests:\n" + item.q.tests.join("\n") : ""}\n\nCandidate's spoken/written answer:\n"""${item.answer || (item.code && item.code.trim() !== (item.q.starter_code||"").trim() ? "(none, see code)" : "(no answer: the candidate asked to see the answer)")}"""${item.code && item.code.trim() !== (item.q.starter_code||"").trim() ? `\n\nCandidate's code:\n\`\`\`python\n${item.code.slice(0,6000)}\n\`\`\`\nExecution result (real Python run in the browser):\n${item.q.kind === "code" ? "Not executed (Playwright/API code is reviewed only)." : runSummary(item.run)}` : ""}\n\nFor coding answers: correctness comes first (use the execution result as ground truth; failing tests cap the score at 2, an error at 1), then readability, edge cases and complexity. Mention the time complexity in the tightened answer.\n\nGrade it on this scale: 1 = wrong or missing, 2 = textbook only / vague / key gaps, 3 = correct, practical, explains why (meets the ${S.level} bar), 4 = adds trade-offs, gotchas, real-project detail. Be strict: vague answers are 2. Factually wrong claims must be called out in gaps.\nThe "tightened" answer must keep the candidate's own voice and ideas, fixed and upgraded to a 4; if the answer was empty, write a model answer. Use Markdown with \`\`\`python fences for any code.\n${last ? 'This is the final question, so set "next" to null.' : 'Also write the next question in "next". ${slotRule(S.plan[S.items.length])}'}\nReply with only JSON: {"score": 1-4, "verdict": string (one short line), "strengths": [string], "gaps": [string], "tightened": string (Markdown), "follow_up": string (what an interviewer would ask next about this answer), "next": ${last ? "null" : QSHAPE}}`;
+    const g = await sample.json(prompt, {signal: ctl.signal, cache:false});
+    if (!g || typeof g.score === "undefined") throw {code:"invalid_json"};
+    g.score = Math.max(1, Math.min(4, Math.round(+g.score || 1)));
+    return g;
+  }
+
+  async function summarize(){
+    const lines = S.items.map((it,i)=>`Q${i+1} [${it.q.topic}] score ${it.grade?.score ?? "skipped"}. ${it.q.question}\nGaps: ${(it.grade?.gaps||[]).join("; ")}`).join("\n");
+    const prompt = `You are an interview coach. Level: ${S.level}. Session results:\n${lines}\n\nWrite a short debrief in Markdown with exactly three bullet lists under bold labels: **Strengths** (2-3 bullets), **Gaps to fix** (2-3 bullets, specific), **Drill next** (2-3 concrete topics or exercises). Keep it under 160 words. No preamble.`;
+    const {text} = await sample(prompt, {signal: ctl.signal, cache:false});
+    return text;
+  }
+
+  // ---------- Views ----------
+  function show(view){
+    $("#setupView").hidden = view!=="setup";
+    $("#sessionView").hidden = view!=="session";
+    $("#summaryView").hidden = view!=="summary";
+    window.scrollTo({top:0});
+  }
+
+  function renderProgress(){
+    let h = "";
+    for (let i=0;i<S.total;i++){
+      const it = S.items[i];
+      const cls = it && it.grade ? "done" : (i === S.items.length-1 ? "cur" : "");
+      h += `<span class="pip ${cls}" title="${esc(S.plan?.[i]?.topic || "")}"></span>`;
+    }
+    const n = Math.min(S.items.length, S.total);
+    const mix = S.plan?.length ? " · " + mixText(allocate(S.tracks, S.total)) : "";
+    h += `<span class="count">Question ${n} of ${S.total} · ${esc(S.level)}${mix}</span>`;
+    $("#progress").innerHTML = h;
+  }
+
+  function thinking(el, label){
+    const t0 = Date.now();
+    el.innerHTML = `<div class="thinking"><span class="spinner"></span><span>${esc(label)} <span data-t>0s</span></span><button class="btn sm ghost" type="button" data-stop>Stop</button></div>`;
+    const tick = setInterval(() => { const s = el.querySelector("[data-t]"); if (!s) return clearInterval(tick); s.textContent = Math.round((Date.now()-t0)/1000)+"s"; }, 1000);
+    el.querySelector("[data-stop]").onclick = () => ctl?.abort();
+    return () => clearInterval(tick);
+  }
+
+  function errCopy(e){
+    const c = e?.code;
+    if (c==="cancelled") return "Stopped.";
+    if (c==="rate_limited") return "Too many requests right now. Wait a minute, then try again.";
+    if (c==="invalid_json") return "The interviewer's reply came back garbled. Try again.";
+    if (c==="session_expired") return "Your Claude session expired. Sign in again, then retry.";
+    if (c==="not_granted" || c==="sampling_disabled" || c==="capability_disabled" || c==="not_declared") return "AI access isn't allowed here, so the session switched to the offline question bank.";
+    return "Couldn't reach the interviewer. Check your connection and try again.";
+  }
+  function isFatal(e){ return ["not_granted","sampling_disabled","capability_disabled","not_declared","capability_removed"].includes(e?.code); }
+
+  function renderQuestion(){
+    const it = S.items[S.items.length-1];
+    renderProgress();
+    if (!it){ return; }
+    const q = it.q;
+    const graded = !!(it.grade || it.skipped);
+    $("#qBody").innerHTML = `
+      <div class="qmeta"><span class="tag topic">${esc(q.topic)}</span><span class="tag">${esc(q.difficulty||"core")}</span></div>
+      <p class="question">${esc(q.question)}</p>
+      <p class="tested">Assesses: ${esc(q.what_tested||"")}</p>
+      ${q.hint ? `<div class="hintbox" id="hintBox" hidden><b>Hint:</b> ${esc(q.hint)}</div>` : ""}
+      ${ideHTML(it)}
+      <label class="label" for="answer" style="display:block;margin-bottom:6px">${isCoding(it) ? "Explain your approach (optional)" : "Your answer"}</label>
+      <textarea id="answer" rows="${isCoding(it) ? 3 : 8}" style="${isCoding(it) ? "min-height:84px" : ""}" placeholder="${isCoding(it) ? "Talk through your approach, edge cases and complexity, as you would to an interviewer." : "Answer as you would out loud."}" ${graded?"readonly":""}>${esc(it.answer||"")}</textarea>
+      <div class="actions">
+        ${graded ? (S.items.length >= S.total ? `<button class="btn primary" id="finishBtn" type="button">See summary</button>` : `<button class="btn primary" id="nextBtn" type="button">Next question</button>`)
+                 : `<button class="btn primary" id="submitBtn" type="button">Submit answer</button>
+                    ${q.hint ? `<button class="btn ghost" id="hintBtn" type="button">Hint</button>`:""}
+                    ${!isCoding(it) ? `<button class="btn ghost" id="addCodeBtn" type="button">Add Python code</button>` : ""}
+                    <button class="btn ghost" id="dunnoBtn" type="button">${S.offline ? "Show model answer" : "I don't know, show me"}</button>
+                    <span class="grow"></span><span class="kbd">Ctrl + Enter to submit</span>`}
+      </div>`;
+    wireIde(it);
+    const ta = $("#answer");
+    ta.addEventListener("input", () => { it.answer = ta.value; save(); });
+    ta.addEventListener("keydown", e => { if ((e.ctrlKey||e.metaKey) && e.key==="Enter" && !graded) submit(false); });
+    $("#addCodeBtn") && ($("#addCodeBtn").onclick = () => { it.showIde = true; if (it.code == null) it.code = "# Python 3.12 scratchpad: write and run code to support your answer\n"; save(); renderQuestion(); $("#code")?.focus(); });
+    $("#submitBtn") && ($("#submitBtn").onclick = () => submit(false));
+    $("#dunnoBtn") && ($("#dunnoBtn").onclick = () => submit(true));
+    $("#hintBtn") && ($("#hintBtn").onclick = () => { $("#hintBox").hidden = false; it.hintUsed = true; save(); });
+    $("#nextBtn") && ($("#nextBtn").onclick = next);
+    $("#finishBtn") && ($("#finishBtn").onclick = finish);
+    if (!graded) (isCoding(it) ? $("#code") : ta)?.focus();
+  }
+
+  // ---------- Code editor ----------
+  function isCoding(it){ return it.q.kind === "python_code" || it.q.kind === "code"; }
+  function ideShown(it){ return isCoding(it) || it.showIde; }
+  function runnable(it){ return it.q.kind !== "code"; }
+
+  function ideHTML(it){
+    if (!ideShown(it)) return "";
+    if (it.code == null) it.code = it.q.starter_code || "";
+    const q = it.q;
+    const file = q.kind === "python_code" ? "solution.py" : q.kind === "code" ? "test_" + (q.topic === "API testing" ? "api" : "ui") + ".py" : "scratch.py";
+    const note = !runnable(it) ? "Reviewed by AI · not executed" : q.tests?.length ? `Python 3.12 · ${q.tests.length} hidden tests` : "Python 3.12 · standard library";
+    return `<div class="ide">
+      <div class="ide-bar">
+        <span class="file">${file}</span><span class="note">${note}</span><span class="grow"></span>
+        ${runnable(it) ? `<span class="runpill" id="pyState"></span>` : ""}
+        <button class="btn sm ghost" type="button" id="resetCode">Reset</button>
+        ${runnable(it) ? `<button class="btn sm primary" type="button" id="runBtn">${q.tests?.length ? "Run tests" : "Run"}</button>` : ""}
+      </div>
+      <div class="ide-wrap"><div class="gutter" id="gutter" aria-hidden="true"></div>
+        <textarea class="code" id="code" spellcheck="false" autocapitalize="off" autocomplete="off" aria-label="Code editor">${esc(it.code)}</textarea></div>
+      <div class="console" id="console" ${it.run ? "" : "hidden"}></div>
+    </div>`;
+  }
+
+  function wireIde(it){
+    const ed = $("#code"); if (!ed) return;
+    const gut = $("#gutter");
+    const fit = () => {
+      const n = ed.value.split("\n").length;
+      gut.textContent = Array.from({length:n}, (_,i) => i+1).join("\n");
+      ed.style.height = "auto"; ed.style.height = Math.max(240, ed.scrollHeight) + "px";
+    };
+    fit();
+    ed.addEventListener("input", () => { it.code = ed.value; save(); fit(); });
+    ed.addEventListener("keydown", e => {
+      if ((e.ctrlKey||e.metaKey) && e.key === "Enter"){ e.preventDefault(); runnable(it) ? doRun(it) : null; return; }
+      if (e.key === "Tab" && !e.shiftKey){ e.preventDefault(); insert(ed, "    "); }
+      else if (e.key === "Enter"){
+        const before = ed.value.slice(0, ed.selectionStart);
+        const line = before.slice(before.lastIndexOf("\n") + 1);
+        let ind = (line.match(/^\s*/) || [""])[0];
+        if (/:\s*$/.test(line)) ind += "    ";
+        e.preventDefault(); insert(ed, "\n" + ind);
+      }
+      it.code = ed.value; save(); fit();
+    });
+    $("#resetCode").onclick = () => { ed.value = it.q.starter_code || ""; it.code = ed.value; it.run = null; save(); fit(); $("#console").hidden = true; };
+    if (runnable(it)){
+      $("#runBtn").onclick = () => doRun(it);
+      pyPill();
+      if (PY.state === "idle") bootPy().then(pyPill);
+    }
+    if (it.run) renderRun(it.run);
+  }
+
+  function insert(ed, text){
+    const s = ed.selectionStart, e = ed.selectionEnd;
+    ed.setRangeText(text, s, e, "end");
+  }
+
+  function pyPill(){
+    const p = $("#pyState"); if (!p) return;
+    p.className = "runpill";
+    p.textContent = {idle:"Runtime idle", loading:"Loading Python…", ready:"Python ready", failed:"Runner unavailable"}[PY.state] || "";
+  }
+
+  async function doRun(it){
+    const btn = $("#runBtn"), con = $("#console");
+    if (!btn || btn.disabled) return;
+    btn.disabled = true; con.hidden = false;
+    con.innerHTML = `<div class="muted">${PY.state === "ready" ? "Running…" : "Loading Python runtime (first run takes a few seconds)…"}</div>`;
+    pyPill();
+    const run = await runPython(it.code || "", it.q.tests || []);
+    run.code = it.code;
+    it.run = run; save();
+    if (btn.isConnected) btn.disabled = false;
+    pyPill(); renderRun(run);
+    return run;
+  }
+
+  function renderRun(run){
+    const con = $("#console"); if (!con) return;
+    con.hidden = false;
+    if (run.unavailable){ con.innerHTML = `<div class="no">The Python runner couldn't start in this view. Submit anyway: the AI will review your code without running it.</div>`; return; }
+    if (run.timeout){ con.innerHTML = `<div class="no">Stopped after 10 seconds. Check for an infinite loop.</div>`; return; }
+    let h = "";
+    const res = run.results || [];
+    if (res.length){
+      const pass = res.filter(r => r.ok).length;
+      h += `<div class="sum ${pass===res.length ? "ok" : "no"}">${pass}/${res.length} tests passed${run.ms != null ? ` <span class="muted">· ${run.ms} ms</span>` : ""}</div>`;
+      h += res.map(r => `<div class="row"><span class="${r.ok ? "ok" : "no"}">${r.ok ? "✓" : "✗"}</span><span>${esc(r.test)}${!r.ok ? `<br><span class="muted">${r.got ? "got " + esc(r.got) : esc(r.err || "assertion failed")}</span>` : ""}</span></div>`).join("");
+    }
+    if (run.error) h += `<pre class="no">${esc(run.error)}</pre>`;
+    if (run.stdout) h += `<div class="muted" style="margin-top:6px">stdout</div><pre>${esc(run.stdout.slice(0, 4000))}</pre>`;
+    if (!h) h = `<div class="muted">Ran with no output${run.ms != null ? ` · ${run.ms} ms` : ""}.</div>`;
+    con.innerHTML = h;
+  }
+
+  // ---------- Python runtime (Pyodide in a worker) ----------
+  const PY = { worker:null, state:"idle", seq:0, pending:new Map(), bootP:null };
+  const INDEX = (() => { try { return new URL("pyodide/", location.href).href; } catch(e){ return "pyodide/"; } })();
+  function pyWorker(){
+    if (PY.worker) return PY.worker;
+    const w = new Worker("py-worker.js");
+    w.onmessage = e => { const p = PY.pending.get(e.data.id); if (p){ PY.pending.delete(e.data.id); p(e.data); } };
+    w.onerror = () => { const ps = [...PY.pending.values()]; PY.pending.clear(); ps.forEach(p => p({ok:false, fatal:true, error:"worker error"})); };
+    PY.worker = w; return w;
+  }
+  function killPy(){ try{ PY.worker?.terminate(); }catch(e){} PY.worker = null; PY.bootP = null; PY.state = "idle"; }
+  function pyCall(msg, timeout){
+    return new Promise(resolve => {
+      const id = ++PY.seq;
+      const timer = setTimeout(() => { PY.pending.delete(id); killPy(); resolve({ok:false, timeout:true}); }, timeout);
+      PY.pending.set(id, d => { clearTimeout(timer); resolve(d); });
+      try { pyWorker().postMessage(Object.assign({}, msg, {id, indexURL: INDEX})); }
+      catch(e){ clearTimeout(timer); PY.pending.delete(id); resolve({ok:false, fatal:true, error:String(e)}); }
+    });
+  }
+  function bootPy(){
+    if (PY.state === "failed") return Promise.resolve(false);
+    if (!PY.bootP){
+      PY.state = "loading"; pyPill();
+      PY.bootP = pyCall({type:"boot"}, 90000).then(d => {
+        PY.state = d.ok ? "ready" : "failed";
+        if (!d.ok) { PY.bootP = null; try{ PY.worker?.terminate(); }catch(e){} PY.worker = null; }
+        pyPill(); return d.ok;
+      });
+    }
+    return PY.bootP;
+  }
+  async function runPython(code, tests){
+    const ok = await bootPy();
+    if (!ok) return {unavailable:true};
+    const d = await pyCall({type:"run", code, tests}, 10000);
+    if (d.timeout) return {timeout:true};
+    if (!d.ok) return {unavailable:true};
+    return {stdout:d.stdout || "", error:d.error || null, results:d.results || [], ms:d.ms};
+  }
+
+  function renderFeedback(){
+    const it = S.items[S.items.length-1];
+    const g = it?.grade;
+    if (!g){
+      $("#fBody").innerHTML = `<div class="empty"><h3>Feedback appears here</h3><p>Answer in your own words, the way you would in the room. You'll get a score, what was strong, what was missing, and a tightened version of your answer.</p></div>`;
+      return;
+    }
+    if (g.offline){
+      $("#fBody").innerHTML = `<div class="fb">
+        <div><h4>Model answer</h4><div class="model rich">${rich(g.tightened)}</div></div>
+        <div><h4>Rate yourself</h4><p class="hint" style="margin:0 0 8px">Compare honestly. Did you cover the same points with a real example?</p>
+          <div class="seg" id="selfRate">${[1,2,3,4].map(n=>`<button type="button" data-v="${n}" aria-pressed="${g.score===n}">${n}</button>`).join("")}</div></div>
+      </div>`;
+      $("#selfRate").onclick = e => { const b=e.target.closest("button"); if(!b) return; g.score=+b.dataset.v; save(); renderFeedback(); };
+      return;
+    }
+    $("#fBody").innerHTML = `<div class="fb">
+      <div class="score sc${g.score}"><div class="num">${g.score}</div><div class="verdict"><b>${["","No hire","Weak","Meets the bar","Strong hire"][g.score]}</b><span>${esc(g.verdict||"")}</span></div></div>
+      ${g.strengths?.length ? `<div><h4>What was strong</h4><ul class="good">${g.strengths.map(s=>`<li>${esc(s)}</li>`).join("")}</ul></div>`:""}
+      ${g.gaps?.length ? `<div><h4>What was missing</h4><ul class="bad">${g.gaps.map(s=>`<li>${esc(s)}</li>`).join("")}</ul></div>`:""}
+      <div><h4>${it.answer ? "Your answer, tightened" : "Model answer"}</h4><div class="model rich">${rich(g.tightened)}</div></div>
+      ${g.follow_up ? `<div><h4>Likely follow-up</h4><p style="margin:0">${esc(g.follow_up)}</p></div>`:""}
+    </div>`;
+  }
+
+  // ---------- Flow ----------
+  function pickOffline(){
+    const used = new Set(S.items.map(x=>x.q.question));
+    const slot = (S.plan || [])[S.items.length];
+    if (slot){
+      const fits = BANK.filter(b => b.topic === slot.topic && !used.has(b.question));
+      let exact = fits.filter(b => !slot.kind || (b.kind || "concept") === slot.kind);
+      const firstOfTopic = !S.items.some(x => x.q.topic === slot.topic);
+      const warm = exact.filter(b => b.difficulty === "warm-up");
+      if (firstOfTopic && warm.length) exact = warm;
+      const rnd = a => a[Math.floor(Math.random() * a.length)];
+      const pick = exact.length ? rnd(exact) : fits.length ? rnd(fits) : null;
+      if (pick) return pick;
+    }
+    let pool = BANK.filter(b => S.tracks.includes(b.topic) && !used.has(b.question));
+    if (!pool.length) pool = BANK.filter(b => !used.has(b.question));
+    const order = {"warm-up":0,"core":1,"deep":2};
+    pool.sort((a,b)=>order[a.difficulty]-order[b.difficulty]);
+    // rotate topics
+    const lastTopic = S.items.at(-1)?.q.topic;
+    return pool.find(p=>p.topic!==lastTopic) || pool[0] || BANK[0];
+  }
+
+  async function start(e){
+    e?.preventDefault();
+    if (!S.tracks.length){ $("#setupErr").hidden=false; $("#setupErr").textContent="Pick at least one skill to cover."; return; }
+    $("#setupErr").hidden = true;
+    $("#startBtn").disabled = true;
+    await aiP;
+    $("#startBtn").disabled = false;
+    const keep = {level:S.level, tracks:S.tracks, total:S.total};
+    S = Object.assign(fresh(), keep, {jd: $("#jd").value.trim(), phase:"session", offline: !aiReady, startedAt: Date.now()});
+    S.plan = buildPlan(S.tracks, S.total);
+    show("session");
+    renderProgress();
+    renderFeedback();
+    await loadQuestion();
+  }
+
+  async function loadQuestion(nextQ){
+    if (nextQ){ S.items.push({q: nextQ}); save(); renderQuestion(); renderFeedback(); return; }
+    if (S.offline){ S.items.push({q: normQ({...pickOffline()})}); save(); renderQuestion(); renderFeedback(); return; }
+    ctl = new AbortController();
+    const stop = thinking($("#qBody"), "Preparing a question…");
+    $("#fBody").innerHTML = `<div class="empty"><h3>Feedback appears here</h3><p>The first call may ask you to allow this page to use Claude.</p></div>`;
+    try{
+      const q = await askQuestion();
+      stop(); S.items.push({q}); save(); renderQuestion(); renderFeedback();
+    }catch(err){
+      stop();
+      if (isFatal(err)){ S.offline = true; setAI("off"); S.items.push({q: normQ({...pickOffline()})}); save(); renderQuestion(); renderFeedback(); return; }
+      $("#qBody").innerHTML = `<div class="err">${esc(errCopy(err))}</div><div class="actions"><button class="btn primary" type="button" id="retryQ">Try again</button></div>`;
+      $("#retryQ").onclick = () => loadQuestion();
+    }
+  }
+
+  async function submit(dunno){
+    const it = S.items[S.items.length-1];
+    it.answer = $("#answer").value.trim();
+    const codeChanged = it.code != null && it.code.trim() !== (it.q.starter_code || "").trim();
+    if (!dunno && !it.answer && !codeChanged){ (isCoding(it) ? $("#code") : $("#answer")).focus(); return; }
+    if (!dunno && codeChanged && runnable(it) && PY.state !== "failed" && (!it.run || it.run.code !== it.code)){
+      $("#submitBtn").disabled = true;
+      await doRun(it);
+    }
+    if (dunno && !it.answer) it.answer = "";
+    save();
+    if (S.offline){
+      it.grade = {offline:true, score: null, tightened: it.q.model || "No model answer for this question."};
+      save(); renderQuestion(); renderFeedback(); return;
+    }
+    ctl = new AbortController();
+    $("#submitBtn").disabled = true; $("#dunnoBtn").disabled = true; $("#answer").readOnly = true;
+    const stop = thinking($("#fBody"), "Grading your answer…");
+    try{
+      const g = await gradeAnswer(it);
+      stop();
+      it.pendingNext = g.next || null; delete g.next;
+      it.grade = g; save();
+      renderQuestion(); renderFeedback();
+    }catch(err){
+      stop();
+      if (isFatal(err)){ S.offline = true; setAI("off"); it.grade = {offline:true, score:null, tightened: "AI grading isn't available here. Compare your answer with the strong points for this topic in the question bank, then rate yourself."}; save(); renderQuestion(); renderFeedback(); return; }
+      $("#fBody").innerHTML = `<div class="err">${esc(errCopy(err))}</div><div class="actions"><button class="btn primary" type="button" id="retryG">Grade again</button></div>`;
+      $("#answer").readOnly = false;
+      $("#retryG").onclick = () => submit(dunno);
+      $("#submitBtn").disabled = false; $("#dunnoBtn").disabled = false;
+    }
+  }
+
+  async function next(){
+    const it = S.items[S.items.length-1];
+    const n = it.pendingNext; delete it.pendingNext; save();
+    if (S.items.length >= S.total) return finish();
+    await loadQuestion(n && n.question ? applySlot(normQ(n), S.plan[S.items.length]) : null);
+  }
+
+  async function finish(){
+    S.phase = "summary"; save();
+    show("summary");
+    const graded = S.items.filter(x => x.grade && x.grade.score);
+    const avg = graded.length ? graded.reduce((a,x)=>a+x.grade.score,0)/graded.length : 0;
+    $("#avgScore").innerHTML = `${graded.length ? avg.toFixed(1) : "–"}<small> / 4</small>`;
+    const label = avg>=3.5 ? "Strong hire range" : avg>=2.75 ? "At the bar" : avg>=2 ? "Below the bar, close" : graded.length ? "Needs more prep" : "No graded answers yet";
+    $("#sumTitle").textContent = label;
+    const mins = S.startedAt ? Math.max(1, Math.round((Date.now()-S.startedAt)/60000)) : 0;
+    $("#sumMeta").textContent = `${S.level} · ${graded.length} of ${S.items.length} answers scored${mins ? " · "+mins+" min" : ""}`;
+    // bars per topic
+    const by = {};
+    graded.forEach(x => { (by[x.q.topic] ||= []).push(x.grade.score); });
+    $("#bars").innerHTML = Object.keys(by).length ? Object.entries(by).map(([t,a]) => {
+      const v = a.reduce((x,y)=>x+y,0)/a.length;
+      return `<div class="bar"><span>${esc(t)}</span><div class="track"><div class="fill" style="width:${(v/4*100).toFixed(0)}%"></div></div><span class="v">${v.toFixed(1)}</span></div>`;
+    }).join("") : `<p class="hint" style="margin:0">Scores will appear once answers are graded.</p>`;
+    $("#log").innerHTML = S.items.map((x,i) => `<div class="logrow"><span class="n">Q${i+1}</span><span><b>${esc(x.q.topic)}</b> · ${esc(x.q.question)}</span><span class="s" style="color:var(--s${x.grade?.score||1})">${x.grade?.score ?? "–"}</span></div>`).join("");
+    // coach notes
+    const coach = $("#coach");
+    if (S.summary){ coach.innerHTML = rich(S.summary); return; }
+    if (S.offline || !graded.length){
+      const weak = Object.entries(by).filter(([,a])=>a.reduce((x,y)=>x+y,0)/a.length<3).map(([t])=>t);
+      coach.innerHTML = rich(graded.length ? `**Drill next**\n\n${(weak.length?weak:["Real-project examples in every answer"]).map(w=>"- "+w).join("\n")}` : "Answer and rate a few questions to get coaching notes.");
+      return;
+    }
+    ctl = new AbortController();
+    const stop = thinking(coach, "Writing your debrief…");
+    try{ S.summary = await summarize(); stop(); coach.innerHTML = rich(S.summary); save(); }
+    catch(err){ stop(); coach.innerHTML = `<div class="err">${esc(errCopy(err))}</div>`; }
+  }
+
+  function summaryText(){
+    const graded = S.items.filter(x=>x.grade && x.grade.score);
+    const avg = graded.length ? (graded.reduce((a,x)=>a+x.grade.score,0)/graded.length).toFixed(1) : "–";
+    return `SDET mock interview · ${S.level} · average ${avg}/4\n\n` +
+      S.items.map((x,i)=>`Q${i+1} [${x.q.topic}] ${x.grade?.score ?? "–"}/4 — ${x.q.question}`).join("\n") +
+      (S.summary ? "\n\n" + S.summary : "");
+  }
+
+  $("#setupForm").addEventListener("submit", start);
+  $("#endBtn").onclick = finish;
+  $("#againBtn").onclick = () => { clear(); S = Object.assign(fresh(), {level:S.level, tracks:S.tracks, total:S.total}); show("setup"); checkResume(); };
+  $("#copyBtn").onclick = async () => {
+    try{ await navigator.clipboard.writeText(summaryText()); $("#copyNote").textContent = "Copied."; }
+    catch(e){ $("#copyNote").textContent = "Copy isn't allowed here. Select the log above to copy it."; }
+  };
+
+  function checkResume(){
+    const prev = load();
+    if (prev && prev.phase !== "setup" && prev.items.length){
+      $("#resumeBox").hidden = false;
+      $("#resumeText").textContent = `Unfinished ${prev.level} session: ${prev.items.length} of ${prev.total} questions.`;
+      $("#resumeBtn").onclick = () => {
+        S = prev;
+        if (S.phase === "summary"){ finish(); return; }
+        if (!aiReady) S.offline = true;
+        show("session"); renderQuestion(); renderFeedback();
+      };
+      $("#discardBtn").onclick = () => { clear(); $("#resumeBox").hidden = true; };
+    } else $("#resumeBox").hidden = true;
+  }
+
+  // ---------- Boot ----------
+  renderMix();
+  checkResume();
+  setAI("pending");
+  aiP = (async () => {
+    try{ sample = window.claude ? await window.claude.use("sample") : null; }catch(e){ sample = null; }
+    aiReady = !!sample;
+    setAI(aiReady ? "on" : "off");
+  })();
+})();
+</script>
+
+</body>
+</html>
