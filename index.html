@@ -99,7 +99,19 @@ textarea:focus,input:focus{border-color:var(--accent);outline:none}
 .pip{width:28px;height:6px;border-radius:3px;background:var(--line)}
 .pip.done{background:var(--accent)} .pip.cur{background:var(--fg)}
 .progress .count{font:500 12.5px var(--f-mono);color:var(--muted);margin-left:8px}
-.session{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:20px;align-items:start}
+.session{display:grid;grid-template-columns:minmax(0,1fr);gap:20px;align-items:start}
+.sessbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+.sessbar .progress{margin:0;flex:1;min-width:0}
+.fbtoggle{position:relative}
+.fbtoggle .dot{position:absolute;top:-4px;right:-4px;width:10px;height:10px;border-radius:50%;background:var(--accent);border:2px solid var(--bg)}
+.fbtoggle .dot.correct{background:var(--good,#0ca30c)} .fbtoggle .dot.partial{background:var(--warn,#fab219)} .fbtoggle .dot.incorrect,.fbtoggle .dot.skipped{background:var(--crit,#d03b3b)}
+.scrim{position:fixed;inset:0;background:rgba(5,8,20,.45);z-index:40;opacity:0;pointer-events:none;transition:opacity .2s}
+.scrim.on{opacity:1;pointer-events:auto}
+#fPanel{position:fixed;top:0;right:0;bottom:0;width:min(560px,100vw);z-index:41;border-radius:0;border-width:0 0 0 1px;overflow-y:auto;overscroll-behavior:contain;transform:translateX(100%);transition:transform .25s ease;box-shadow:-18px 0 40px rgba(0,0,0,.25);visibility:hidden}
+#fPanel.open{transform:none;visibility:visible}
+.drawer-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:-6px 0 16px;position:sticky;top:-22px;background:var(--surface);padding:6px 0 10px;z-index:1;border-bottom:1px solid var(--line)}
+.drawer-head h3{font-size:15px;font-family:var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+@media (prefers-reduced-motion:reduce){#fPanel,.scrim{transition:none}}
 .panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:22px;min-width:0}
 .qmeta{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
 .tag{font:600 11px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;padding:4px 8px;border-radius:5px;background:var(--sunken);color:var(--muted)}
@@ -160,9 +172,17 @@ pre code{background:none;padding:0;color:inherit;font-size:inherit}
 .ide-bar .file{font:600 12px var(--f-mono);color:var(--fg)}
 .ide-bar .note{font:500 11.5px var(--f-mono);color:var(--muted)}
 .ide-bar .grow{flex:1}
-.ide-wrap{display:grid;grid-template-columns:auto minmax(0,1fr);max-height:420px;overflow:auto}
-.gutter{font:13px/1.6 var(--f-mono);color:#6B7395;text-align:right;padding:12px 8px 12px 12px;user-select:none;white-space:pre;background:var(--code-bg)}
-.code{font:13px/1.6 var(--f-mono);background:var(--code-bg);color:var(--code-fg);border:0;border-radius:0;padding:12px 12px 12px 6px;min-height:240px;white-space:pre;overflow:hidden;resize:none;tab-size:4;caret-color:var(--code-fg);width:100%}
+.ide-wrap{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:stretch}
+.gutter{font:13px/1.6 var(--f-mono);color:#6B7395;text-align:right;padding:12px 8px 40px 12px;user-select:none;white-space:pre;background:var(--code-bg);overflow:hidden;height:0;min-height:100%}
+.code{font:13px/1.6 var(--f-mono);background:var(--code-bg);color:var(--code-fg);border:0;border-radius:0;padding:12px 12px 12px 6px;height:380px;min-height:160px;white-space:pre;overflow:auto;overflow-wrap:normal;resize:vertical;tab-size:4;caret-color:var(--code-fg);width:100%;display:block}
+.ide-q{display:none}
+.ide.full{position:fixed;inset:0;z-index:50;margin:0;border-radius:0;border:0;display:flex;flex-direction:column}
+.ide.full .ide-q{display:block;padding:10px 14px;background:var(--surface);border-bottom:1px solid var(--line);font-size:14px;line-height:1.45;max-height:22vh;overflow:auto}
+.ide.full .ide-q pre{display:inline;margin:0;padding:1px 6px;font-size:12.5px}
+.ide.full .ide-wrap{flex:1;min-height:0}
+.ide.full .code{height:100%!important;resize:none}
+.ide.full .console{max-height:34vh;overflow:auto;flex:none}
+body.ide-locked{overflow:hidden}
 .code:focus{outline:none;border:0}
 .ide:focus-within{border-color:var(--accent)}
 .console{border-top:1px solid #2B3152;background:var(--code-bg);color:var(--code-fg);font:12.5px/1.55 var(--f-mono);padding:10px 12px;max-height:240px;overflow:auto}
@@ -315,14 +335,19 @@ footer{margin-top:36px;color:var(--muted);font-size:12.5px}
 
   <!-- SESSION -->
   <section id="sessionView" hidden>
-    <div class="progress" id="progress"></div>
+    <div class="sessbar">
+      <div class="progress" id="progress"></div>
+      <button class="btn sm ghost fbtoggle" id="fbToggle" type="button" aria-controls="fPanel" aria-expanded="false">Feedback<span class="dot" id="fbDot" hidden></span></button>
+    </div>
+    <div class="scrim" id="scrim"></div>
     <div class="session">
       <div class="panel" id="qPanel">
         <div id="qBody"></div>
       </div>
-      <div class="panel" id="fPanel">
+      <aside class="panel" id="fPanel" aria-label="Feedback" aria-hidden="true">
+        <div class="drawer-head"><h3>Feedback</h3><button class="btn sm ghost" id="fbClose" type="button">Close ✕</button></div>
         <div id="fBody"></div>
-      </div>
+      </aside>
     </div>
     <div class="actions" style="margin-top:16px">
       <button class="btn ghost sm" id="endBtn" type="button">End and see summary</button>
@@ -595,6 +620,7 @@ ${S.jd ? "Target role / job description (tailor questions to it):\n"+S.jd.slice(
 
   // ---------- Views ----------
   function show(view){
+    if (view !== "session"){ try{ setFb(false); setFull(false); }catch(_){} }
     $("#setupView").hidden = view!=="setup";
     $("#sessionView").hidden = view!=="session";
     $("#summaryView").hidden = view!=="summary";
@@ -740,15 +766,18 @@ ${S.jd ? "Target role / job description (tailor questions to it):\n"+S.jd.slice(
     const q = it.q;
     const file = q.kind === "python_code" ? "solution.py" : q.kind === "api_code" ? "test_api.py" : "test_ui.py";
     const note = !runnable(it) ? "Reviewed by AI · not executed" : q.kind === "api_code" ? "Python 3.12 · requests · live API" : `Python 3.12 · ${q.tests?.length || 0} hidden tests`;
-    return `<div class="ide">
+    const ex = (q.examples||[]).slice(0,2).map(x=>`<pre>${esc(x.input)}</pre> → <pre>${esc(x.output)}</pre>`).join(" &nbsp; ");
+    return `<div class="ide" id="ide">
+      <div class="ide-q"><b>${esc(q.question)}</b>${q.endpoint?`<div class="muted" style="margin-top:4px"><code>${esc(q.endpoint)}</code></div>`:""}${ex?`<div style="margin-top:6px">${ex}</div>`:""}</div>
       <div class="ide-bar">
         <span class="file">${file}</span><span class="note">${note}</span><span class="grow"></span>
         ${runnable(it) ? `<span class="runpill" id="pyState"></span>` : ""}
         <button class="btn sm ghost" type="button" id="resetCode">Reset</button>
+        <button class="btn sm ghost" type="button" id="fullBtn" aria-pressed="false" title="Full-screen editor (Esc to exit)">⛶ Full screen</button>
         ${runnable(it) ? `<button class="btn sm primary" type="button" id="runBtn">Run tests</button>` : ""}
       </div>
       <div class="ide-wrap"><div class="gutter" id="gutter" aria-hidden="true"></div>
-        <textarea class="code" id="code" spellcheck="false" autocapitalize="off" autocomplete="off" aria-label="Code editor">${esc(it.code)}</textarea></div>
+        <textarea class="code" id="code" wrap="off" spellcheck="false" autocapitalize="off" autocomplete="off" aria-label="Code editor">${esc(it.code)}</textarea></div>
       <div class="console" id="console" ${it.run ? "" : "hidden"}></div>
     </div>`;
   }
@@ -759,9 +788,12 @@ ${S.jd ? "Target role / job description (tailor questions to it):\n"+S.jd.slice(
     const fit = () => {
       const n = ed.value.split("\n").length;
       gut.textContent = Array.from({length:n}, (_,i) => i+1).join("\n");
-      ed.style.height = "auto"; ed.style.height = Math.max(240, ed.scrollHeight) + "px";
+      gut.scrollTop = ed.scrollTop;
     };
     fit();
+    ed.addEventListener("scroll", () => { gut.scrollTop = ed.scrollTop; });
+    new ResizeObserver(() => { gut.scrollTop = ed.scrollTop; }).observe(ed);
+    $("#fullBtn").onclick = () => setFull(!$("#ide").classList.contains("full"));
     ed.addEventListener("input", () => { it.code = ed.value; save(); fit(); });
     ed.addEventListener("keydown", e => {
       if ((e.ctrlKey||e.metaKey) && e.key === "Enter"){ e.preventDefault(); runnable(it) ? doRun(it) : null; return; }
@@ -872,7 +904,50 @@ ${S.jd ? "Target role / job description (tailor questions to it):\n"+S.jd.slice(
     return {stdout:d.stdout || "", error:d.error || null, results:d.results || [], ms:d.ms, mode:d.mode || null};
   }
 
+  function setFull(on){
+    const ide = $("#ide"); if (!ide) { document.body.classList.remove("ide-locked"); return; }
+    ide.classList.toggle("full", on);
+    document.body.classList.toggle("ide-locked", on);
+    const b = $("#fullBtn"); if (b){ b.textContent = on ? "✕ Exit full screen" : "⛶ Full screen"; b.setAttribute("aria-pressed", on); }
+    $("#code")?.focus();
+  }
+  function setFb(open){
+    const p = $("#fPanel");
+    if (open) setFull(false);
+    p.classList.toggle("open", open); p.setAttribute("aria-hidden", !open);
+    $("#scrim").classList.toggle("on", open);
+    $("#fbToggle").setAttribute("aria-expanded", open);
+    if (open){ $("#fbDot").hidden = true; $("#fbClose").focus({preventScroll:true}); }
+    else { const it = S.items && S.items[S.items.length-1]; if (it && (it.grade || it.skipped)) $("#fbDot").hidden = false; }
+  }
+  $("#fbToggle").onclick = () => setFb(!$("#fPanel").classList.contains("open"));
+  $("#fbClose").onclick = () => { setFb(false); $("#fbToggle").focus(); };
+  $("#scrim").onclick = () => setFb(false);
+  document.addEventListener("keydown", e => {
+    if (e.key !== "Escape") return;
+    if ($("#ide.full")){ setFull(false); e.preventDefault(); }
+    else if ($("#fPanel").classList.contains("open")){ setFb(false); $("#fbToggle").focus(); e.preventDefault(); }
+  });
+
   function renderFeedback(){
+    const out = renderFeedbackBody();
+    const it = S.items[S.items.length-1];
+    const done = !!(it && (it.grade || it.skipped));
+    const dot = $("#fbDot");
+    if (done){
+      const last = S.items.length >= S.total;
+      $("#fBody").insertAdjacentHTML("beforeend", `<div class="actions" style="margin-top:20px;border-top:1px solid var(--line);padding-top:16px">
+        <button class="btn primary" id="fbNext" type="button">${last ? "See report" : "Next question"}</button>
+        <button class="btn ghost" id="fbBack" type="button">Back to question</button></div>`);
+      $("#fbNext").onclick = () => { setFb(false); last ? finish() : next(); };
+      $("#fbBack").onclick = () => { setFb(false); $("#fbToggle").focus(); };
+      dot.className = "dot " + outcomeOf(it); setFb(true);
+    }
+    else { dot.hidden = true; setFb(false); }
+    return out;
+  }
+
+  function renderFeedbackBody(){
     const it = S.items[S.items.length-1];
     if (!it){ return; }
     const g = it.grade;
@@ -984,6 +1059,7 @@ ${S.jd ? "Target role / job description (tailor questions to it):\n"+S.jd.slice(
     if (S.offline){ it.grade = {auto: true}; save(); renderQuestion(); renderFeedback(); return; }
     ctl = new AbortController();
     $("#submitBtn").disabled = true; $("#dunnoBtn").disabled = true; if ($("#answer")) $("#answer").readOnly = true;
+    setFb(true);
     const stop = thinking($("#fBody"), "Grading your answer…");
     try{
       const g = await gradeAnswer(it);
