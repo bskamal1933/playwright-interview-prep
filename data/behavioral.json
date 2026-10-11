@@ -1,0 +1,20 @@
+[
+ {
+  "id": "beh-001",
+  "topic": "Behavioral",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "Tell me about a time automation missed a bug that reached production.",
+  "what_tested": "Ownership and systemic fixes",
+  "model": "Use STAR. Give the situation and task in two sentences, then what you personally did: confirmed the gap (no coverage, wrong test layer, mocked away), added a regression test at the right layer, and fixed the systemic cause, such as adding contract tests or a review checklist item. Finish with a measurable result, like no repeat issues in that area over the following releases."
+ },
+ {
+  "id": "beh-002",
+  "topic": "Behavioral",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "A developer says your UI tests slow down their pull requests. How do you respond?",
+  "what_tested": "Collaboration under pressure",
+  "model": "Acknowledge the cost and bring data: suite duration, flake rate, and bugs the suite caught. Then propose changes: a fast smoke tier on PRs, parallelism and sharding, moving the full regression to post-merge or nightly, and fixing the slowest tests. Agree a shared time budget with the developers so it's a team target, not an argument."
+ }
+]

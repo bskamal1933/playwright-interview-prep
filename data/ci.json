@@ -1,0 +1,20 @@
+[
+ {
+  "id": "ci-001",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How would you set up Playwright tests in a CI pipeline?",
+  "what_tested": "CI/CD for UI tests",
+  "model": "Use the official Playwright Docker image, or `playwright install --with-deps`, so browsers and OS libraries match the Playwright version. Run lint, then API tests, then a UI smoke suite on every PR, with the full regression nightly or before release. Shard across machines and use xdist within each. Upload traces, videos and the report as artifacts, and post a summary to the PR. Keep the PR suite under an agreed time budget."
+ },
+ {
+  "id": "ci-002",
+  "topic": "CI, debugging & flakiness",
+  "difficulty": "deep",
+  "kind": "concept",
+  "question": "Your suite has a 7% flake rate. How do you bring it down?",
+  "what_tested": "Flakiness strategy",
+  "model": "Measure first: track each test's pass/fail history and find the worst offenders. Classify root causes: synchronization (sleeps, non-web-first asserts), test data collisions, environment instability, order dependence, and real product races. Quarantine with an owner and a deadline, never silent retries. Prevent new flakes with lint rules banning sleeps, a PR checklist and stress-running new tests before merge. Report the flake rate trend and set a target such as under 1%."
+ }
+]

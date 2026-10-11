@@ -1,0 +1,29 @@
+[
+ {
+  "id": "fw-001",
+  "topic": "Pytest & framework design",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "Explain fixture scopes in pytest and a case where the wrong scope causes flaky tests.",
+  "what_tested": "Fixture scopes and isolation",
+  "model": "Scopes are function (default), class, module, package and session. A wider scope is shared and cheaper but can leak state. A classic flake: a session-scoped page or a module-scoped object that tests modify, so results depend on test order and break under xdist. Share expensive, read-only things widely (browser, config, auth state) and keep anything mutable at function scope."
+ },
+ {
+  "id": "fw-002",
+  "topic": "Pytest & framework design",
+  "difficulty": "core",
+  "kind": "concept",
+  "question": "How do you structure a Page Object Model so it doesn't turn into a mess?",
+  "what_tested": "POM design",
+  "model": "One class per page or reusable component, taking `page` in the constructor, exposing locators as attributes and intent-level methods such as `login(user)`. Keep assertions in tests (or explicit `expect_*` helpers), use component objects for shared widgets like tables and modals, and wire page objects through fixtures so tests just ask for `login_page`. Avoid a giant BasePage that every page inherits everything from."
+ },
+ {
+  "id": "fw-003",
+  "topic": "Pytest & framework design",
+  "difficulty": "deep",
+  "kind": "concept",
+  "question": "Design the folder structure and key fixtures for a new Playwright + pytest framework.",
+  "what_tested": "Framework architecture",
+  "model": "`pages/` for page and component objects, `api/` for API clients, `tests/ui` and `tests/api`, layered `conftest.py` files, `data/` factories and `config/` per environment. Key fixtures: environment config from CLI options or env vars, `browser_context_args` with base_url, per-role storage state, API client, and data factories that create unique records and clean up after themselves. Add markers (smoke, regression), xdist, traces/videos on failure and Allure or pytest-html reporting."
+ }
+]

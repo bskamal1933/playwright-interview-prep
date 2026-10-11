@@ -15,18 +15,18 @@ Free mock-interview practice for **SDET / QA automation** roles built on **Pytho
 
 ## Question bank
 
-40 questions, chosen at random per session:
+Questions are compiled from topics commonly reported in real SDET, QA automation and QA lead interviews (public interview reports, interview-prep write-ups and hiring discussions), and every model answer is written for this project. Sessions pick at random and show questions you haven't seen yet first.
 
-| Track | Questions |
-|---|---|
-| Python | 9 concept + 8 live-coding tasks with hidden tests |
-| Playwright | 8 |
-| API testing | 8 |
-| Pytest & framework design | 3 |
-| CI, debugging & flakiness | 2 |
-| Behavioral | 2 |
+| Module | Questions | Notes |
+|---|---|---|
+| Python | 145 | 84 concept + 61 live-coding tasks with hidden tests |
+| Playwright | 120 | locators, waits, assertions, contexts, network, auth, tracing, CI, scenarios |
+| API testing | 103 | HTTP/REST, auth, validation, contracts, resilience, security, scenarios |
+| Pytest & framework design | 3 | expanding to 100+ |
+| CI, debugging & flakiness | 2 | expanding to 100+ |
+| Behavioral | 2 | expanding to 100+ |
 
-Every coding task's reference solution is checked against its tests, and the starter code is checked to fail them.
+Every coding task's reference solution is checked against its tests, and its starter code is checked to fail them, by `tools/validate_bank.py`, which also runs in GitHub Actions on every change to `data/`.
 
 ## Run locally
 
@@ -44,16 +44,29 @@ Fork the repo, then in **Settings → Pages** choose **Deploy from a branch**, b
 ## Repo layout
 
 ```
-index.html        the whole app (HTML, CSS, JS and the question bank)
-py-worker.js      runs Python in a Web Worker so long-running code can be stopped
-pyodide/          Pyodide 0.26.4 runtime (CPython compiled to WebAssembly)
-skill/            a Claude skill version of the interview helper (question bank, coding
-                  exercises, framework/leadership questions and an interviewer rubric)
+index.html                 the app (HTML, CSS and JS)
+data/<module>.json         the question bank, one file per module
+py-worker.js               runs Python in a Web Worker so long-running code can be stopped
+pyodide/                   Pyodide 0.26.4 runtime (CPython compiled to WebAssembly)
+tools/validate_bank.py     checks the bank and runs every coding task's tests
+skill/                     a Claude skill version of the interview helper
 ```
 
 ## Contributing questions
 
-Questions live in the `BANK` array in `index.html`. Each entry has `topic`, `difficulty` (`warm-up` / `core` / `deep`), `kind` (`concept` or `python_code`), `question`, `what_tested`, `hint` and `model`. Coding tasks also need `starter_code` and `tests` (single-line `assert` statements). Pull requests welcome.
+Add entries to the right `data/<module>.json` file. Each question has:
+
+| Field | Required | Notes |
+|---|---|---|
+| `id` | yes | unique, e.g. `py-146` |
+| `topic` | yes | one of the six module names |
+| `difficulty` | yes | `warm-up`, `core` or `deep` |
+| `kind` | yes | `concept` or `python_code` |
+| `question`, `what_tested`, `model` | yes | `model` is Markdown |
+| `hint`, `tags` | no | |
+| `starter_code`, `tests`, `solution` | coding tasks | `tests` are single-line or short multi-line `assert` snippets |
+
+Run `python tools/validate_bank.py` before opening a pull request.
 
 ## Credits
 
