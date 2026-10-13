@@ -13,6 +13,7 @@ Free mock-interview practice for **SDET / QA automation** roles built on **Pytho
   - **Playwright, framework and CI coding**: page objects, locator strategy, polling waits and network mocking are graded with a recording stand-in for Playwright's page (`pyharness/fakepw.py`, same method names as the sync API), alongside pure-Python tasks on conftest resolution, fixture scopes, pytest.ini, marker expressions, JUnit XML reports, sharding and CI matrices.
 - **Pick the format when you start**: *Mixed* (default), *Only multiple choice* or *Only coding*. Coding-only sessions turn off Behavioral, which has no coding tasks.
 - **Preparation guide**: a separate page with the answer to every question, grouped by section and topic (e.g. Python → Overloading & overriding, DSA, Decorators; Framework → conftest.py, pytest.ini, Fixtures, Markers), with search, a type filter and reference links to the official docs that open in a new tab.
+- **Python Preparation** (`python-preparation.html`): 189 Python interview questions in 19 chapters, basics to advanced, then coding-round programs and output-prediction questions. Each answer opens with a line you can say out loud, followed by code. It has a chapter side menu, full-text search, jump to any question number, a random question picker (all chapters, this chapter, or not yet known), a quiz mode that hides answers until you reveal them, "mark as known" progress saved in the browser, copy buttons on code, and light/dark themes.
 - **10-question sessions** with a 5 Python / 3 Playwright / 2 API mix. Topic order and questions are picked at random, unseen questions first. Shorter sessions keep the same ratio, and Framework, CI & flakiness and Behavioral sections can be added.
 - **A colourful report**: pie charts for the overall result (correct, partly correct, incorrect, skipped) and for questions by section, plus per-section accuracy, coaching notes and a question log.
 - Runs entirely in your browser: no sign-up and no backend. Progress is saved in your browser only. API tasks call the public test APIs directly; if they're unreachable, a recorded copy of the API is used so you can still practise.
@@ -54,6 +55,9 @@ Fork the repo, then in **Settings → Pages** choose **Deploy from a branch**, b
 ```
 index.html                 the app (HTML, CSS and JS)
 data/<module>.json         the question bank, one file per module
+python-preparation.html    the Python Preparation page
+guide/python/*.md          Python Preparation content, one chapter per "##" heading, one question per "###"
+guide/python.json          built from the Markdown by tools/build_python_guide.py (pip install markdown)
 py-worker.js               runs Python in a Web Worker so long-running code can be stopped
 pyodide/                   Pyodide 0.26.4 runtime (CPython compiled to WebAssembly)
 pywheels/                  requests and its dependencies (pure-Python wheels, renamed .whl.wasm)

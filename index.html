@@ -268,6 +268,15 @@ body.ide-locked{overflow:hidden}
 .topnav .btn[aria-current="page"]{background:var(--accent);color:var(--accent-fg);border-color:var(--accent)}
 .prepcta{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:18px;padding:14px 16px;border:1px dashed var(--line);border-radius:var(--r);background:var(--surface)}
 .prepcta p{margin:0;flex:1;min-width:200px;font-size:14px;color:var(--muted)}
+.setup-side{display:grid;gap:16px;min-width:0}
+.pyprep-cta{display:flex;gap:14px;align-items:flex-start;padding:16px 18px;border-radius:var(--r);border:1px solid var(--line);border-left:5px solid var(--c3);background:linear-gradient(120deg,var(--accent-soft),var(--surface) 70%)}
+.pyprep-badge{flex:none;width:44px;height:44px;border-radius:10px;background:var(--accent);display:grid;place-items:center;font-size:22px}
+.pyprep-body h3{font-size:19px;margin:4px 0 6px}
+.pyprep-body p{margin:0;font-size:14px;color:var(--muted);max-width:56ch}
+.pyprep-acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.topnav a.btn{text-decoration:none;color:inherit}
+.pyprep-acts a.btn{text-decoration:none}
+.pyprep-acts a.btn:not(.primary){color:var(--fg)}
 /* preparation page */
 .prep-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:18px}
 .prep-head h2{font-size:clamp(24px,3vw,30px)}
@@ -341,6 +350,7 @@ footer{margin-top:36px;color:var(--muted);font-size:12.5px}
     <nav class="topnav" aria-label="Main">
       <button class="btn sm ghost" type="button" id="navPractice" aria-current="page">Practice</button>
       <button class="btn sm ghost" type="button" id="navPrep">📘 Preparation</button>
+      <a class="btn sm ghost" href="python-preparation.html">🐍 Python Preparation</a>
     </nav>
     <div class="status"><span class="dot" id="aiDot"></span><span id="aiStatus">Connecting to interviewer…</span></div>
   </header>
@@ -364,6 +374,7 @@ footer{margin-top:36px;color:var(--muted);font-size:12.5px}
         </div>
       </div>
 
+      <div class="setup-side">
       <form class="sheet" id="setupForm" autocomplete="off">
         <div class="resume" id="resumeBox" hidden>
           <span id="resumeText"></span>
@@ -421,6 +432,19 @@ footer{margin-top:36px;color:var(--muted);font-size:12.5px}
         </div>
         <p class="hint" id="bankStats" style="margin:0"></p>
       </form>
+      <aside class="pyprep-cta" aria-label="Python Preparation">
+          <div class="pyprep-badge">🐍</div>
+          <div class="pyprep-body">
+            <span class="label">New · Python Preparation</span>
+            <h3>Clear the Python round</h3>
+            <p>189 questions in 19 chapters, from basics to OOP, memory, concurrency and testing, plus coding-round programs and output-prediction questions. Answers you can say out loud, with code.</p>
+            <div class="pyprep-acts">
+              <a class="btn primary" href="python-preparation.html">Open Python Preparation</a>
+              <a class="btn" href="python-preparation.html#q/1">Start at Q1</a>
+            </div>
+          </div>
+      </aside>
+      </div>
     </div>
   </section>
 
